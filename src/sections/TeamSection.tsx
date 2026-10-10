@@ -152,10 +152,10 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
           </div>
         </div>
 
-        {/* Prominent Editorial 3-Column Gallery (Large, Beautiful Portraits) */}
+        {/* Compact & Responsive 2-Column (Mobile) / 3-Column (Desktop) Gallery */}
         <div
           ref={cardsContainerRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 pt-12"
+          className="grid grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-8 pt-8 sm:pt-12"
         >
           {team.members.map((member, index) => {
             const isHovered = hoveredMemberId === member.id;
@@ -164,18 +164,19 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
             return (
               <div
                 key={member.id}
+                onClick={() => setHoveredMemberId(isHovered ? null : member.id)}
                 onMouseEnter={() => setHoveredMemberId(member.id)}
                 onMouseLeave={() => setHoveredMemberId(null)}
-                className={`group relative rounded-3xl bg-canvas-surface border border-canvas-border p-4 sm:p-5 flex flex-col justify-between transition-all duration-500 cursor-pointer ${
+                className={`group relative rounded-2xl sm:rounded-3xl bg-canvas-surface border border-canvas-border p-3 sm:p-5 flex flex-col justify-between transition-all duration-400 cursor-pointer select-none ${
                   isHovered
-                    ? 'border-accent shadow-2xl -translate-y-2'
+                    ? 'border-accent shadow-xl sm:shadow-2xl -translate-y-1 sm:-translate-y-2'
                     : isAnyHovered
-                    ? 'opacity-65 scale-[0.99]'
+                    ? 'opacity-70 scale-[0.99]'
                     : 'hover:border-accent/40 shadow-xs'
                 }`}
               >
-                {/* Large Editorial Portrait Frame */}
-                <div className="relative aspect-[4/4.8] w-full rounded-2xl overflow-hidden bg-charcoal-900 mb-5 shadow-sm">
+                {/* Proportional Editorial Portrait Frame */}
+                <div className="relative aspect-[3/3.8] sm:aspect-[4/4.8] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-charcoal-900 mb-3 sm:mb-5 shadow-xs">
                   <img
                     src={member.avatar}
                     alt={member.name}
@@ -189,41 +190,41 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
                   />
 
                   {/* Top Identifier Pill */}
-                  <div className="absolute top-3 left-3 px-3 py-1 rounded-full bg-ink/80 backdrop-blur-md text-canvas-surface text-xs font-tech flex items-center gap-1.5 shadow-sm">
+                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-ink/80 backdrop-blur-md text-canvas-surface text-[9px] sm:text-xs font-tech flex items-center gap-1 sm:gap-1.5 shadow-xs">
                     <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                     <span className="uppercase tracking-wider">Curator 0{index + 1}</span>
                   </div>
 
-                  {/* Top Right Hover Arrow */}
-                  <div className="absolute top-3 right-3 w-8 h-8 rounded-full bg-canvas-surface/90 backdrop-blur-md text-ink flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-sm">
-                    <ArrowUpRight className="w-4 h-4 text-accent" />
+                  {/* Top Right Tap/Hover Indicator */}
+                  <div className="absolute top-2 right-2 sm:top-3 sm:right-3 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-canvas-surface/90 backdrop-blur-md text-ink flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs">
+                    <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent" />
                   </div>
                 </div>
 
-                {/* Member Information (Always visible, prominent typography) */}
-                <div className="space-y-2 px-1 pb-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs font-tech uppercase text-accent font-semibold tracking-wider">
+                {/* Member Information */}
+                <div className="space-y-1 sm:space-y-2 px-0.5 sm:px-1 pb-0.5 sm:pb-1">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[10px] sm:text-xs font-tech uppercase text-accent font-semibold tracking-wider truncate">
                       {member.track}
                     </span>
-                    <span className="text-xs font-tech text-ink-ghost font-bold">
+                    <span className="text-[10px] sm:text-xs font-tech text-ink-ghost font-bold shrink-0">
                       {member.initials}
                     </span>
                   </div>
 
-                  <h3 className="text-xl sm:text-2xl font-display font-bold text-ink group-hover:text-accent transition-colors leading-snug">
+                  <h3 className="text-sm sm:text-xl lg:text-2xl font-display font-bold text-ink group-hover:text-accent transition-colors leading-tight line-clamp-1 sm:line-clamp-none">
                     {member.name}
                   </h3>
 
                   {/* Cobalt Blue Animated Line */}
                   <div
-                    className={`h-[2px] rounded-full transition-all duration-400 ${
-                      isHovered ? 'w-full bg-accent' : 'w-8 bg-canvas-muted'
+                    className={`h-[2px] rounded-full transition-all duration-300 ${
+                      isHovered ? 'w-full bg-accent' : 'w-6 sm:w-8 bg-canvas-muted'
                     }`}
                   />
 
-                  <p className="text-xs text-ink-muted font-light pt-1">
-                    Quality Assurance Contributor • Automation Test Store
+                  <p className="text-[11px] sm:text-xs text-ink-muted font-light pt-0.5 sm:pt-1 line-clamp-1 sm:line-clamp-none">
+                    QA Contributor • Automation Test Store
                   </p>
                 </div>
               </div>

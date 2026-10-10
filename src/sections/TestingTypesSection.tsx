@@ -50,6 +50,15 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
     }
   }, [selectedId]);
 
+  const handleSelectType = (id: string) => {
+    setSelectedId(id);
+    if (window.innerWidth < 1024 && detailPanelRef.current) {
+      setTimeout(() => {
+        detailPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
+    }
+  };
+
   const getIconForType = (id: string) => {
     switch (id) {
       case 'type-static':
@@ -88,20 +97,20 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
         </div>
 
         {/* Interactive Kinetic Explorer */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10 pt-8 sm:pt-10 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 lg:gap-10 pt-6 sm:pt-10 items-stretch">
           {/* Left Column: Interactive Type Selector (5 Cols) */}
-          <div className="lg:col-span-5 flex flex-col justify-between space-y-2.5">
-            <div className="space-y-2.5">
+          <div className="lg:col-span-5 flex flex-col justify-between space-y-2">
+            <div className="space-y-2">
               {types.map((item, idx) => {
                 const isSelected = item.id === selectedId;
                 return (
                   <button
                     key={item.id}
                     type="button"
-                    onClick={() => setSelectedId(item.id)}
-                    className={`w-full group p-4 sm:p-5 rounded-2xl text-left transition-all border flex items-center justify-between relative overflow-hidden ${
+                    onClick={() => handleSelectType(item.id)}
+                    className={`w-full group p-3.5 sm:p-5 rounded-xl sm:rounded-2xl text-left transition-all border flex items-center justify-between relative overflow-hidden ${
                       isSelected
-                        ? 'bg-ink text-white border-ink shadow-lg -translate-y-0.5'
+                        ? 'bg-ink text-white border-ink shadow-md -translate-y-0.5'
                         : 'bg-canvas-surface border-canvas-border hover:border-canvas-muted text-ink shadow-xs'
                     }`}
                   >
@@ -110,10 +119,10 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
                       <div className="absolute left-0 top-2 bottom-2 w-1.5 bg-accent rounded-r-full" />
                     )}
 
-                    <div className="flex items-center gap-4 pl-1">
+                    <div className="flex items-center gap-3 sm:gap-4 pl-1">
                       {/* Number index */}
                       <span
-                        className={`font-tech text-sm sm:text-base font-bold transition-colors ${
+                        className={`font-tech text-xs sm:text-base font-bold transition-colors ${
                           isSelected ? 'text-accent' : 'text-ink-ghost group-hover:text-accent'
                         }`}
                       >
@@ -122,14 +131,14 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
 
                       <div>
                         <h3
-                          className={`text-lg sm:text-xl font-display font-bold leading-tight ${
+                          className={`text-base sm:text-xl font-display font-bold leading-tight ${
                             isSelected ? 'text-white' : 'text-ink'
                           }`}
                         >
                           {item.name}
                         </h3>
                         <span
-                          className={`text-xs font-tech tracking-wider uppercase block mt-0.5 ${
+                          className={`text-[11px] sm:text-xs font-tech tracking-wider uppercase block mt-0.5 ${
                             isSelected ? 'text-charcoal-400' : 'text-ink-subtle'
                           }`}
                         >
@@ -139,7 +148,7 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
                     </div>
 
                     <ArrowRight
-                      className={`w-5 h-5 transition-transform ${
+                      className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform ${
                         isSelected
                           ? 'text-accent translate-x-1'
                           : 'text-ink-ghost group-hover:translate-x-1'
@@ -151,11 +160,11 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
             </div>
           </div>
 
-          {/* Right Column: Detailed Strategic Kinetic Panel (7 Cols, stable height) */}
+          {/* Right Column: Detailed Strategic Kinetic Panel (7 Cols) */}
           <div className="lg:col-span-7">
             <div
               ref={detailPanelRef}
-              className="h-full min-h-[460px] rounded-3xl bg-canvas-surface border border-canvas-border p-7 sm:p-10 lg:p-12 flex flex-col justify-between shadow-sm relative overflow-hidden"
+              className="h-full min-h-0 lg:min-h-[460px] rounded-2xl sm:rounded-3xl bg-canvas-surface border border-canvas-border p-5 sm:p-10 lg:p-12 flex flex-col justify-between shadow-xs sm:shadow-sm relative overflow-hidden"
             >
               <div className="space-y-6 sm:space-y-8">
                 {/* Header row with badges */}

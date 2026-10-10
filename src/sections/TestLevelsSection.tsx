@@ -163,14 +163,42 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
                         {lvl.tagline}
                       </span>
                     </div>
+
+                    {/* Mobile Inline Expanded Details Accordion */}
+                    {isSelected && (
+                      <div className="lg:hidden mt-4 pt-4 border-t border-charcoal-800 space-y-3.5 text-xs animate-in fade-in duration-200">
+                        <div className="space-y-1">
+                          <span className="text-[10px] font-tech uppercase text-charcoal-400 font-semibold tracking-wider">
+                            Architectural Definition
+                          </span>
+                          <p className="text-canvas-surface/90 leading-relaxed font-light">
+                            {lvl.description}
+                          </p>
+                        </div>
+                        <div className="p-3.5 rounded-xl bg-charcoal-900 border border-charcoal-800 space-y-1">
+                          <span className="text-[10px] font-tech uppercase text-accent font-bold tracking-wider block">
+                            Proposed Project Scope
+                          </span>
+                          <p className="text-canvas-surface/90 leading-relaxed text-[11px]">
+                            {lvl.plannedFocus}
+                          </p>
+                        </div>
+                        <div className="p-3 rounded-xl bg-charcoal-900/60 border border-charcoal-800 flex items-start gap-2 text-[11px] text-charcoal-300">
+                          <AlertCircle className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
+                          <p className="leading-relaxed">
+                            <strong>Access Boundary:</strong> {lvl.accessNotice}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* Right Column: Deep Explanation Display Panel */}
-          <div ref={detailPanelRef} className="lg:col-span-7">
+          {/* Right Column: Deep Explanation Display Panel (Desktop) */}
+          <div ref={detailPanelRef} className="hidden lg:block lg:col-span-7">
             <div className="h-full rounded-3xl bg-canvas-surface border border-canvas-border p-7 sm:p-10 lg:p-12 shadow-sm space-y-6 flex flex-col justify-between">
               <div className="space-y-6">
                 <div className="border-b border-canvas-border pb-5">

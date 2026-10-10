@@ -98,6 +98,15 @@
   background: #315BFA;
 }
 
+/* Hide scrollbar utility for touch/swipe bars */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Accessibility: respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   * {

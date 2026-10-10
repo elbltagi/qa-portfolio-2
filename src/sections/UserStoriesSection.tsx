@@ -137,8 +137,8 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({ stories 
 
         {/* Interactive Explorer Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pt-1 items-start">
-          {/* Module Selector (Filter pills) */}
-          <div className="lg:col-span-4 space-y-5">
+          {/* Module Selector (Filter pills & Search) */}
+          <div className="lg:col-span-4 space-y-4 sm:space-y-5">
             {/* Search Input */}
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-ghost" />
@@ -147,7 +147,7 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({ stories 
                 placeholder="Search features (e.g. login, cart, search)..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-9 py-3 rounded-2xl bg-canvas-surface border border-canvas-border text-sm text-ink placeholder:text-ink-ghost focus:outline-hidden focus:border-accent transition-colors shadow-xs"
+                className="w-full pl-10 pr-9 py-2.5 sm:py-3 rounded-2xl bg-canvas-surface border border-canvas-border text-xs sm:text-sm text-ink placeholder:text-ink-ghost focus:outline-hidden focus:border-accent transition-colors shadow-xs"
               />
               {searchQuery && (
                 <button
@@ -161,8 +161,43 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({ stories 
               )}
             </div>
 
-            {/* Modules List */}
-            <div className="p-4 rounded-2xl bg-canvas-surface border border-canvas-border space-y-1.5 shadow-xs">
+            {/* Mobile Module Selector (Horizontal Swipeable Bar) */}
+            <div className="flex lg:hidden overflow-x-auto gap-2 pb-1 pt-0.5 no-scrollbar -mx-6 px-6 sm:-mx-8 sm:px-8">
+              {modules.map((mod: string) => {
+                const count =
+                  mod === 'All'
+                    ? stories.length
+                    : stories.filter((s) => s.module === mod).length;
+                const isSelected = selectedModule === mod;
+
+                return (
+                  <button
+                    key={mod}
+                    type="button"
+                    onClick={() => setSelectedModule(mod)}
+                    className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs transition-all ${
+                      isSelected
+                        ? 'bg-accent text-white font-bold shadow-sm ring-1 ring-accent'
+                        : 'bg-canvas-surface border border-canvas-border text-ink-muted hover:text-ink font-medium shadow-xs'
+                    }`}
+                  >
+                    <span className="whitespace-nowrap">{mod}</span>
+                    <span
+                      className={`font-tech text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
+                        isSelected
+                          ? 'bg-white/20 text-white'
+                          : 'bg-canvas-muted text-ink-subtle'
+                      }`}
+                    >
+                      {count}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Desktop Modules List */}
+            <div className="hidden lg:block p-4 rounded-2xl bg-canvas-surface border border-canvas-border space-y-1.5 shadow-xs">
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-canvas-border text-xs font-tech text-ink-ghost uppercase tracking-wider">
                 <span className="flex items-center gap-1.5">
                   <Filter className="w-3.5 h-3.5 text-accent" />

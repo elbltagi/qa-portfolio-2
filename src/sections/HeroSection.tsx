@@ -174,7 +174,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
             </span>
           </div>
 
-          <div className="flex items-center gap-5 text-xs text-ink-muted font-tech">
+          <div className="flex flex-wrap items-center gap-2.5 sm:gap-5 text-[11px] sm:text-xs text-ink-muted font-tech">
             <div className="flex items-center gap-1.5">
               <ShieldCheck className="w-3.5 h-3.5 text-accent" />
               <span>{meta.track}</span>

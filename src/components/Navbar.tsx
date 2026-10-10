@@ -44,6 +44,27 @@ export const Navbar: React.FC<NavbarProps> = ({ targetUrl }) => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Prevent background scroll when mobile menu is open & handle Escape key
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && mobileMenuOpen) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
+
   return (
     <>
       <header
@@ -110,7 +131,9 @@ export const Navbar: React.FC<NavbarProps> = ({ targetUrl }) => {
             type="button"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle navigation menu"
-            className="xl:hidden p-2 rounded-lg text-ink hover:bg-canvas-muted transition-colors"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-navigation"
+            className="xl:hidden p-2 rounded-lg text-ink hover:bg-canvas-muted transition-colors focus:outline-hidden focus:ring-2 focus:ring-accent"
           >
             {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
@@ -119,7 +142,13 @@ export const Navbar: React.FC<NavbarProps> = ({ targetUrl }) => {
 
       {/* Mobile Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 bg-canvas/98 backdrop-blur-lg pt-24 px-8 pb-8 flex flex-col justify-between xl:hidden animate-in fade-in duration-200">
+        <div
+          id="mobile-navigation"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile navigation"
+          className="fixed inset-0 z-40 bg-canvas/98 backdrop-blur-lg pt-24 px-6 sm:px-8 pb-8 flex flex-col justify-between overflow-y-auto xl:hidden animate-in fade-in duration-200"
+        >
           <nav className="flex flex-col space-y-4">
             <span className="text-[11px] font-tech tracking-widest uppercase text-ink-ghost mb-2">
               Exhibition Navigation

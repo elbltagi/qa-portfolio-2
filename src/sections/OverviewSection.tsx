@@ -186,11 +186,11 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           {/* Left Narrative Column */}
           <div ref={textContentRef} className="lg:col-span-6 space-y-5">
             {/* Interactive Tab Switcher */}
-            <div className="flex items-center gap-1.5 p-1 bg-canvas-muted rounded-full w-fit border border-canvas-border">
+            <div className="flex flex-wrap items-center gap-1.5 p-1 bg-canvas-muted rounded-2xl sm:rounded-full w-full sm:w-fit border border-canvas-border">
               <button
                 type="button"
                 onClick={() => setActiveTab('mission')}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                className={`flex-1 sm:flex-initial text-center px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
                   activeTab === 'mission'
                     ? 'bg-ink text-canvas-surface shadow-xs'
                     : 'text-ink-muted hover:text-ink'
@@ -201,7 +201,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('target')}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                className={`flex-1 sm:flex-initial text-center px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
                   activeTab === 'target'
                     ? 'bg-ink text-canvas-surface shadow-xs'
                     : 'text-ink-muted hover:text-ink'
@@ -212,7 +212,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('scope')}
-                className={`px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all ${
+                className={`flex-1 sm:flex-initial text-center px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
                   activeTab === 'scope'
                     ? 'bg-ink text-canvas-surface shadow-xs'
                     : 'text-ink-muted hover:text-ink'

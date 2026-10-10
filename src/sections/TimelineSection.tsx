@@ -124,7 +124,7 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
         </div>
 
         {/* Timeline Interactive Stack with vertical animated track */}
-        <div ref={timelineTrackRef} className="relative space-y-4 pt-4 pl-4 sm:pl-8">
+        <div ref={timelineTrackRef} className="relative space-y-3.5 sm:space-y-4 pt-3 sm:pt-4 pl-0 sm:pl-8">
           {/* Vertical progress track on desktop/tablet */}
           <div className="absolute left-0 top-6 bottom-6 w-[3px] bg-canvas-border rounded-full hidden sm:block">
             <div
@@ -143,7 +143,7 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
                 ref={(el) => {
                   if (el) weekCardsRef.current[index] = el;
                 }}
-                className={`rounded-3xl transition-all duration-300 border relative overflow-hidden ${
+                className={`rounded-2xl sm:rounded-3xl transition-all duration-300 border relative overflow-hidden ${
                   isExpanded
                     ? 'bg-canvas-surface border-accent ring-1 ring-accent/30 shadow-md'
                     : isCurrent
@@ -155,13 +155,13 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
                 <button
                   type="button"
                   onClick={() => setExpandedWeek(isExpanded ? '' : phase.id)}
-                  className="w-full p-5 sm:p-7 text-left flex items-center justify-between gap-4 focus:outline-hidden group"
+                  className="w-full p-4 sm:p-7 text-left flex items-center justify-between gap-3 sm:gap-4 focus:outline-hidden group select-none"
                 >
-                  <div className="flex items-center gap-4 sm:gap-8">
-                    {/* Oversized Week Numeral (Woonpact-inspired) */}
+                  <div className="flex items-center gap-3 sm:gap-8">
+                    {/* Oversized Week Numeral */}
                     <div className="flex items-baseline gap-1 shrink-0">
                       <span
-                        className={`font-display font-black text-3xl sm:text-4xl lg:text-5xl tracking-tighter transition-colors ${
+                        className={`font-display font-black text-2xl sm:text-4xl lg:text-5xl tracking-tighter transition-colors ${
                           isExpanded
                             ? 'text-accent'
                             : isCurrent
@@ -216,7 +216,7 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
 
                 {/* Expanded Details Panel */}
                 {isExpanded && (
-                  <div className="px-5 pb-7 sm:px-8 sm:pb-8 pt-3 border-t border-canvas-border grid grid-cols-1 lg:grid-cols-12 gap-6 animate-in fade-in duration-200">
+                  <div className="px-4 pb-6 sm:px-8 sm:pb-8 pt-3 border-t border-canvas-border grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 animate-in fade-in duration-200">
                     <div className="lg:col-span-7 space-y-4">
                       <div>
                         <span className="text-xs font-tech uppercase text-ink-subtle tracking-wider font-semibold block mb-1">
