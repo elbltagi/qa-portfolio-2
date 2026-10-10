@@ -160,21 +160,21 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
           {team.members.map((member, index) => {
             const isHovered = hoveredMemberId === member.id;
             const isAnyHovered = hoveredMemberId !== null;
+            const memberUrl =
+              member.url ||
+              member.linkedinUrl ||
+              (index === 0 ? 'https://eg.linkedin.com/in/youssef-elbltagi' : undefined);
 
-            return (
-              <div
-                key={member.id}
-                onClick={() => setHoveredMemberId(isHovered ? null : member.id)}
-                onMouseEnter={() => setHoveredMemberId(member.id)}
-                onMouseLeave={() => setHoveredMemberId(null)}
-                className={`group relative rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border p-3 sm:p-4 flex flex-col justify-between transition-all duration-300 cursor-pointer select-none ${
-                  isHovered
-                    ? 'border-accent shadow-lg sm:shadow-xl -translate-y-1'
-                    : isAnyHovered
-                    ? 'opacity-70 scale-[0.99]'
-                    : 'hover:border-accent/40 shadow-xs'
-                }`}
-              >
+            const cardClasses = `group relative rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border p-3 sm:p-4 flex flex-col justify-between transition-all duration-300 cursor-pointer select-none no-underline ${
+              isHovered
+                ? 'border-accent shadow-lg sm:shadow-xl -translate-y-1'
+                : isAnyHovered
+                ? 'opacity-70 scale-[0.99]'
+                : 'hover:border-accent/40 shadow-xs'
+            }`;
+
+            const cardInner = (
+              <>
                 {/* Proportional Editorial Portrait Frame */}
                 <div className="relative aspect-[3/3.8] sm:aspect-[3.6/4.2] w-full rounded-lg sm:rounded-xl overflow-hidden bg-charcoal-900 mb-2.5 sm:mb-4 shadow-xs">
                   <img
@@ -196,8 +196,20 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
                   </div>
 
                   {/* Top Right Tap/Hover Indicator */}
-                  <div className="absolute top-2 right-2 sm:top-3 sm:right-3 w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-canvas-surface/90 backdrop-blur-md text-ink flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-xs">
-                    <ArrowUpRight className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent" />
+                  <div
+                    className={`absolute top-2 right-2 sm:top-3 sm:right-3 w-6 h-6 sm:w-8 sm:h-8 rounded-full backdrop-blur-md flex items-center justify-center transition-all duration-300 shadow-xs ${
+                      memberUrl
+                        ? 'bg-accent text-canvas-surface sm:bg-canvas-surface/90 sm:text-ink sm:group-hover:bg-accent sm:group-hover:text-canvas-surface group-hover:scale-110'
+                        : 'bg-canvas-surface/90 text-ink opacity-0 group-hover:opacity-100'
+                    }`}
+                  >
+                    <ArrowUpRight
+                      className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${
+                        memberUrl
+                          ? 'text-canvas-surface sm:text-accent sm:group-hover:text-canvas-surface transition-colors'
+                          : 'text-accent'
+                      }`}
+                    />
                   </div>
                 </div>
 
@@ -207,9 +219,15 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
                     <span className="text-[10px] sm:text-xs font-tech uppercase text-accent font-semibold tracking-wider truncate">
                       {member.track}
                     </span>
-                    <span className="text-[10px] sm:text-xs font-tech text-ink-ghost font-bold shrink-0">
-                      {member.initials}
-                    </span>
+                    {memberUrl ? (
+                      <span className="text-[9px] sm:text-[10px] font-tech text-accent/85 font-bold uppercase tracking-wider shrink-0 flex items-center gap-0.5 group-hover:text-accent transition-colors">
+                        LinkedIn <ArrowUpRight className="w-2.5 h-2.5" />
+                      </span>
+                    ) : (
+                      <span className="text-[10px] sm:text-xs font-tech text-ink-ghost font-bold shrink-0">
+                        {member.initials}
+                      </span>
+                    )}
                   </div>
 
                   <h3 className="text-sm sm:text-xl lg:text-2xl font-display font-bold text-ink group-hover:text-accent transition-colors leading-tight line-clamp-1 sm:line-clamp-none">
@@ -227,6 +245,36 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
                     QA Contributor • Automation Test Store
                   </p>
                 </div>
+              </>
+            );
+
+            if (memberUrl) {
+              return (
+                <a
+                  key={member.id}
+                  href={memberUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={`${member.name} - Digital Egypt Pioneers Initiative - DEPI | LinkedIn`}
+                  title={`${member.name} - Digital Egypt Pioneers Initiative - DEPI | LinkedIn`}
+                  onMouseEnter={() => setHoveredMemberId(member.id)}
+                  onMouseLeave={() => setHoveredMemberId(null)}
+                  className={cardClasses}
+                >
+                  {cardInner}
+                </a>
+              );
+            }
+
+            return (
+              <div
+                key={member.id}
+                onClick={() => setHoveredMemberId(isHovered ? null : member.id)}
+                onMouseEnter={() => setHoveredMemberId(member.id)}
+                onMouseLeave={() => setHoveredMemberId(null)}
+                className={cardClasses}
+              >
+                {cardInner}
               </div>
             );
           })}

@@ -28,6 +28,8 @@ export interface TeamMember {
   initials: string;
   objectPosition?: string;
   role?: string;
+  url?: string;
+  linkedinUrl?: string;
 }
 
 export interface TeamIntroductionData {

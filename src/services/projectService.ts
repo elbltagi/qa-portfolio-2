@@ -33,9 +33,11 @@ export const fallbackProjectState: ProjectStatePayload = {
         id: "team-1",
         name: "Youssef El Beltagi",
         track: "DEPI Software Testing",
-        avatar: "/images/team/member-1.jpg",
+        avatar: "/images/team/member-1.png",
         initials: "YE",
-        objectPosition: "50% 20%"
+        objectPosition: "50% 20%",
+        url: "https://eg.linkedin.com/in/youssef-elbltagi",
+        linkedinUrl: "https://eg.linkedin.com/in/youssef-elbltagi"
       },
       {
         id: "team-2",
@@ -505,6 +507,20 @@ export async function fetchProjectData(): Promise<{
           return { ...h, value: `${storyCount} Features Identified` };
         }
         return h;
+      });
+    }
+
+    // Ensure Youssef El Beltagi retains his LinkedIn profile link
+    if (combinedData.teamIntroduction?.members) {
+      combinedData.teamIntroduction.members = combinedData.teamIntroduction.members.map(member => {
+        if (member.id === 'team-1' || member.name.toLowerCase().includes('youssef')) {
+          return {
+            ...member,
+            url: member.url || 'https://eg.linkedin.com/in/youssef-elbltagi',
+            linkedinUrl: member.linkedinUrl || 'https://eg.linkedin.com/in/youssef-elbltagi'
+          };
+        }
+        return member;
       });
     }
 
