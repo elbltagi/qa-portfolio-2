@@ -155,13 +155,13 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
                 <button
                   type="button"
                   onClick={() => setExpandedWeek(isExpanded ? '' : phase.id)}
-                  className="w-full p-4 sm:p-7 text-left flex items-center justify-between gap-3 sm:gap-4 focus:outline-hidden group select-none"
+                  className="w-full p-3.5 sm:p-5 text-left flex items-center justify-between gap-3 sm:gap-4 focus:outline-hidden group select-none"
                 >
-                  <div className="flex items-center gap-3 sm:gap-8">
+                  <div className="flex items-center gap-3 sm:gap-6">
                     {/* Oversized Week Numeral */}
                     <div className="flex items-baseline gap-1 shrink-0">
                       <span
-                        className={`font-display font-black text-2xl sm:text-4xl lg:text-5xl tracking-tighter transition-colors ${
+                        className={`font-display font-black text-2xl sm:text-3xl lg:text-4xl tracking-tighter transition-colors ${
                           isExpanded
                             ? 'text-accent'
                             : isCurrent
@@ -178,21 +178,21 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
 
                     {/* Phase title & subtitle */}
                     <div>
-                      <div className="flex items-center gap-2.5 flex-wrap">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <span className="font-tech text-xs uppercase text-accent font-bold">
                           {phase.phaseNumber}
                         </span>
                         <span className="text-ink-ghost">•</span>
-                        <h3 className="text-base sm:text-xl font-display font-bold text-ink group-hover:text-accent transition-colors">
+                        <h3 className="text-sm sm:text-base lg:text-lg font-display font-bold text-ink group-hover:text-accent transition-colors">
                           {phase.title}
                         </h3>
                         {isCurrent && (
-                          <span className="text-[10px] font-tech uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
+                          <span className="text-[10px] font-tech uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
                             Current Stage
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-ink-subtle font-tech mt-1 hidden sm:block">
+                      <p className="text-xs text-ink-subtle font-tech mt-0.5 hidden sm:block">
                         Status: <span className="text-ink font-medium">{phase.status}</span>
                       </p>
                     </div>
@@ -203,20 +203,20 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
                       {phase.keyActivities.length} Planned Activities
                     </span>
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                      className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all ${
                         isExpanded
                           ? 'rotate-180 bg-accent text-white shadow-xs'
                           : 'bg-canvas-muted text-ink group-hover:bg-canvas-border'
                       }`}
                     >
-                      <ChevronDown className="w-4 h-4" />
+                      <ChevronDown className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                     </div>
                   </div>
                 </button>
 
                 {/* Expanded Details Panel */}
                 {isExpanded && (
-                  <div className="px-4 pb-6 sm:px-8 sm:pb-8 pt-3 border-t border-canvas-border grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-6 animate-in fade-in duration-200">
+                  <div className="px-4 pb-5 sm:px-6 sm:pb-6 pt-3 border-t border-canvas-border grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 animate-in fade-in duration-200">
                     <div className="lg:col-span-7 space-y-4">
                       <div>
                         <span className="text-xs font-tech uppercase text-ink-subtle tracking-wider font-semibold block mb-1">

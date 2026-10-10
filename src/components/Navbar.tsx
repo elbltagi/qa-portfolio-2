@@ -70,38 +70,38 @@ export const Navbar: React.FC<NavbarProps> = ({ targetUrl }) => {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? 'bg-canvas/92 backdrop-blur-md border-b border-canvas-border py-3.5 shadow-xs'
-            : 'bg-transparent py-5'
+            ? 'bg-canvas/92 backdrop-blur-md border-b border-canvas-border py-2.5 sm:py-3 shadow-xs'
+            : 'bg-transparent py-3.5 sm:py-4'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Logo / Brand mark */}
           <a
             href="#project-name"
-            className="group flex items-center gap-3 focus:outline-hidden"
+            className="group flex items-center gap-2.5 sm:gap-3 focus:outline-hidden shrink-0"
           >
-            <div className="w-8 h-8 rounded-full bg-ink text-canvas-surface flex items-center justify-center font-display font-bold text-sm tracking-tighter group-hover:bg-accent transition-colors duration-300">
+            <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-ink text-canvas-surface flex items-center justify-center font-display font-bold text-xs sm:text-sm tracking-tighter group-hover:bg-accent transition-colors duration-300">
               Q
             </div>
             <div className="flex flex-col">
-              <span className="font-display font-bold text-xs tracking-widest uppercase text-ink">
+              <span className="font-display font-bold text-[11px] sm:text-xs tracking-widest uppercase text-ink">
                 The Quality Journey
               </span>
-              <span className="text-[10px] tracking-wider text-ink-subtle uppercase font-tech">
+              <span className="text-[9px] sm:text-[10px] tracking-wider text-ink-subtle uppercase font-tech">
                 DEPI '26 / Software Testing
               </span>
             </div>
           </a>
 
           {/* Desktop Navigation Links with animated hover line & active highlight */}
-          <nav className="hidden xl:flex items-center gap-3.5 2xl:gap-5">
+          <nav className="hidden xl:flex items-center gap-2 xl:gap-2.5 2xl:gap-4">
             {navLinks.map((link) => {
               const isActive = activeSection === link.id;
               return (
                 <a
                   key={link.href}
                   href={link.href}
-                  className={`text-[11px] 2xl:text-xs uppercase tracking-wider relative py-1 transition-all duration-200 whitespace-nowrap ${
+                  className={`text-[10.5px] 2xl:text-xs uppercase tracking-wider relative py-1 transition-all duration-200 whitespace-nowrap ${
                     isActive
                       ? 'text-accent font-bold after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[2px] after:bg-accent'
                       : 'text-ink-muted font-medium hover:text-accent after:content-[""] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-accent hover:after:w-full after:transition-all after:duration-300'
@@ -114,12 +114,12 @@ export const Navbar: React.FC<NavbarProps> = ({ targetUrl }) => {
           </nav>
 
           {/* Right Action */}
-          <div className="hidden sm:flex items-center gap-4">
+          <div className="hidden sm:flex items-center gap-3 shrink-0">
             <a
               href={targetUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-full bg-ink text-white hover:bg-accent transition-colors tracking-wide shadow-xs hover:shadow-md"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold px-3.5 py-1.5 rounded-full bg-ink text-white hover:bg-accent transition-colors tracking-wide shadow-xs hover:shadow-md"
             >
               <span>Test Store</span>
               <ExternalLink className="w-3 h-3" />

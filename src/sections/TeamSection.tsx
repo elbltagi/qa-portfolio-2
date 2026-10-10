@@ -44,18 +44,18 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
           );
         }
 
-        // 2. All 6 team portraits reveal together with expanding masks and subtle scale
+        // 2. All 6 team portraits reveal smoothly without hard clipPath masks
         if (cardsContainerRef.current) {
           tl.fromTo(
             cardsContainerRef.current.children,
-            { opacity: 0, y: 50, scale: 0.94, clipPath: 'inset(10% 0% 10% 0% round 24px)' },
+            { opacity: 0, y: 35, scale: 0.95 },
             {
               opacity: 1,
               y: 0,
               scale: 1,
-              clipPath: 'inset(0% 0% 0% 0% round 24px)',
-              stagger: 0.06,
+              stagger: 0.05,
               ease: 'power2.out',
+              clearProps: 'transform,scale,opacity',
             },
             0.15
           );
@@ -155,7 +155,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
         {/* Compact & Responsive 2-Column (Mobile) / 3-Column (Desktop) Gallery */}
         <div
           ref={cardsContainerRef}
-          className="grid grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-6 lg:gap-8 pt-8 sm:pt-12"
+          className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4.5 lg:gap-6 pt-6 sm:pt-8"
         >
           {team.members.map((member, index) => {
             const isHovered = hoveredMemberId === member.id;
@@ -167,16 +167,16 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
                 onClick={() => setHoveredMemberId(isHovered ? null : member.id)}
                 onMouseEnter={() => setHoveredMemberId(member.id)}
                 onMouseLeave={() => setHoveredMemberId(null)}
-                className={`group relative rounded-2xl sm:rounded-3xl bg-canvas-surface border border-canvas-border p-3 sm:p-5 flex flex-col justify-between transition-all duration-400 cursor-pointer select-none ${
+                className={`group relative rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border p-3 sm:p-4 flex flex-col justify-between transition-all duration-300 cursor-pointer select-none ${
                   isHovered
-                    ? 'border-accent shadow-xl sm:shadow-2xl -translate-y-1 sm:-translate-y-2'
+                    ? 'border-accent shadow-lg sm:shadow-xl -translate-y-1'
                     : isAnyHovered
                     ? 'opacity-70 scale-[0.99]'
                     : 'hover:border-accent/40 shadow-xs'
                 }`}
               >
                 {/* Proportional Editorial Portrait Frame */}
-                <div className="relative aspect-[3/3.8] sm:aspect-[4/4.8] w-full rounded-xl sm:rounded-2xl overflow-hidden bg-charcoal-900 mb-3 sm:mb-5 shadow-xs">
+                <div className="relative aspect-[3/3.8] sm:aspect-[3.6/4.2] w-full rounded-lg sm:rounded-xl overflow-hidden bg-charcoal-900 mb-2.5 sm:mb-4 shadow-xs">
                   <img
                     src={member.avatar}
                     alt={member.name}

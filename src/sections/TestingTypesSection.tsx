@@ -108,7 +108,7 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
                     key={item.id}
                     type="button"
                     onClick={() => handleSelectType(item.id)}
-                    className={`w-full group p-3.5 sm:p-5 rounded-xl sm:rounded-2xl text-left transition-all border flex items-center justify-between relative overflow-hidden ${
+                    className={`w-full group p-3 sm:p-4 rounded-xl sm:rounded-2xl text-left transition-all border flex items-center justify-between relative overflow-hidden ${
                       isSelected
                         ? 'bg-ink text-white border-ink shadow-md -translate-y-0.5'
                         : 'bg-canvas-surface border-canvas-border hover:border-canvas-muted text-ink shadow-xs'
@@ -119,10 +119,10 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
                       <div className="absolute left-0 top-2 bottom-2 w-1.5 bg-accent rounded-r-full" />
                     )}
 
-                    <div className="flex items-center gap-3 sm:gap-4 pl-1">
+                    <div className="flex items-center gap-3 pl-1">
                       {/* Number index */}
                       <span
-                        className={`font-tech text-xs sm:text-base font-bold transition-colors ${
+                        className={`font-tech text-xs sm:text-sm font-bold transition-colors ${
                           isSelected ? 'text-accent' : 'text-ink-ghost group-hover:text-accent'
                         }`}
                       >
@@ -131,14 +131,14 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
 
                       <div>
                         <h3
-                          className={`text-base sm:text-xl font-display font-bold leading-tight ${
+                          className={`text-sm sm:text-base lg:text-lg font-display font-bold leading-tight ${
                             isSelected ? 'text-white' : 'text-ink'
                           }`}
                         >
                           {item.name}
                         </h3>
                         <span
-                          className={`text-[11px] sm:text-xs font-tech tracking-wider uppercase block mt-0.5 ${
+                          className={`text-[10px] sm:text-xs font-tech tracking-wider uppercase block mt-0.5 ${
                             isSelected ? 'text-charcoal-400' : 'text-ink-subtle'
                           }`}
                         >
@@ -148,7 +148,7 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
                     </div>
 
                     <ArrowRight
-                      className={`w-4 h-4 sm:w-5 sm:h-5 transition-transform ${
+                      className={`w-4 h-4 transition-transform ${
                         isSelected
                           ? 'text-accent translate-x-1'
                           : 'text-ink-ghost group-hover:translate-x-1'
@@ -164,25 +164,25 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
           <div className="lg:col-span-7">
             <div
               ref={detailPanelRef}
-              className="h-full min-h-0 lg:min-h-[460px] rounded-2xl sm:rounded-3xl bg-canvas-surface border border-canvas-border p-5 sm:p-10 lg:p-12 flex flex-col justify-between shadow-xs sm:shadow-sm relative overflow-hidden"
+              className="h-full min-h-0 lg:min-h-[380px] rounded-2xl sm:rounded-3xl bg-canvas-surface border border-canvas-border p-5 sm:p-7 lg:p-8 flex flex-col justify-between shadow-xs sm:shadow-sm relative overflow-hidden"
             >
-              <div className="space-y-6 sm:space-y-8">
+              <div className="space-y-4 sm:space-y-6">
                 {/* Header row with badges */}
-                <div className="flex items-center justify-between border-b border-canvas-border pb-6 flex-wrap gap-4">
+                <div className="flex items-center justify-between border-b border-canvas-border pb-4 sm:pb-5 flex-wrap gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-xl bg-canvas-muted border border-canvas-border">
+                    <div className="p-2 sm:p-2.5 rounded-xl bg-canvas-muted border border-canvas-border">
                       {getIconForType(selectedType.id)}
                     </div>
                     <div>
                       <span
                         ref={badgeNumRef}
-                        className="text-[11px] font-tech text-accent uppercase tracking-widest block font-bold"
+                        className="text-[10px] sm:text-[11px] font-tech text-accent uppercase tracking-widest block font-bold"
                       >
                         Strategy {selectedType.badge}
                       </span>
                       <h3
                         ref={titleRef}
-                        className="text-2xl sm:text-3xl font-display font-extrabold text-ink"
+                        className="text-xl sm:text-2xl lg:text-3xl font-display font-extrabold text-ink"
                       >
                         {selectedType.name}
                       </h3>
@@ -201,23 +201,23 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
                 </div>
 
                 {/* Content blocks animated via GSAP */}
-                <div ref={contentBlocksRef} className="space-y-5">
+                <div ref={contentBlocksRef} className="space-y-4 sm:space-y-5">
                   {/* Purpose block */}
-                  <div className="space-y-1.5">
+                  <div className="space-y-1">
                     <span className="text-xs font-tech uppercase text-ink-subtle tracking-wider font-semibold">
                       Strategic Purpose
                     </span>
-                    <p className="text-base sm:text-lg text-ink font-light leading-relaxed">
+                    <p className="text-sm sm:text-base text-ink font-light leading-relaxed">
                       {selectedType.purpose}
                     </p>
                   </div>
 
                   {/* Proposed Approach */}
-                  <div className="p-5 rounded-2xl bg-canvas-muted/40 border border-canvas-border space-y-1.5">
+                  <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-muted/40 border border-canvas-border space-y-1">
                     <span className="text-xs font-tech uppercase text-accent font-bold tracking-wider block">
                       Proposed Method & Implementation
                     </span>
-                    <p className="text-sm text-ink leading-relaxed">
+                    <p className="text-xs sm:text-sm text-ink leading-relaxed">
                       {selectedType.proposedApproach}
                     </p>
                   </div>

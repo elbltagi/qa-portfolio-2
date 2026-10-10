@@ -115,9 +115,9 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
                   <div
                     key={lvl.id}
                     onClick={() => setActiveLevelId(lvl.id)}
-                    className={`test-level-layer group cursor-pointer p-5 sm:p-6 rounded-2xl border transition-all duration-300 relative overflow-hidden ${
+                    className={`test-level-layer group cursor-pointer p-4 sm:p-5 rounded-xl sm:rounded-2xl border transition-all duration-300 relative overflow-hidden ${
                       isSelected
-                        ? 'bg-ink text-canvas-surface border-ink shadow-lg -translate-y-1'
+                        ? 'bg-ink text-canvas-surface border-ink shadow-lg -translate-y-0.5'
                         : 'bg-canvas-surface border-canvas-border hover:border-canvas-muted text-ink shadow-xs'
                     }`}
                   >
@@ -127,9 +127,9 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
                     )}
 
                     <div className="flex items-center justify-between gap-3 pl-1">
-                      <div className="flex items-center gap-3.5">
+                      <div className="flex items-center gap-3">
                         <div
-                          className={`p-2.5 rounded-xl ${
+                          className={`p-2 sm:p-2.5 rounded-xl ${
                             isSelected ? 'bg-charcoal-800' : 'bg-canvas-muted border border-canvas-border'
                           }`}
                         >
@@ -141,7 +141,7 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
                               {lvl.shortName}
                             </span>
                           </div>
-                          <h3 className="text-lg sm:text-xl font-display font-bold mt-0.5">
+                          <h3 className="text-base sm:text-lg lg:text-xl font-display font-bold mt-0.5">
                             {lvl.name}
                           </h3>
                         </div>
@@ -191,16 +191,16 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
             </div>
           </div>
 
-          {/* Right Column: Deep Explanation Display Panel (Desktop) */}
+          {/* Right Column: Deep Explanation Display Panel (Desktop/Laptop) */}
           <div ref={detailPanelRef} className="hidden lg:block lg:col-span-7">
-            <div className="h-full rounded-3xl bg-canvas-surface border border-canvas-border p-7 sm:p-10 lg:p-12 shadow-sm space-y-6 flex flex-col justify-between">
-              <div className="space-y-6">
-                <div className="border-b border-canvas-border pb-5">
-                  <div className="flex items-center gap-2 text-xs font-tech text-accent uppercase font-bold tracking-wider mb-2">
+            <div className="h-full rounded-2xl sm:rounded-3xl bg-canvas-surface border border-canvas-border p-5 sm:p-7 lg:p-8 shadow-xs sm:shadow-sm space-y-5 flex flex-col justify-between">
+              <div className="space-y-5">
+                <div className="border-b border-canvas-border pb-4">
+                  <div className="flex items-center gap-2 text-xs font-tech text-accent uppercase font-bold tracking-wider mb-1.5">
                     <CheckCircle2 className="w-4 h-4" />
                     <span>{activeLevel.shortName} Verification Scope</span>
                   </div>
-                  <h3 className="text-2xl sm:text-3xl font-display font-bold text-ink">
+                  <h3 className="text-xl sm:text-2xl lg:text-3xl font-display font-bold text-ink">
                     {activeLevel.name}
                   </h3>
                   <p className="text-xs sm:text-sm font-tech text-ink-subtle uppercase tracking-wider mt-1">

@@ -108,15 +108,15 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({ stories 
         {/* Required Academic Commitment Banner */}
         <div
           id="stories-commitment-banner"
-          className="my-7 sm:my-8 p-5 sm:p-7 rounded-3xl bg-canvas-surface border border-accent/30 shadow-xs relative overflow-hidden"
+          className="my-5 sm:my-6 p-4 sm:p-6 rounded-2xl sm:rounded-3xl bg-canvas-surface border border-accent/30 shadow-xs relative overflow-hidden"
         >
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5">
-            <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent-subtle text-accent font-tech text-xs font-semibold uppercase">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-5">
+            <div className="space-y-1 sm:space-y-1.5">
+              <div className="inline-flex items-center gap-2 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-accent-subtle text-accent font-tech text-xs font-semibold uppercase">
                 <Sparkles className="w-3.5 h-3.5" />
                 <span>Core Project Commitment</span>
               </div>
-              <h3 className="text-xl sm:text-2xl font-display font-bold text-ink">
+              <h3 className="text-lg sm:text-xl lg:text-2xl font-display font-bold text-ink">
                 We will write and review User Stories during our project.
               </h3>
               <p className="text-xs sm:text-sm text-ink-muted font-light max-w-2xl leading-relaxed">
@@ -124,7 +124,7 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({ stories 
               </p>
             </div>
 
-            <div className="shrink-0 p-3.5 rounded-2xl bg-canvas-muted border border-canvas-border text-xs text-ink-muted font-tech space-y-1">
+            <div className="shrink-0 p-3 sm:p-3.5 rounded-xl sm:rounded-2xl bg-canvas-muted border border-canvas-border text-xs text-ink-muted font-tech space-y-1">
               <span className="text-[10px] text-ink-subtle uppercase tracking-wider block font-bold">
                 Presentation Note
               </span>
@@ -252,10 +252,10 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({ stories 
             {/* Stories Scroll Container (Compact height, prevents long scroll sequences) */}
             <div
               ref={storiesListRef}
-              className="space-y-2.5 max-h-[540px] overflow-y-auto pr-2"
+              className="space-y-2 max-h-[440px] lg:max-h-[480px] 2xl:max-h-[540px] overflow-y-auto pr-1.5 sm:pr-2"
             >
               {filteredStories.length === 0 ? (
-                <div className="p-12 text-center rounded-2xl bg-canvas-surface border border-canvas-border text-ink-subtle">
+                <div className="p-8 sm:p-12 text-center rounded-2xl bg-canvas-surface border border-canvas-border text-ink-subtle">
                   <p className="text-sm">No stories match your current filter criteria.</p>
                 </div>
               ) : (
@@ -265,9 +265,9 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({ stories 
                     <div
                       key={story.id}
                       onClick={() => setSelectedStory(isSelected ? null : story)}
-                      className={`group cursor-pointer p-4 rounded-2xl border transition-all ${
+                      className={`group cursor-pointer p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border transition-all ${
                         isSelected
-                          ? 'bg-canvas-surface border-accent ring-1 ring-accent shadow-sm'
+                          ? 'bg-canvas-surface border-accent ring-1 ring-accent shadow-xs'
                           : 'bg-canvas-surface border-canvas-border hover:border-canvas-border'
                       }`}
                     >

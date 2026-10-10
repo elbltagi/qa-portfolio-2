@@ -77,15 +77,16 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           expandTl.fromTo(
             previewCardRef.current,
             {
-              scale: 0.84,
-              clipPath: 'inset(12% 16% 12% 16% round 24px)',
+              scale: 0.93,
+              opacity: 0.88,
               boxShadow: '0 8px 24px -10px rgba(0, 0, 0, 0.1)',
             },
             {
               scale: 1,
-              clipPath: 'inset(0% 0% 0% 0% round 28px)',
+              opacity: 1,
               boxShadow: '0 25px 60px -15px rgba(0, 0, 0, 0.35)',
               ease: 'power2.out',
+              clearProps: 'transform,scale,opacity',
             }
           );
         }
@@ -132,11 +133,11 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
       id="overview"
       className="section-padding bg-canvas-muted/40 border-b border-canvas-border relative overflow-hidden"
     >
-      <div className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 section-header-spacing border-b border-canvas-border">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 section-header-spacing border-b border-canvas-border">
           <div>
-            <span className="font-tech text-xs tracking-widest uppercase text-accent block mb-1.5">
+            <span className="font-tech text-xs tracking-widest uppercase text-accent block mb-1">
               02 / Project Overview
             </span>
             <h2
@@ -154,29 +155,29 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
         {/* Highlights Grid - Compact & Balanced */}
         <div
           ref={metricsRef}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 py-6 sm:py-7 border-b border-canvas-border"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 py-5 sm:py-6 border-b border-canvas-border"
         >
-          <div className="p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
-            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-1">Target Application</span>
-            <span className="text-base sm:text-lg font-display font-bold text-ink">E-Commerce Store</span>
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
+            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-0.5">Target Application</span>
+            <span className="text-sm sm:text-base font-display font-bold text-ink">E-Commerce Store</span>
             <span className="text-xs text-ink-subtle block mt-0.5">AbanteCart Practice Platform</span>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
-            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-1">Project Duration</span>
-            <span className="text-base sm:text-lg font-display font-bold text-accent">{meta.duration}</span>
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
+            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-0.5">Project Duration</span>
+            <span className="text-sm sm:text-base font-display font-bold text-accent">{meta.duration}</span>
             <span className="text-xs text-ink-subtle block mt-0.5">Proposal & Planning</span>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
-            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-1">Planned Approach</span>
-            <span className="text-base sm:text-lg font-display font-bold text-ink">Manual First</span>
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
+            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-0.5">Planned Approach</span>
+            <span className="text-sm sm:text-base font-display font-bold text-ink">Manual First</span>
             <span className="text-xs text-ink-subtle block mt-0.5">Then Automation Scripts</span>
           </div>
 
-          <div className="p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
-            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-1">Proposed Stories</span>
-            <span className="text-base sm:text-lg font-display font-bold text-ink">{totalStoriesCount} Identified</span>
+          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
+            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-0.5">Proposed Stories</span>
+            <span className="text-sm sm:text-base font-display font-bold text-ink">{totalStoriesCount} Identified</span>
             <span className="text-xs text-ink-subtle block mt-0.5">Across 10 Modules</span>
           </div>
         </div>
@@ -333,16 +334,16 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           <div ref={previewWrapperRef} className="lg:col-span-6 w-full">
             <div
               ref={previewCardRef}
-              className="rounded-3xl bg-ink text-canvas-surface p-6 sm:p-8 shadow-2xl border border-charcoal-800 relative overflow-hidden transition-all"
+              className="rounded-2xl sm:rounded-3xl bg-ink text-canvas-surface p-5 sm:p-6 lg:p-7 shadow-xl border border-charcoal-800 relative overflow-hidden transition-all"
             >
               {/* Browser mockup chrome */}
-              <div className="flex items-center justify-between pb-4 border-b border-charcoal-800 mb-6">
+              <div className="flex items-center justify-between pb-3.5 border-b border-charcoal-800 mb-4 sm:mb-5">
                 <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-rose-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500/80" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-500/80" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
+                  <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
                 </div>
-                <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-charcoal-900 text-charcoal-400 text-xs font-tech">
+                <div className="flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-charcoal-900 text-charcoal-400 text-xs font-tech">
                   <Globe className="w-3.5 h-3.5 text-accent" />
                   <span>https://automationteststore.com</span>
                 </div>
@@ -350,25 +351,25 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
               </div>
 
               {/* Architectural storefront preview details */}
-              <div className="space-y-6">
+              <div className="space-y-4 sm:space-y-5">
                 <div>
                   <span className="text-xs font-tech tracking-wider text-accent uppercase block mb-1">
                     Storefront Architecture
                   </span>
-                  <h4 className="text-2xl font-display font-bold text-canvas-surface">
+                  <h4 className="text-lg sm:text-xl lg:text-2xl font-display font-bold text-canvas-surface">
                     AbanteCart Open-Source E-Commerce
                   </h4>
-                  <p className="text-sm text-charcoal-400 mt-2 font-light leading-relaxed">
+                  <p className="text-xs sm:text-sm text-charcoal-400 mt-1.5 font-light leading-relaxed">
                     A fully-featured web application hosting an extensive catalog of apparel, makeup, fragrances, skincare, and books with shopping cart states and session cookies.
                   </p>
                 </div>
 
                 {/* Modules breakdown pills */}
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <span className="text-xs font-tech text-charcoal-400 uppercase tracking-wider block">
                     10 Functional Modules in Testing Scope:
                   </span>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5 sm:gap-2">
                     {[
                       'Authentication',
                       'Account Management',
@@ -383,7 +384,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                     ].map((mod) => (
                       <span
                         key={mod}
-                        className="px-2.5 py-1 rounded-md bg-charcoal-900 border border-charcoal-800 text-xs text-charcoal-300 font-tech"
+                        className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-charcoal-900 border border-charcoal-800 text-[11px] sm:text-xs text-charcoal-300 font-tech"
                       >
                         {mod}
                       </span>
@@ -392,9 +393,9 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                 </div>
 
                 {/* Scope boundaries notice */}
-                <div className="p-4 rounded-xl bg-charcoal-900/90 border border-charcoal-800 space-y-2">
+                <div className="p-3 sm:p-3.5 rounded-xl bg-charcoal-900/90 border border-charcoal-800 space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-tech text-amber-400">
-                    <Terminal className="w-4 h-4" />
+                    <Terminal className="w-3.5 h-3.5" />
                     <span className="font-semibold uppercase tracking-wider">Proposal Stage Boundary</span>
                   </div>
                   <p className="text-xs text-charcoal-400 leading-relaxed">
