@@ -45,7 +45,9 @@ export const fallbackProjectState: ProjectStatePayload = {
         track: "DEPI Software Testing",
         avatar: "/images/team/member-2.jpeg",
         initials: "AE",
-        objectPosition: "50% 32%"
+        objectPosition: "50% 32%",
+        url: "https://www.linkedin.com/in/abdulrhman-mohamed01/",
+        linkedinUrl: "https://www.linkedin.com/in/abdulrhman-mohamed01/"
       },
       {
         id: "team-3",
@@ -53,7 +55,9 @@ export const fallbackProjectState: ProjectStatePayload = {
         track: "DEPI Software Testing",
         avatar: "/images/team/member-3.jpeg",
         initials: "HA",
-        objectPosition: "50% 20%"
+        objectPosition: "50% 20%",
+        url: "https://www.linkedin.com/in/hend-amr-502281416/",
+        linkedinUrl: "https://www.linkedin.com/in/hend-amr-502281416/"
       },
       {
         id: "team-4",
@@ -61,7 +65,9 @@ export const fallbackProjectState: ProjectStatePayload = {
         track: "DEPI Software Testing",
         avatar: "/images/team/member-4.jpeg",
         initials: "ME",
-        objectPosition: "50% 16%"
+        objectPosition: "50% 16%",
+        url: "https://www.linkedin.com/in/mostafa-elgohary-7b679a392/?isSelfProfile=false",
+        linkedinUrl: "https://www.linkedin.com/in/mostafa-elgohary-7b679a392/?isSelfProfile=false"
       },
       {
         id: "team-5",
@@ -510,14 +516,22 @@ export async function fetchProjectData(): Promise<{
       });
     }
 
-    // Ensure Youssef El Beltagi retains his LinkedIn profile link
+    // Ensure team members retain their LinkedIn profile links
+    const memberLinkedInMap: Record<string, string> = {
+      'team-1': 'https://eg.linkedin.com/in/youssef-elbltagi',
+      'team-2': 'https://www.linkedin.com/in/abdulrhman-mohamed01/',
+      'team-3': 'https://www.linkedin.com/in/hend-amr-502281416/',
+      'team-4': 'https://www.linkedin.com/in/mostafa-elgohary-7b679a392/?isSelfProfile=false',
+    };
+
     if (combinedData.teamIntroduction?.members) {
-      combinedData.teamIntroduction.members = combinedData.teamIntroduction.members.map(member => {
-        if (member.id === 'team-1' || member.name.toLowerCase().includes('youssef')) {
+      combinedData.teamIntroduction.members = combinedData.teamIntroduction.members.map((member, index) => {
+        const mappedUrl = memberLinkedInMap[member.id] || memberLinkedInMap[`team-${index + 1}`];
+        if (mappedUrl) {
           return {
             ...member,
-            url: member.url || 'https://eg.linkedin.com/in/youssef-elbltagi',
-            linkedinUrl: member.linkedinUrl || 'https://eg.linkedin.com/in/youssef-elbltagi'
+            url: member.url || mappedUrl,
+            linkedinUrl: member.linkedinUrl || mappedUrl
           };
         }
         return member;

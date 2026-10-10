@@ -160,10 +160,13 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
           {team.members.map((member, index) => {
             const isHovered = hoveredMemberId === member.id;
             const isAnyHovered = hoveredMemberId !== null;
-            const memberUrl =
-              member.url ||
-              member.linkedinUrl ||
-              (index === 0 ? 'https://eg.linkedin.com/in/youssef-elbltagi' : undefined);
+            const defaultUrls: Record<number, string> = {
+              0: 'https://eg.linkedin.com/in/youssef-elbltagi',
+              1: 'https://www.linkedin.com/in/abdulrhman-mohamed01/',
+              2: 'https://www.linkedin.com/in/hend-amr-502281416/',
+              3: 'https://www.linkedin.com/in/mostafa-elgohary-7b679a392/?isSelfProfile=false',
+            };
+            const memberUrl = member.url || member.linkedinUrl || defaultUrls[index];
 
             const cardClasses = `group relative rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border p-3 sm:p-4 flex flex-col justify-between transition-all duration-300 cursor-pointer select-none no-underline ${
               isHovered
