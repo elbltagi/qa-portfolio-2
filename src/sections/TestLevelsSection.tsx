@@ -9,9 +9,9 @@ interface TestLevelsSectionProps {
 }
 
 export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) => {
-  const [activeLevelId, setActiveLevelId] = useState<string>('level-system');
+  const [activeLevelId, setActiveLevelId] = useState<string>(levels[0]?.id || 'level-component');
 
-  const activeLevel = levels.find((l) => l.id === activeLevelId) || levels[2];
+  const activeLevel = levels.find((l) => l.id === activeLevelId) || levels[0];
   const sectionRef = useRef<HTMLElement>(null);
   const layersContainerRef = useRef<HTMLDivElement>(null);
   const detailPanelRef = useRef<HTMLDivElement>(null);
@@ -108,9 +108,8 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
             </span>
 
             <div ref={layersContainerRef} className="space-y-3">
-              {levels.slice().reverse().map((lvl) => {
+              {levels.map((lvl) => {
                 const isSelected = lvl.id === activeLevelId;
-                const isPrimary = lvl.id === 'level-system';
 
                 return (
                   <div
@@ -141,11 +140,6 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
                             <span className="text-xs font-tech font-bold text-accent">
                               {lvl.shortName}
                             </span>
-                            {isPrimary && (
-                              <span className="text-[10px] font-tech uppercase px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 font-bold">
-                                Primary Focus
-                              </span>
-                            )}
                           </div>
                           <h3 className="text-lg sm:text-xl font-display font-bold mt-0.5">
                             {lvl.name}
