@@ -293,6 +293,15 @@ export const fallbackProjectState: ProjectStatePayload = {
       description: "Focuses on evaluating complete, end-to-end user workflows across the entire e-commerce website from a real customer's perspective on supported web browsers.",
       accessNotice: "Fully accessible through the live web application interface at https://automationteststore.com/.",
       plannedFocus: "Primary focus of our graduation project: verifying complete customer purchase and browsing journeys."
+    },
+    {
+      id: "level-acceptance",
+      name: "Acceptance Testing",
+      tagline: "Business Requirements & User Acceptance",
+      shortName: "Level 4: Acceptance",
+      description: "Focuses on validating that the system meets user expectations, business requirements, and predefined acceptance criteria before final graduation project submission.",
+      accessNotice: "Evaluated against documented user stories, acceptance criteria, and project stakeholder expectations.",
+      plannedFocus: "Verify that user stories and end-to-end checkout scenarios fulfill all acceptance criteria defined for the graduation project."
     }
   ],
   testingPhases: [
@@ -536,6 +545,22 @@ export async function fetchProjectData(): Promise<{
           linkedinUrl: member.linkedinUrl || mappedUrl
         };
       });
+    }
+
+    // Ensure Acceptance Testing is present in testLevelsData
+    if (combinedData.testLevelsData) {
+      const hasAcceptance = combinedData.testLevelsData.some(l => l.id === 'level-acceptance');
+      if (!hasAcceptance) {
+        combinedData.testLevelsData.push({
+          id: "level-acceptance",
+          name: "Acceptance Testing",
+          tagline: "Business Requirements & User Acceptance",
+          shortName: "Level 4: Acceptance",
+          description: "Focuses on validating that the system meets user expectations, business requirements, and predefined acceptance criteria before final graduation project submission.",
+          accessNotice: "Evaluated against documented user stories, acceptance criteria, and project stakeholder expectations.",
+          plannedFocus: "Verify that user stories and end-to-end checkout scenarios fulfill all acceptance criteria defined for the graduation project."
+        });
+      }
     }
 
     return {

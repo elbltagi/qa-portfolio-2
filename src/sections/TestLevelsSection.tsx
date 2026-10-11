@@ -72,6 +72,8 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
         return <Workflow className="w-5 h-5 text-accent" />;
       case 'level-system':
         return <Cpu className="w-5 h-5 text-accent" />;
+      case 'level-acceptance':
+        return <CheckCircle2 className="w-5 h-5 text-accent" />;
       default:
         return <Layers className="w-5 h-5 text-accent" />;
     }
