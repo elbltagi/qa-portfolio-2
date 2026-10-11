@@ -33,6 +33,7 @@ export const fallbackProjectState: ProjectStatePayload = {
         id: "team-1",
         name: "Youssef El Beltagi",
         track: "DEPI Software Testing",
+        role: "Team Leader",
         avatar: "/images/team/member-1.png",
         initials: "YE",
         objectPosition: "50% 20%",
@@ -526,15 +527,14 @@ export async function fetchProjectData(): Promise<{
 
     if (combinedData.teamIntroduction?.members) {
       combinedData.teamIntroduction.members = combinedData.teamIntroduction.members.map((member, index) => {
+        const isLeader = member.id === 'team-1' || index === 0 || member.name.toLowerCase().includes('youssef');
         const mappedUrl = memberLinkedInMap[member.id] || memberLinkedInMap[`team-${index + 1}`];
-        if (mappedUrl) {
-          return {
-            ...member,
-            url: member.url || mappedUrl,
-            linkedinUrl: member.linkedinUrl || mappedUrl
-          };
-        }
-        return member;
+        return {
+          ...member,
+          role: isLeader ? 'Team Leader' : member.role,
+          url: member.url || mappedUrl,
+          linkedinUrl: member.linkedinUrl || mappedUrl
+        };
       });
     }
 

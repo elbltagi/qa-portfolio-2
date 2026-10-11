@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '../lib/gsap';
-import { Sparkles, ArrowUpRight } from 'lucide-react';
+import { Sparkles, ArrowUpRight, Crown } from 'lucide-react';
 import type { TeamIntroductionData } from '../types';
 
 interface TeamSectionProps {
@@ -160,6 +160,12 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
           {team.members.map((member, index) => {
             const isHovered = hoveredMemberId === member.id;
             const isAnyHovered = hoveredMemberId !== null;
+            const isLeader =
+              index === 0 ||
+              member.id === 'team-1' ||
+              member.role === 'Team Leader' ||
+              member.name.toLowerCase().includes('youssef');
+
             const defaultUrls: Record<number, string> = {
               0: 'https://eg.linkedin.com/in/youssef-elbltagi',
               1: 'https://www.linkedin.com/in/abdulrhman-mohamed01/',
@@ -168,11 +174,15 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
             };
             const memberUrl = member.url || member.linkedinUrl || defaultUrls[index];
 
-            const cardClasses = `group relative rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border p-3 sm:p-4 flex flex-col justify-between transition-all duration-300 cursor-pointer select-none no-underline ${
+            const cardClasses = `group relative rounded-xl sm:rounded-2xl bg-canvas-surface border ${
+              isLeader ? 'border-accent/40 ring-1 ring-accent/20' : 'border-canvas-border'
+            } p-3 sm:p-4 flex flex-col justify-between transition-all duration-300 cursor-pointer select-none no-underline ${
               isHovered
                 ? 'border-accent shadow-lg sm:shadow-xl -translate-y-1'
                 : isAnyHovered
                 ? 'opacity-70 scale-[0.99]'
+                : isLeader
+                ? 'hover:border-accent shadow-xs'
                 : 'hover:border-accent/40 shadow-xs'
             }`;
 
@@ -193,10 +203,17 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
                   />
 
                   {/* Top Identifier Pill */}
-                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-ink/80 backdrop-blur-md text-canvas-surface text-[9px] sm:text-xs font-tech flex items-center gap-1 sm:gap-1.5 shadow-xs">
-                    <span className="w-1.5 h-1.5 rounded-full bg-accent" />
-                    <span className="uppercase tracking-wider">Curator 0{index + 1}</span>
-                  </div>
+                  {isLeader ? (
+                    <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-accent text-white backdrop-blur-md text-[9px] sm:text-xs font-tech flex items-center gap-1 sm:gap-1.5 shadow-md font-bold tracking-wider uppercase border border-white/20">
+                      <Crown className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-300 fill-amber-300 shrink-0" />
+                      <span>Team Leader</span>
+                    </div>
+                  ) : (
+                    <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-ink/80 backdrop-blur-md text-canvas-surface text-[9px] sm:text-xs font-tech flex items-center gap-1 sm:gap-1.5 shadow-xs">
+                      <span className="w-1.5 h-1.5 rounded-full bg-accent" />
+                      <span className="uppercase tracking-wider">Curator 0{index + 1}</span>
+                    </div>
+                  )}
 
                   {/* Top Right Tap/Hover Indicator */}
                   <div
@@ -219,8 +236,9 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
                 {/* Member Information */}
                 <div className="space-y-1 sm:space-y-2 px-0.5 sm:px-1 pb-0.5 sm:pb-1">
                   <div className="flex items-center justify-between gap-1">
-                    <span className="text-[10px] sm:text-xs font-tech uppercase text-accent font-semibold tracking-wider truncate">
-                      {member.track}
+                    <span className="text-[10px] sm:text-xs font-tech uppercase text-accent font-semibold tracking-wider truncate flex items-center gap-1">
+                      {isLeader && <Crown className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-amber-500 fill-amber-500 shrink-0" />}
+                      <span>{isLeader ? 'Lead QA • DEPI' : member.track}</span>
                     </span>
                     {memberUrl ? (
                       <span className="text-[9px] sm:text-[10px] font-tech text-accent/85 font-bold uppercase tracking-wider shrink-0 flex items-center gap-0.5 group-hover:text-accent transition-colors">
@@ -245,7 +263,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
                   />
 
                   <p className="text-[11px] sm:text-xs text-ink-muted font-light pt-0.5 sm:pt-1 line-clamp-1 sm:line-clamp-none">
-                    QA Contributor • Automation Test Store
+                    {isLeader ? 'Team Leader & QA Specialist • Automation Test Store' : 'QA Contributor • Automation Test Store'}
                   </p>
                 </div>
               </>
