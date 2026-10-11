@@ -142,7 +142,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
     <section
       ref={containerRef}
       id="project-name"
-      className="relative min-h-[70vh] lg:min-h-[74vh] 2xl:min-h-[82vh] pt-18 sm:pt-20 lg:pt-22 pb-7 sm:pb-9 flex flex-col justify-between bg-canvas bg-canvas-texture border-b border-canvas-border overflow-hidden"
+      className="relative min-h-[70vh] lg:min-h-[74vh] 2xl:min-h-[82vh] pt-[78px] sm:pt-[88px] lg:pt-[96px] pb-7 sm:pb-9 flex flex-col justify-between bg-canvas bg-canvas-texture border-b border-canvas-border overflow-hidden"
     >
       {/* Decorative architectural grid lines */}
       <div className="absolute inset-0 pointer-events-none opacity-40">
@@ -164,24 +164,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
         {/* Top Metadata Row */}
         <div
           ref={topBarRef}
-          className="flex flex-wrap items-center justify-between gap-3 pt-1 pb-3 sm:pb-4 border-b border-canvas-border"
+          className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 sm:gap-4 pb-3 sm:pb-4 border-b border-canvas-border"
         >
-          <div className="flex items-center gap-3">
-            <span className="font-tech text-xs tracking-widest uppercase bg-ink text-canvas-surface px-2.5 py-1 rounded-sm">
+          <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+            <span className="font-tech text-[10.5px] sm:text-xs tracking-widest uppercase bg-ink text-canvas-surface px-2.5 py-1 rounded-sm shrink-0">
               EXHIBITION 01 / V2
             </span>
-            <span className="text-xs font-semibold tracking-wider uppercase text-ink-muted">
+            <span className="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-ink-muted">
               {meta.initiative}
             </span>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5 sm:gap-5 text-[11px] sm:text-xs text-ink-muted font-tech">
+          <div className="flex flex-wrap items-center gap-3 sm:gap-5 text-[11px] sm:text-xs text-ink-muted font-tech">
             <div className="flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-accent" />
+              <ShieldCheck className="w-3.5 h-3.5 text-accent shrink-0" />
               <span>{meta.track}</span>
             </div>
             <div className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 text-accent" />
+              <Calendar className="w-3.5 h-3.5 text-accent shrink-0" />
               <span>Duration: {meta.duration}</span>
             </div>
           </div>

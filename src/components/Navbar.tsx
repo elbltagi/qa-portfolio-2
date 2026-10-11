@@ -70,8 +70,8 @@ export const Navbar: React.FC<NavbarProps> = ({ targetUrl }) => {
       <header
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled
-            ? 'bg-canvas/92 backdrop-blur-md border-b border-canvas-border py-2.5 sm:py-3 shadow-xs'
-            : 'bg-transparent py-3.5 sm:py-4'
+            ? 'bg-canvas/95 backdrop-blur-md border-b border-canvas-border py-2 sm:py-2.5 shadow-xs'
+            : 'bg-canvas/92 sm:bg-transparent backdrop-blur-md sm:backdrop-blur-none border-b border-canvas-border/60 sm:border-transparent py-2.5 sm:py-3.5'
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
