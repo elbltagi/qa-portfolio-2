@@ -4,6 +4,7 @@ import { useActiveChapter } from './hooks/useActiveChapter';
 import { useRoute } from './lib/router';
 import { findDetailPage } from './lib/chapters';
 import { announceMounted } from './lib/boot';
+import { Cursor } from './components/Cursor';
 import { Navbar } from './components/Navbar';
 import { ChapterRail } from './components/ChapterRail';
 import { ScrollProgress } from './components/ScrollProgress';
@@ -66,6 +67,7 @@ export const App: React.FC = () => {
         Skip to content
       </a>
 
+      <Cursor />
       <ScrollProgress progress={progress} />
       <Navbar
         targetUrl={data.projectMeta.liveAppUrl}

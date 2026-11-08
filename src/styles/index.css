@@ -32,6 +32,23 @@
   }
 }
 
+/* Custom cursor.
+   The class is added by src/components/Cursor.tsx only once the replacement
+   is actually on screen — a fine pointer, and after the boot curtain lifts.
+   Hiding the native cursor from a stylesheet instead would leave anyone on a
+   touch device, or anyone watching the page load, with no pointer at all. */
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none !important;
+}
+
+/* A caret still has to be placeable, so text fields keep the real thing. */
+html.custom-cursor input,
+html.custom-cursor textarea,
+html.custom-cursor [contenteditable='true'] {
+  cursor: text !important;
+}
+
 /* Chevron-free disclosure arrows for the designed test cases. */
 summary::-webkit-details-marker {
   display: none;
