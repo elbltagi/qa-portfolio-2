@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { BlurTextReveal } from '../components/BlurTextReveal';
-import { CheckCircle2, AlertCircle, ArrowUpRight } from 'lucide-react';
+import { CheckCircle2, MinusCircle, AlertCircle, ArrowUpRight } from 'lucide-react';
 import { gsap } from '../lib/gsap';
 import type { TestingActivitiesRecord } from '../types';
 
@@ -56,7 +56,7 @@ export const TestingActivitiesSection: React.FC<TestingActivitiesSectionProps> =
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 section-header-spacing border-b border-canvas-border">
           <div>
             <span className="font-tech text-xs tracking-widest uppercase text-accent block mb-1.5">
-              06 / QA Workflow Carried Out
+              06 / QA Workflow
             </span>
             <BlurTextReveal
               as="h2"
@@ -66,7 +66,9 @@ export const TestingActivitiesSection: React.FC<TestingActivitiesSectionProps> =
             />
           </div>
           <p className="text-ink-muted max-w-md text-sm sm:text-base leading-relaxed font-light">
-            The hands-on activities the team actually performed in each discipline, and what each one produced.
+            The workflow in each discipline. Static and Manual testing were
+            carried out and produced the artifacts below; the other four were
+            not, and say what they would have involved.
           </p>
         </div>
 
@@ -95,7 +97,7 @@ export const TestingActivitiesSection: React.FC<TestingActivitiesSectionProps> =
                         : 'bg-amber-500/20 text-amber-700'
                     }`}
                   >
-                    Partial
+                    Not run
                   </span>
                 )}
               </button>
@@ -143,7 +145,12 @@ export const TestingActivitiesSection: React.FC<TestingActivitiesSectionProps> =
                       {act.name}
                     </h4>
                   </div>
-                  <CheckCircle2 className="w-4 h-4 text-ink-ghost group-hover:text-accent transition-colors shrink-0" />
+                  {/* A tick on a step that never happened would read as done. */}
+                  {activeCategory?.wasSkipped ? (
+                    <MinusCircle className="w-4 h-4 text-amber-600 shrink-0" />
+                  ) : (
+                    <CheckCircle2 className="w-4 h-4 text-ink-ghost group-hover:text-accent transition-colors shrink-0" />
+                  )}
                 </div>
 
                 <p className="text-xs sm:text-sm text-ink-muted leading-relaxed font-light pl-0.5">
@@ -156,13 +163,14 @@ export const TestingActivitiesSection: React.FC<TestingActivitiesSectionProps> =
           {/* Bottom notice */}
           <div className="pt-4 sm:pt-5 border-t border-canvas-border flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs font-tech text-ink-subtle">
             <span>
-              Note: Writing User Stories is organized in Section 04 (User Stories Feature Explorer).
+              Note: the user stories themselves, and the cases written against
+              each one, are on the User Stories page.
             </span>
             <a
-              href="#user-stories"
+              href="#/stories"
               className="inline-flex items-center gap-1 text-accent hover:underline font-semibold"
             >
-              <span>Jump to User Stories Explorer</span>
+              <span>Open User Stories</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
           </div>

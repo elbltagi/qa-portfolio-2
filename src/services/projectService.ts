@@ -1,5 +1,6 @@
 import {
   appUrl,
+  areaCount,
   crossModule,
   defectSeverity,
   moduleStories,
@@ -232,6 +233,11 @@ export const projectState: ProjectStatePayload = {
     },
   ],
 
+  // One entry per discipline in the Testing Types section, in the same order.
+  // The two that were carried out describe what the team did and what it
+  // produced. The four that were not describe what each would have involved,
+  // in the conditional, so a card read on its own cannot be mistaken for work
+  // that happened.
   testingActivitiesData: {
     static: {
       title: 'Static Testing',
@@ -248,69 +254,125 @@ export const projectState: ProjectStatePayload = {
           name: 'Recording findings by severity',
           description: `${staticSeverity.high} high, ${staticSeverity.medium} medium and ${staticSeverity.low} low findings were rated; ${staticSeverity.unrated} were left unrated and are reported as such.`,
         },
-      ],
-    },
-    functional: {
-      title: 'Functional Testing',
-      activities: [
-        {
-          name: 'Designing cases by test area',
-          description: `${totals.cases} cases were written across 53 distinct test areas, each mapped to its module.`,
-        },
-        {
-          name: 'Executing and recording verdicts',
-          description: `${totals.executed} cases were executed and given a pass, fail or blocked verdict in the workbook.`,
-        },
-        {
-          name: 'Prioritising coverage',
-          description:
-            'Each case carries a priority, so the unexecuted remainder can be judged by what it would have covered.',
-        },
-      ],
-    },
-    integration: {
-      title: 'Integration Testing',
-      activities: [
-        {
-          name: 'Exercising module handovers',
-          description: `${crossModule.integration.totals.total} cross-module cases were run where two modules meet.`,
-        },
-        {
-          name: 'Recording the failures',
-          description: `${crossModule.integration.totals.failed} of ${crossModule.integration.totals.total} failed, concentrated in account and order history handovers.`,
-        },
-      ],
-    },
-    e2e: {
-      title: 'End-to-End Testing',
-      wasSkipped: false,
-      skippedNote:
-        'Completed only as far as the account creation step; the remainder is blocked, not failed.',
-      activities: [
-        {
-          name: 'Walking the purchase journey',
-          description: `A ${crossModule.e2e.totals.total}-step journey from catalogue through to order confirmation.`,
-        },
-        {
-          name: 'Stopping honestly at the blocker',
-          description: `${crossModule.e2e.totals.blocked} steps could not be reached and are recorded as blocked rather than given a verdict.`,
-        },
-      ],
-    },
-    defects: {
-      title: 'Defect Reporting',
-      activities: [
-        {
-          name: 'Writing reproducible reports',
-          description: `${defectSeverity.total} defects were logged with steps, expected and actual behaviour.`,
-        },
-        {
-          name: 'Rating severity',
-          description: `${defectSeverity.high} high, ${defectSeverity.medium} medium and ${defectSeverity.low} low.`,
-        },
         {
           name: 'Leaving the gap visible',
-          description: `${totals.failuresAwaitingWriteUp} observed failures were never written up and exist only as a Failed verdict in a workbook.`,
+          description: `${modulesWithoutStaticReview.length} of ${moduleStories.length} modules were never reviewed at all: ${modulesWithoutStaticReview
+            .map((m) => `${m.id} ${m.module}`)
+            .join(', ')}.`,
+        },
+      ],
+    },
+    manual: {
+      title: 'Manual Testing',
+      activities: [
+        {
+          name: 'Test case creation',
+          description: `${totals.cases} cases were written across ${areaCount} test areas, each with an ID, preconditions, steps, data and an expected result, and each mapped to its module.`,
+        },
+        {
+          name: 'Test case execution',
+          description: `${totals.executed} cases were executed by hand in the browser — ${totals.passed} passed, ${totals.failed} failed, ${totals.blocked} blocked — alongside ${crossModule.integration.totals.total} cross-module cases and a ${crossModule.e2e.totals.total}-step purchase journey. ${totals.notRun} cases were never run.`,
+        },
+        {
+          name: 'Bug reporting',
+          description: `${defectSeverity.total} defects were logged with reproduction steps, expected and actual behaviour and a severity. ${totals.failuresAwaitingWriteUp} observed failures were never written up and exist only as a Failed verdict in a workbook.`,
+        },
+        {
+          name: 'Test summary report',
+          description: `Execution and defect figures were consolidated into the delivered dashboard this site reports from: ${totals.execRate}% of cases executed, ${totals.passRate}% of those passing.`,
+        },
+      ],
+    },
+    api: {
+      title: 'API Testing',
+      wasSkipped: true,
+      accessNote: 'Not performed — no endpoint documentation or API access',
+      activities: [
+        {
+          name: 'Test case creation',
+          description:
+            'Would have covered request parameters, payload headers and expected response codes. No API case was written.',
+        },
+        {
+          name: 'Test case execution',
+          description:
+            'Would have sent requests against confirmed endpoints and validated status codes, headers and body data.',
+        },
+        {
+          name: 'Bug reporting',
+          description:
+            'Would have documented incorrect status codes, schema mismatches and unexpected server error payloads.',
+        },
+        {
+          name: 'Test summary report',
+          description:
+            'Would have consolidated endpoint results and contract validation outcomes. No such report exists.',
+        },
+      ],
+    },
+    automation: {
+      title: 'Automation Testing',
+      wasSkipped: true,
+      accessNote: 'Not performed — every case was run by hand',
+      activities: [
+        {
+          name: 'Writing test scripts',
+          description:
+            'Would have authored modular scripts for the stable functional cases using an approved automation tool. No script was written.',
+        },
+        {
+          name: 'Test execution',
+          description:
+            'Would have run the suite against the storefront and captured execution traces or screenshots.',
+        },
+        {
+          name: 'Test summary report',
+          description:
+            'Would have documented suite results, script run times and pass/fail status. There is no suite to report on.',
+        },
+      ],
+    },
+    database: {
+      title: 'Database Testing',
+      wasSkipped: true,
+      accessNote: 'Not performed — no direct database access',
+      activities: [
+        {
+          name: 'Test case creation',
+          description:
+            'Would have developed verification cases and SQL queries for stored user records, cart data and orders.',
+        },
+        {
+          name: 'Test execution',
+          description:
+            'Would have run those queries against the target tables and checked consistency with storefront actions. No query was run.',
+        },
+      ],
+    },
+    mobile: {
+      title: 'Mobile App Testing',
+      wasSkipped: true,
+      accessNote: 'Not performed — no mobile build was made available',
+      activities: [
+        {
+          name: 'Test case creation',
+          description:
+            'Would have tailored cases for mobile viewports, orientations, input fields and mobile navigation.',
+        },
+        {
+          name: 'Test case execution',
+          description:
+            'Would have run them on supported devices or responsive emulators.',
+        },
+        {
+          name: 'Bug reporting',
+          description:
+            'Would have logged mobile-specific defects such as broken touch controls, layout overflows and crash behaviour.',
+        },
+        {
+          name: 'Test summary report',
+          description:
+            'Would have synthesised mobile findings and device compatibility observations. No mobile case was executed.',
         },
       ],
     },
