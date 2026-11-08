@@ -96,7 +96,9 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
             />
           </div>
           <p className="text-ink-muted max-w-md text-sm sm:text-base leading-relaxed font-light">
-            We plan to combine non-functional requirement analysis, exploratory testing, and automated scripts into one cohesive strategy.
+            Six disciplines were in scope at the outset. Two were carried out
+            and four were not — each card says which, and what the absent ones
+            would have covered.
           </p>
         </div>
 
@@ -143,7 +145,13 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
                         </h3>
                         <span
                           className={`text-[10px] sm:text-xs font-tech tracking-wider uppercase block mt-0.5 ${
-                            isSelected ? 'text-charcoal-400' : 'text-ink-subtle'
+                            item.wasSkipped
+                              ? isSelected
+                                ? 'text-amber-300'
+                                : 'text-amber-700'
+                              : isSelected
+                                ? 'text-charcoal-400'
+                                : 'text-ink-subtle'
                           }`}
                         >
                           {item.status}
@@ -219,7 +227,9 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
                   {/* How it was carried out */}
                   <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-muted/40 border border-canvas-border space-y-1">
                     <span className="text-xs font-tech uppercase text-accent font-bold tracking-wider block">
-                      How It Was Carried Out
+                      {selectedType.wasSkipped
+                        ? 'Why It Was Not Carried Out'
+                        : 'How It Was Carried Out'}
                     </span>
                     <p className="text-xs sm:text-sm text-ink leading-relaxed">
                       {selectedType.approach}
@@ -250,7 +260,11 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
 
               {/* Footer indicator */}
               <div className="pt-6 border-t border-canvas-border flex items-center justify-between text-xs font-tech text-ink-subtle mt-4">
-                <span>Discipline Carried Out</span>
+                <span>
+                  {selectedType.wasSkipped
+                    ? 'Discipline Not Carried Out'
+                    : 'Discipline Carried Out'}
+                </span>
                 <span>DEPI Software Testing Track</span>
               </div>
             </div>

@@ -139,6 +139,9 @@ export const projectState: ProjectStatePayload = {
 
   // Only the disciplines the delivered artifacts actually evidence. Nothing is
   // listed here that the project did not carry out.
+  // The six disciplines the project set out to use. Two were carried out and
+  // four were not; the four are listed because leaving them off would hide
+  // which kinds of defect this run could never have found.
   testingTypes: [
     {
       id: 'type-static',
@@ -147,69 +150,85 @@ export const projectState: ProjectStatePayload = {
       status: 'Executed',
       wasSkipped: false,
       purpose:
-        'Review user stories and test cases before execution to catch ambiguity and missing criteria early.',
+        'Review user stories and test cases before execution, to catch ambiguity and missing acceptance criteria early.',
       approach:
-        'Each module’s story and case workbook was reviewed by a second team member and findings were logged against the module.',
+        'Each module story and case workbook was reviewed by a second team member, and every finding was logged against the module it belonged to.',
       outputs: `${staticSeverity.total} findings — ${staticSeverity.high} high, ${staticSeverity.medium} medium, ${staticSeverity.low} low, ${staticSeverity.unrated} left unrated.`,
       coverageNotice: `${modulesWithoutStaticReview.length} of ${moduleStories.length} modules were never statically reviewed: ${modulesWithoutStaticReview
         .map((m) => `${m.id} ${m.module}`)
         .join(', ')}.`,
     },
     {
-      id: 'type-functional',
-      name: 'Functional Testing',
+      id: 'type-manual',
+      name: 'Manual Testing',
       badge: '02',
       status: 'Executed',
       wasSkipped: false,
       purpose:
-        'Verify each module against its user story and acceptance criteria through the browser.',
-      approach: `Manual execution of ${totals.cases} written cases across ${moduleStories.length} modules, recording a verdict per case.`,
+        'Execute every written test case against the live storefront by hand, and record a verdict for each one.',
+      approach: `Manual execution through the browser across all ${moduleStories.length} modules. Every case was run and judged by a person; no tooling was involved at any point.`,
       outputs: `${totals.executed} executed — ${totals.passed} passed, ${totals.failed} failed, ${totals.blocked} blocked.`,
       coverageNotice: `${totals.notRun} cases were never executed, ${
         moduleStories.find((m) => m.id === 'US-005')?.cases.notRun ?? 0
       } of them the entire checkout and payment module.`,
     },
     {
-      id: 'type-integration',
-      name: 'Integration Testing',
+      id: 'type-api',
+      name: 'API Testing',
       badge: '03',
-      status: 'Executed',
-      wasSkipped: false,
+      status: 'Not performed (no API access)',
+      wasSkipped: true,
       purpose:
-        'Verify that data and state hand over correctly where two modules meet.',
+        'Exercise the application endpoints directly, underneath the interface, where the browser cannot reach.',
       approach:
-        'A dedicated cross-module suite exercising handovers such as catalogue to cart and registration to account.',
-      outputs: `${crossModule.integration.totals.total} cases — ${crossModule.integration.totals.passed} passed, ${crossModule.integration.totals.failed} failed.`,
+        'Not carried out. Testing was confined to the live web interface; no endpoint documentation or API credentials were obtained.',
+      outputs:
+        'No API case was written or executed, and no API defect is reported.',
       coverageNotice:
-        'The majority of the integration suite failed, which is the weakest result in the project.',
+        'Any defect reachable only through the API is outside everything this report covers.',
     },
     {
-      id: 'type-e2e',
-      name: 'End-to-End Testing',
+      id: 'type-automation',
+      name: 'Automation Testing',
       badge: '04',
-      status: 'Partially executed',
-      wasSkipped: false,
+      status: 'Not performed',
+      wasSkipped: true,
       purpose:
-        'Walk the complete purchase journey as a customer would, from catalogue to confirmed order.',
-      approach: `A single ${crossModule.e2e.totals.total}-step purchase journey run end to end.`,
-      outputs: `${crossModule.e2e.totals.passed} steps passed, ${crossModule.e2e.totals.blocked} blocked.`,
+        'Re-run a regression suite automatically, so the same checks can be repeated cheaply against every later build.',
+      approach: `Not carried out. All ${totals.executed} executed cases were run by hand and no script was written.`,
+      outputs:
+        'No automated suite exists, so no part of this run can be repeated without a person to repeat it.',
       coverageNotice:
-        'The run stopped before creating an account, entering a password and confirming payment, so every later step is blocked rather than failed.',
+        'Re-testing a fix, or catching a regression, would mean executing the cases manually a second time.',
     },
     {
-      id: 'type-defect-reporting',
-      name: 'Defect Reporting',
+      id: 'type-database',
+      name: 'Database Testing',
       badge: '05',
-      status: 'Executed',
-      wasSkipped: false,
+      status: 'Not performed (no DB access)',
+      wasSkipped: true,
       purpose:
-        'Turn observed failures into reproducible, severity-rated defect reports.',
+        'Check stored records directly, to confirm the data behind the interface matches what the interface shows.',
       approach:
-        'A bug report workbook per module, each defect carrying steps, expected and actual behaviour, and a severity.',
-      outputs: `${defectSeverity.total} defects — ${defectSeverity.high} high, ${defectSeverity.medium} medium, ${defectSeverity.low} low.`,
-      coverageNotice: `${totals.failuresAwaitingWriteUp} failures were never written up: ${modulesWithoutBugReport
-        .map((m) => `${m.id} ${m.module}`)
-        .join(' and ')} have no bug report at all.`,
+        'Not carried out. No database credentials were obtained, so no query was run against the application data.',
+      outputs:
+        'No data-integrity check was made, and no finding of that kind is reported.',
+      coverageNotice:
+        'Where the stored data and the interface disagree, this run would not have seen it.',
+    },
+    {
+      id: 'type-mobile',
+      name: 'Mobile App Testing',
+      badge: '06',
+      status: 'Not performed (no app access)',
+      wasSkipped: true,
+      purpose:
+        'Verify the storefront on mobile builds and small viewports, where layout and interaction differ from the desktop.',
+      approach:
+        'Not carried out. No mobile build was made available, and the delivered workbooks record no viewport or device detail for any case.',
+      outputs: 'No mobile case was written or executed.',
+      coverageNotice:
+        'Every verdict in this report comes from a desktop browser session.',
     },
   ],
 
