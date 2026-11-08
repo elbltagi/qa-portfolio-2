@@ -26,7 +26,7 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({ stories }) => (
         eyebrow="The Work in Detail"
         title="Explore the Results"
         tone="dark"
-        description={`The reporting behind this run — the ${stories.length} modules and their verdicts, the traceability matrix, the defects, and what the measurements show. Each opens on its own page.`}
+        description={`The four artefacts this project delivered — the ${stories.length} user stories, the test cases written against them, the bugs those cases found, and the summary report. Each opens on its own page.`}
       />
 
       <Stagger className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4 mt-8">

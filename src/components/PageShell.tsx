@@ -13,8 +13,8 @@ interface PageShellProps {
 
 /**
  * Shared chrome for every detail page: breadcrumb back to the home page, a
- * full-width title block, and prev/next links so the five pages read as one
- * set rather than five dead ends.
+ * full-width title block, and prev/next links so the four pages read as one
+ * set rather than four dead ends.
  */
 export const PageShell: React.FC<PageShellProps> = ({ page, children }) => {
   const position = detailPages.findIndex((p) => p.path === page.path);

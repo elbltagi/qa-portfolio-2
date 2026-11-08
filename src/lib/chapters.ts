@@ -1,6 +1,5 @@
 import { defectSeverity, moduleStories, staticSeverity, totals } from '../data/toolshop';
 import { countAreas } from './traceability';
-import { techniqueSpecimens } from '../data/testDesign';
 import { qualityMetrics, riskRegister } from '../data/quality';
 
 /**
@@ -43,10 +42,6 @@ export interface DetailPage {
 }
 
 const areaCount = countAreas(moduleStories);
-const designedCases = techniqueSpecimens.reduce(
-  (sum, technique) => sum + technique.cases.length,
-  0
-);
 const notMetCriteria = 6; // exit criteria recorded as not met
 
 export const detailPages: DetailPage[] = [
@@ -66,56 +61,41 @@ export const detailPages: DetailPage[] = [
     ],
   },
   {
-    path: '/test-design',
+    path: '/test-cases',
     index: '02',
-    title: 'Test Design Lab',
-    short: 'Test Design',
-    eyebrow: 'Technique Reference',
-    blurb:
-      'How the team derives cases from a requirement — illustrated against real Toolshop modules. Methodology, not a delivered artefact.',
-    figure: String(techniqueSpecimens.length),
-    figureLabel: 'Techniques illustrated',
-    stats: [
-      { value: String(designedCases), label: 'Worked examples' },
-      { value: 'EP · BVA · DT · ST', label: 'Techniques' },
-    ],
-  },
-  {
-    path: '/traceability',
-    index: '03',
-    title: 'Traceability Matrix',
-    short: 'Traceability',
-    eyebrow: 'Coverage, Area by Area',
+    title: 'Test Cases',
+    short: 'Cases',
+    eyebrow: 'Written, Run and Not Run',
     blurb:
       'Every test area mapped to its module, with what was executed and what it returned — including the areas that were never run.',
-    figure: `${totals.execRate}%`,
-    figureLabel: 'Of written cases executed',
+    figure: String(totals.cases),
+    figureLabel: 'Test cases written',
     stats: [
-      { value: String(areaCount), label: 'Test areas' },
-      { value: String(totals.notRun), label: 'Cases never run' },
+      { value: `${totals.executed}`, label: 'Executed' },
+      { value: String(totals.notRun), label: 'Never run' },
     ],
   },
   {
-    path: '/defects',
-    index: '04',
-    title: 'Defect Management',
-    short: 'Defects',
+    path: '/bugs',
+    index: '03',
+    title: 'Bugs',
+    short: 'Bugs',
     eyebrow: 'What We Found',
     blurb:
       'The defects logged, how they were rated, and the failures that were observed but never written up.',
     figure: String(defectSeverity.total),
-    figureLabel: 'Defects logged',
+    figureLabel: 'Bugs logged',
     stats: [
       { value: String(totals.failed), label: 'Failures observed' },
       { value: String(totals.failuresAwaitingWriteUp), label: 'Never written up' },
     ],
   },
   {
-    path: '/metrics',
-    index: '05',
-    title: 'Metrics & Risk',
-    short: 'Metrics',
-    eyebrow: 'Measured, Not Targeted',
+    path: '/summary',
+    index: '04',
+    title: 'Test Summary Report',
+    short: 'Summary',
+    eyebrow: 'The Result, Measured',
     blurb:
       'What the run actually measured against what it set out to achieve, and which of the identified risks materialised.',
     figure: `${totals.passRate}%`,

@@ -71,11 +71,10 @@ then:
 node scripts/generate-toolshop-data.mjs
 ```
 
-The one exception is `src/data/testDesign.ts`, which holds **illustrative**
-technique examples (equivalence partitioning, boundary value analysis, decision
-tables, state transition) drawn against real Toolshop modules. The project's 603
-cases do not record which technique produced each one, so no technique specimen
-exists to publish. Every page that renders these labels them as illustrative.
+There is no longer any exception: every figure and every page on the site comes
+from the delivered workbooks. The Test Design Lab, which held *illustrative*
+technique examples rather than delivered work, has been removed — the site now
+shows the four artefacts the project actually produced and nothing else.
 
 ### Structure
 
@@ -91,17 +90,16 @@ pages carry the evidence.
 5. Disciplines — the testing types actually carried out
 6. Activities — the hands-on work in each discipline
 7. Levels — component through acceptance, with the result at each
-8. Delivery — the pipeline from user story to delivered report
+8. Timeline — the nine-week plan, and the three weeks never run
 
-**Detail pages**
+**Detail pages — one per delivered artefact**
 
 | Route | Page | Headline figure |
 | --- | --- | --- |
-| `#/stories` | User Stories | 10 modules, 603 cases |
-| `#/test-design` | Test Design Lab | 4 techniques (illustrative) |
-| `#/traceability` | Traceability Matrix | 87.9% executed, 53 test areas |
-| `#/defects` | Defect Management | 50 defects logged |
-| `#/metrics` | Metrics & Risk | 80.2% pass rate of executed |
+| `#/stories` | User Stories | 10 user stories delivered |
+| `#/test-cases` | Test Cases | 603 written, 530 run, 73 never run |
+| `#/bugs` | Bugs | 50 logged, 29 failures never written up |
+| `#/summary` | Test Summary Report | 80.2% pass rate of executed |
 
 ### Architecture notes
 

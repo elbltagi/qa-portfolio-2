@@ -11,11 +11,10 @@ import { ScrollProgress } from './components/ScrollProgress';
 import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
 import {
-  DefectsPage,
-  MetricsPage,
+  BugsPage,
   StoriesPage,
-  TestDesignPage,
-  TraceabilityPage,
+  SummaryPage,
+  TestCasesPage,
 } from './pages/DetailPages';
 
 const BASE_TITLE =
@@ -45,14 +44,12 @@ export const App: React.FC = () => {
     switch (path) {
       case '/stories':
         return <StoriesPage stories={data.moduleStories} />;
-      case '/test-design':
-        return <TestDesignPage />;
-      case '/traceability':
-        return <TraceabilityPage stories={data.moduleStories} />;
-      case '/defects':
-        return <DefectsPage />;
-      case '/metrics':
-        return <MetricsPage />;
+      case '/test-cases':
+        return <TestCasesPage stories={data.moduleStories} />;
+      case '/bugs':
+        return <BugsPage />;
+      case '/summary':
+        return <SummaryPage />;
       default:
         return null;
     }
