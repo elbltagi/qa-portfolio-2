@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { BlurTextReveal } from '../components/BlurTextReveal';
 import { ShieldCheck, ArrowRight, AlertCircle, FileCheck, Layers, Terminal, Database, Smartphone } from 'lucide-react';
 import { gsap } from '../lib/gsap';
 import type { TestingType } from '../types';
@@ -87,9 +88,12 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
             <span className="font-tech text-xs tracking-widest uppercase text-accent block mb-1.5">
               05 / Testing Strategy
             </span>
-            <h2 className="text-fluid-section-title font-display font-black text-ink uppercase">
-              Testing Types<span className="text-accent">.</span>
-            </h2>
+            <BlurTextReveal
+              as="h2"
+              text="Testing Types"
+              accentSuffix="."
+              className="text-fluid-section-title font-display font-black text-ink uppercase"
+            />
           </div>
           <p className="text-ink-muted max-w-md text-sm sm:text-base leading-relaxed font-light">
             We plan to combine non-functional requirement analysis, exploratory testing, and automated scripts into one cohesive strategy.
@@ -191,9 +195,9 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
 
                   <span
                     className={`px-3 py-1 rounded-full text-xs font-tech font-bold uppercase tracking-wider ${
-                      selectedType.isConditional
+                      selectedType.status !== 'Executed'
                         ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                        : 'bg-accent-subtle text-accent border border-accent/20'
+                        : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                     }`}
                   >
                     {selectedType.status}
@@ -212,32 +216,32 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
                     </p>
                   </div>
 
-                  {/* Proposed Approach */}
+                  {/* How it was carried out */}
                   <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-muted/40 border border-canvas-border space-y-1">
                     <span className="text-xs font-tech uppercase text-accent font-bold tracking-wider block">
-                      Proposed Method & Implementation
+                      How It Was Carried Out
                     </span>
                     <p className="text-xs sm:text-sm text-ink leading-relaxed">
-                      {selectedType.proposedApproach}
+                      {selectedType.approach}
                     </p>
                   </div>
 
-                  {/* Expected Outputs */}
+                  {/* What it produced */}
                   <div className="space-y-1.5">
                     <span className="text-xs font-tech uppercase text-ink-subtle tracking-wider font-semibold">
-                      Expected Deliverables & Artifacts
+                      What It Produced
                     </span>
                     <p className="text-sm font-tech text-ink bg-canvas-muted/30 p-3.5 rounded-xl border border-canvas-border">
-                      {selectedType.expectedOutputs}
+                      {selectedType.outputs}
                     </p>
                   </div>
 
-                  {/* Conditional Notice where applicable */}
-                  {selectedType.accessNotice && (
+                  {/* Where coverage fell short */}
+                  {selectedType.coverageNotice && (
                     <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-50 border border-amber-200/80 text-amber-900 text-xs">
                       <AlertCircle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                       <p className="leading-relaxed">
-                        <strong>Boundary Condition:</strong> {selectedType.accessNotice}
+                        <strong>Coverage:</strong> {selectedType.coverageNotice}
                       </p>
                     </div>
                   )}
@@ -246,7 +250,7 @@ export const TestingTypesSection: React.FC<TestingTypesSectionProps> = ({ types 
 
               {/* Footer indicator */}
               <div className="pt-6 border-t border-canvas-border flex items-center justify-between text-xs font-tech text-ink-subtle mt-4">
-                <span>Proposed Quality Technique</span>
+                <span>Discipline Carried Out</span>
                 <span>DEPI Software Testing Track</span>
               </div>
             </div>

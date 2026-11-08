@@ -253,7 +253,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
                   />
 
                   <p className="text-[11px] sm:text-xs text-ink-muted font-light pt-0.5 sm:pt-1 line-clamp-1 sm:line-clamp-none">
-                    {isLeader ? 'Team Leader • Automation Test Store' : 'QA Contributor • Automation Test Store'}
+                    {isLeader ? 'Team Leader • Bug Hunters QA' : 'QA Engineer • Bug Hunters QA'}
                   </p>
                 </div>
               </>

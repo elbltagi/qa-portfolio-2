@@ -2,13 +2,17 @@ import React, { useRef } from 'react';
 import { ArrowDownRight, Compass, Calendar, ShieldCheck, Sparkles } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '../lib/gsap';
-import type { ProjectMeta } from '../types';
+import { onBooted } from '../lib/boot';
+import type { ProjectMeta, ModuleStory } from '../types';
+import { totals } from '../data/toolshop';
 
 interface HeroSectionProps {
   meta: ProjectMeta;
+  /** The ten delivered modules, used for the figures strip. */
+  stories: ModuleStory[];
 }
 
-export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
+export const HeroSection: React.FC<HeroSectionProps> = ({ meta, stories }) => {
   const containerRef = useRef<HTMLElement>(null);
   const headlineLine1Ref = useRef<HTMLDivElement>(null);
   const headlineLine2Ref = useRef<HTMLDivElement>(null);
@@ -18,6 +22,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
   const descRef = useRef<HTMLParagraphElement>(null);
   const ctaGroupRef = useRef<HTMLDivElement>(null);
   const footerNoticeRef = useRef<HTMLDivElement>(null);
+  const figuresRef = useRef<HTMLDivElement>(null);
   const primaryBtnRef = useRef<HTMLAnchorElement>(null);
 
   const curiosityWord = "CURIOSITY.";
@@ -29,8 +34,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
 
       // Fluid, confident editorial entrance
       mm.add("(prefers-reduced-motion: no-preference)", () => {
+        // Built paused: the fromTo calls still render their start states at
+        // once (so nothing can flash), but the entrance itself waits for the
+        // boot curtain to lift rather than playing behind it.
         const tl = gsap.timeline({
           defaults: { ease: 'power4.out' },
+          paused: true,
         });
 
         // 1. Top bar & status badge enter swiftly
@@ -85,11 +94,19 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
           "-=0.4"
         )
         .fromTo(
+          figuresRef.current ? figuresRef.current.children : [],
+          { opacity: 0, y: 12 },
+          { opacity: 1, y: 0, duration: 0.45, stagger: 0.06 },
+          "-=0.35"
+        )
+        .fromTo(
           footerNoticeRef.current,
           { opacity: 0 },
           { opacity: 1, duration: 0.5 },
           "-=0.3"
         );
+
+        return onBooted(() => tl.play());
       });
 
       // Reduced motion fallback
@@ -103,6 +120,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
             curiosityCharsRef.current,
             descRef.current,
             ctaGroupRef.current,
+            figuresRef.current,
+            ...(figuresRef.current ? Array.from(figuresRef.current.children) : []),
             footerNoticeRef.current,
           ],
           { opacity: 1, yPercent: 0, y: 0, scale: 1, rotate: 0 }
@@ -182,7 +201,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
             </div>
             <div className="flex items-center gap-1.5">
               <Calendar className="w-3.5 h-3.5 text-accent shrink-0" />
-              <span>Duration: {meta.duration}</span>
+              <span>Reported: {meta.reportDate}</span>
             </div>
           </div>
         </div>
@@ -196,7 +215,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
             <Sparkles className="w-3.5 h-3.5 text-accent" />
             <span className="font-semibold uppercase tracking-wider">{meta.status}</span>
             <span className="text-ink-ghost">•</span>
-            <span>Proposed 9-Week Horizon</span>
+            <span>Reported {meta.reportDate}</span>
           </div>
 
           {/* Masked Headline Lines with balanced fluid typography */}
@@ -231,8 +250,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-end">
             <div className="lg:col-span-7">
               <p ref={descRef} className="text-sm sm:text-base md:text-base lg:text-lg text-ink-muted font-light leading-relaxed max-w-2xl">
-                Exploring software quality through our DEPI graduation project. Our team plans to systematically evaluate{' '}
-                <strong className="font-semibold text-ink">{meta.name}</strong> through structured test engineering across 9 rigorous weeks.
+                The {meta.team} wrote {totals.cases} test cases across {stories.length} modules of{' '}
+                <strong className="font-semibold text-ink">{meta.name}</strong>, executed {totals.executed} of them, and logged {totals.defectsLogged} defects. This is what we found.
               </p>
             </div>
 
@@ -253,14 +272,36 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
               </a>
 
               <a
-                href="#user-stories"
+                href="#/stories"
                 className="inline-flex items-center justify-center gap-2 px-4.5 sm:px-5 py-2.5 sm:py-3 rounded-full border border-canvas-border text-ink text-xs sm:text-sm font-medium hover:bg-canvas-muted transition-colors text-center"
               >
-                <span>View Proposed Stories</span>
+                <span>See the modules</span>
                 <span className="text-xs font-tech text-ink-subtle">→</span>
               </a>
             </div>
           </div>
+        </div>
+
+        {/* Scope at a glance */}
+        <div
+          ref={figuresRef}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-3 py-4 sm:py-5 border-t border-canvas-border"
+        >
+          {[
+            { value: String(totals.cases), label: 'Test cases written' },
+            { value: String(totals.executed), label: 'Executed' },
+            { value: `${totals.passRate}%`, label: 'Pass rate of executed' },
+            { value: String(totals.defectsLogged), label: 'Defects logged' },
+          ].map((figure) => (
+            <div key={figure.label} className="flex items-baseline gap-2">
+              <span className="font-display font-black text-xl sm:text-2xl text-ink tabular-nums">
+                {figure.value}
+              </span>
+              <span className="font-tech text-[10px] sm:text-[11px] uppercase tracking-wider text-ink-subtle leading-tight">
+                {figure.label}
+              </span>
+            </div>
+          ))}
         </div>
 
         {/* Bottom Planning Notice */}
@@ -270,8 +311,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta }) => {
         >
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-accent shrink-0" />
-            <span className="font-semibold text-ink shrink-0">PROPOSAL NOTICE:</span>
-            <span className="leading-relaxed">{meta.testingStatusNotice}</span>
+            <span className="font-semibold text-ink shrink-0">COVERAGE:</span>
+            <span className="leading-relaxed">{meta.coverageNotice}</span>
           </div>
 
           <div className="text-ink-subtle shrink-0">

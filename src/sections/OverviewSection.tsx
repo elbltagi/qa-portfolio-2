@@ -1,19 +1,20 @@
 import React, { useState, useRef } from 'react';
-import { ExternalLink, CheckCircle2, ShoppingCart, Layers, Globe, Shield, Terminal } from 'lucide-react';
+import { ExternalLink, CheckCircle2, AlertTriangle, ShoppingCart, Layers, Globe, Shield, Terminal } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '../lib/gsap';
-import type { ProjectOverviewData, ProjectMeta } from '../types';
+import { staticSeverity, totals } from '../data/toolshop';
+import type { ProjectOverviewData, ProjectMeta, ModuleStory } from '../types';
 
 interface OverviewSectionProps {
   overview: ProjectOverviewData;
   meta: ProjectMeta;
-  totalStoriesCount: number;
+  stories: ModuleStory[];
 }
 
 export const OverviewSection: React.FC<OverviewSectionProps> = ({
   overview,
   meta,
-  totalStoriesCount,
+  stories,
 }) => {
   const [activeTab, setActiveTab] = useState<'mission' | 'target' | 'scope'>('mission');
   const sectionRef = useRef<HTMLElement>(null);
@@ -148,7 +149,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
             </h2>
           </div>
           <p className="text-ink-muted max-w-md text-sm sm:text-base leading-relaxed font-light">
-            Our graduation project aims to evaluate the functionality and reliability of Automation Test Store through planned, structured software testing.
+            {overview.briefOverview}
           </p>
         </div>
 
@@ -157,29 +158,26 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
           ref={metricsRef}
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 py-5 sm:py-6 border-b border-canvas-border"
         >
-          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
-            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-0.5">Target Application</span>
-            <span className="text-sm sm:text-base font-display font-bold text-ink">E-Commerce Store</span>
-            <span className="text-xs text-ink-subtle block mt-0.5">AbanteCart Practice Platform</span>
-          </div>
-
-          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
-            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-0.5">Project Duration</span>
-            <span className="text-sm sm:text-base font-display font-bold text-accent">{meta.duration}</span>
-            <span className="text-xs text-ink-subtle block mt-0.5">Proposal & Planning</span>
-          </div>
-
-          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
-            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-0.5">Planned Approach</span>
-            <span className="text-sm sm:text-base font-display font-bold text-ink">Manual First</span>
-            <span className="text-xs text-ink-subtle block mt-0.5">Then Automation Scripts</span>
-          </div>
-
-          <div className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors">
-            <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-0.5">Proposed Stories</span>
-            <span className="text-sm sm:text-base font-display font-bold text-ink">{totalStoriesCount} Identified</span>
-            <span className="text-xs text-ink-subtle block mt-0.5">Across 10 Modules</span>
-          </div>
+          {overview.keyHighlights.map((highlight, index) => (
+            <div
+              key={highlight.label}
+              className="p-3.5 sm:p-4 rounded-xl sm:rounded-2xl bg-canvas-surface border border-canvas-border shadow-xs hover:border-accent/40 transition-colors"
+            >
+              <span className="text-[10px] font-tech uppercase text-ink-subtle block mb-0.5">
+                {highlight.label}
+              </span>
+              <span
+                className={`text-sm sm:text-base font-display font-bold ${
+                  index === 1 ? 'text-accent' : 'text-ink'
+                }`}
+              >
+                {highlight.value}
+              </span>
+              <span className="text-xs text-ink-subtle block mt-0.5">
+                {highlight.sub}
+              </span>
+            </div>
+          ))}
         </div>
 
         {/* Narrative & Visual Showcase */}
@@ -219,7 +217,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                     : 'text-ink-muted hover:text-ink'
                 }`}
               >
-                Planned Testing Work
+                What We Delivered
               </button>
             </div>
 
@@ -227,28 +225,44 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
             {activeTab === 'mission' && (
               <div className="space-y-4">
                 <h3 className="text-2xl sm:text-3xl font-display font-bold text-ink leading-tight">
-                  Systematic Quality Assurance for Real-World E-Commerce Workflows
+                  A Finished Run, Reported Honestly
                 </h3>
                 <p className="text-ink-muted leading-relaxed font-light">
-                  As software testing trainees under the Digital Egypt Pioneers Initiative (DEPI), our graduation project focuses on establishing a disciplined testing lifecycle. We will explore the target storefront, analyze user requirements, design rigorous test suites, and report actionable findings.
+                  The {meta.team}, software testing trainees under the Digital Egypt
+                  Pioneers Initiative, tested {stories.length} modules of{' '}
+                  {meta.name}. Execution is complete and the reporting was delivered
+                  on {meta.reportDate}. The result is mixed, and this site shows it
+                  as it is.
                 </p>
                 <div className="space-y-3 pt-2">
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                     <p className="text-sm text-ink font-light">
-                      <strong className="font-semibold text-ink">Complete Requirement Verification:</strong> We will define clear acceptance criteria for all 10 target storefront modules.
+                      <strong className="font-semibold text-ink">
+                        {totals.cases} cases across {stories.length} modules:
+                      </strong>{' '}
+                      every module in scope received a user story and a case
+                      workbook.
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                     <p className="text-sm text-ink font-light">
-                      <strong className="font-semibold text-ink">Dual Manual & Automated Focus:</strong> Establishing baseline manual execution before writing automated regression test scripts.
+                      <strong className="font-semibold text-ink">
+                        {totals.executed} executed, {totals.passed} passed:
+                      </strong>{' '}
+                      a {totals.passRate}% pass rate of what was run — measured
+                      against executed cases, not written ones.
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-5 h-5 text-accent shrink-0 mt-0.5" />
+                    <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                     <p className="text-sm text-ink font-light">
-                      <strong className="font-semibold text-ink">Standardized Bug Documentation:</strong> Logging reproducible defects with clear severity ratings, environmental details, and screenshots.
+                      <strong className="font-semibold text-ink">
+                        {totals.notRun} cases never run:
+                      </strong>{' '}
+                      the entire checkout and payment module was written, reviewed
+                      and never executed. That gap is reported, not hidden.
                     </p>
                   </div>
                 </div>
@@ -259,28 +273,33 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
             {activeTab === 'target' && (
               <div className="space-y-4">
                 <h3 className="text-2xl sm:text-3xl font-display font-bold text-ink leading-tight">
-                  Why Automation Test Store Was Selected
+                  Why the Toolshop Was Selected
                 </h3>
                 <p className="text-ink-muted leading-relaxed font-light">
-                  <strong className="text-ink font-semibold">Automation Test Store</strong> is an authentic web application built on open-source e-commerce architecture (AbanteCart), specifically intended for training test automation and quality engineers.
+                  <strong className="text-ink font-semibold">
+                    Practice Software Testing — Toolshop
+                  </strong>{' '}
+                  is a purpose-built practice application for quality engineers: a
+                  real storefront with a full catalogue, cart, checkout and account
+                  area, and no risk of a test order reaching a real customer.
                 </p>
                 <div className="space-y-3 pt-2">
                   <div className="flex items-start gap-3">
                     <ShoppingCart className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                     <p className="text-sm text-ink font-light">
-                      <strong className="font-semibold text-ink">Authentic Purchase Funnels:</strong> Includes product search, dynamic filtering, cart modifications, and multi-step checkout processes.
+                      <strong className="font-semibold text-ink">Authentic purchase funnel:</strong> catalogue, search, price and brand filters, cart, and a multi-step checkout — the areas that produced most of our {totals.failed} failures.
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
                     <Layers className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                     <p className="text-sm text-ink font-light">
-                      <strong className="font-semibold text-ink">Diverse UI Components:</strong> Rich form controls, date pickers, dropdown selects, image carousels, and currency selectors.
+                      <strong className="font-semibold text-ink">Dense form surface:</strong> the registration form alone carries twelve distinct fields, and accounts for the single largest cluster of defects we logged.
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
                     <Shield className="w-5 h-5 text-accent shrink-0 mt-0.5" />
                     <p className="text-sm text-ink font-light">
-                      <strong className="font-semibold text-ink">Realistic Boundary Conditions:</strong> Offers fertile ground for boundary value analysis, negative testing, and session handling validation.
+                      <strong className="font-semibold text-ink">Real boundary conditions:</strong> price sliders, quantity selectors and session handling gave boundary analysis and negative testing somewhere genuine to bite.
                     </p>
                   </div>
                 </div>
@@ -291,27 +310,47 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
             {activeTab === 'scope' && (
               <div className="space-y-4">
                 <h3 className="text-2xl sm:text-3xl font-display font-bold text-ink leading-tight">
-                  Our Proposed Testing Deliverables
+                  What We Actually Delivered
                 </h3>
                 <p className="text-ink-muted leading-relaxed font-light">
-                  Over the 9-week project timeline, our team proposes to systematically produce standard testing artifacts:
+                  Four artifacts per module were planned.{' '}
+                  {stories.filter((s) => s.artifacts.delivered === s.artifacts.of).length}{' '}
+                  of {stories.length} modules delivered all four.
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                   <div className="p-3.5 bg-canvas-surface rounded-xl border border-canvas-border">
-                    <span className="text-xs font-tech text-accent font-bold block mb-1">01. Stories & Design</span>
-                    <p className="text-xs text-ink-muted">Writing structured user stories and ambiguity review logs.</p>
+                    <span className="text-xs font-tech text-accent font-bold block mb-1">
+                      01. User Stories
+                    </span>
+                    <p className="text-xs text-ink-muted">
+                      {stories.length} of {stories.length} delivered, one per module.
+                    </p>
                   </div>
                   <div className="p-3.5 bg-canvas-surface rounded-xl border border-canvas-border">
-                    <span className="text-xs font-tech text-accent font-bold block mb-1">02. Manual Test Suites</span>
-                    <p className="text-xs text-ink-muted">Test cases covering positive, negative, and edge paths.</p>
+                    <span className="text-xs font-tech text-accent font-bold block mb-1">
+                      02. Test Cases
+                    </span>
+                    <p className="text-xs text-ink-muted">
+                      {totals.cases} cases across 53 test areas, each with a priority.
+                    </p>
                   </div>
                   <div className="p-3.5 bg-canvas-surface rounded-xl border border-canvas-border">
-                    <span className="text-xs font-tech text-accent font-bold block mb-1">03. Automated Scripts</span>
-                    <p className="text-xs text-ink-muted">Regression scripts for core shopping cart & search journeys.</p>
+                    <span className="text-xs font-tech text-accent font-bold block mb-1">
+                      03. Static Review
+                    </span>
+                    <p className="text-xs text-ink-muted">
+                      {staticSeverity.total} findings across 9 of {stories.length}{' '}
+                      modules. One was never reviewed.
+                    </p>
                   </div>
                   <div className="p-3.5 bg-canvas-surface rounded-xl border border-canvas-border">
-                    <span className="text-xs font-tech text-accent font-bold block mb-1">04. Final Summary</span>
-                    <p className="text-xs text-ink-muted">Comprehensive Graduation Project Test Summary Report.</p>
+                    <span className="text-xs font-tech text-accent font-bold block mb-1">
+                      04. Bug Reports
+                    </span>
+                    <p className="text-xs text-ink-muted">
+                      {totals.defectsLogged} defects logged;{' '}
+                      {totals.failuresAwaitingWriteUp} failures never written up.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -345,9 +384,9 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                 </div>
                 <div className="flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-charcoal-900 text-charcoal-400 text-xs font-tech">
                   <Globe className="w-3.5 h-3.5 text-accent" />
-                  <span>https://automationteststore.com</span>
+                  <span>{meta.liveAppUrl}</span>
                 </div>
-                <span className="text-[10px] font-tech text-charcoal-500 uppercase">Target v1.2</span>
+                <span className="text-[10px] font-tech text-charcoal-500 uppercase">Under test</span>
               </div>
 
               {/* Architectural storefront preview details */}
@@ -357,36 +396,32 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                     Storefront Architecture
                   </span>
                   <h4 className="text-lg sm:text-xl lg:text-2xl font-display font-bold text-canvas-surface">
-                    AbanteCart Open-Source E-Commerce
+                    Practice Software Testing — Toolshop
                   </h4>
                   <p className="text-xs sm:text-sm text-charcoal-400 mt-1.5 font-light leading-relaxed">
-                    A fully-featured web application hosting an extensive catalog of apparel, makeup, fragrances, skincare, and books with shopping cart states and session cookies.
+                    A purpose-built practice storefront: a tool catalogue with
+                    search, brand and category filters, a price slider, cart,
+                    multi-step checkout, customer accounts and order history.
                   </p>
                 </div>
 
                 {/* Modules breakdown pills */}
                 <div className="space-y-1.5">
                   <span className="text-xs font-tech text-charcoal-400 uppercase tracking-wider block">
-                    10 Functional Modules in Testing Scope:
+                    {stories.length} Modules Under Test:
                   </span>
                   <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                    {[
-                      'Authentication',
-                      'Account Management',
-                      'Catalog & Navigation',
-                      'Search',
-                      'Product Details',
-                      'Shopping Cart',
-                      'Checkout',
-                      'Offers & Marketing',
-                      'Support & Info',
-                      'Site Preferences',
-                    ].map((mod) => (
+                    {stories.map((story) => (
                       <span
-                        key={mod}
-                        className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md bg-charcoal-900 border border-charcoal-800 text-[11px] sm:text-xs text-charcoal-300 font-tech"
+                        key={story.id}
+                        title={`${story.id} — ${story.stateLabel}`}
+                        className={`px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md border text-[11px] sm:text-xs font-tech ${
+                          story.cases.executed === 0
+                            ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
+                            : 'bg-charcoal-900 border-charcoal-800 text-charcoal-300'
+                        }`}
                       >
-                        {mod}
+                        {story.shortName}
                       </span>
                     ))}
                   </div>
@@ -396,10 +431,13 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                 <div className="p-3 sm:p-3.5 rounded-xl bg-charcoal-900/90 border border-charcoal-800 space-y-1.5">
                   <div className="flex items-center gap-2 text-xs font-tech text-amber-400">
                     <Terminal className="w-3.5 h-3.5" />
-                    <span className="font-semibold uppercase tracking-wider">Proposal Stage Boundary</span>
+                    <span className="font-semibold uppercase tracking-wider">Coverage Boundary</span>
                   </div>
                   <p className="text-xs text-charcoal-400 leading-relaxed">
-                    Testing will be conducted against the live web interface. Backend APIs, database instances, and mobile builds will be incorporated conditionally upon confirmed credential access.
+                    Testing was carried out against the live web interface only. No
+                    backend API, database or mobile testing was performed. The
+                    module shown in red was written and reviewed but never
+                    executed.
                   </p>
                 </div>
               </div>

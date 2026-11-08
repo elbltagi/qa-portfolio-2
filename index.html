@@ -1,18 +1,561 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en" class="scroll-smooth is-loading">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%231749CC'/><text x='50' y='64' font-size='42' font-family='serif' font-weight='bold' fill='%23FAF8F5' text-anchor='middle'>Q</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Quality Journey — DEPI Graduation Project (Automation Test Store)</title>
-    <meta name="description" content="Digital Egypt Pioneers Initiative (DEPI) Software Testing Graduation Project: Automation Test Store. An interactive digital exhibition detailing our planned 9-week testing journey." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="theme-color" content="#FAF9F6" />
+
+    <title>
+      The Quality Journey — Practice Software Testing (Toolshop) Test Report
+    </title>
+    <meta
+      name="description"
+      content="Test execution report for Practice Software Testing — Toolshop by the Bug Hunters QA Team: 10 modules, 603 test cases, 530 executed, 50 defects logged, and the coverage the run did not achieve. DEPI Software Testing, November 2026."
+    />
+    <meta name="author" content="Bug Hunters QA Team — DEPI Software Testing 2026" />
+
+    <!-- Open Graph / social preview -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Quality Journey" />
+    <meta
+      property="og:title"
+      content="The Quality Journey — Toolshop Test Report"
+    />
+    <meta
+      property="og:description"
+      content="603 test cases across 10 modules, 530 executed, 50 defects logged — and an honest account of the 73 cases that were never run."
+    />
+    <meta property="og:image" content="/images/team/member-1.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="The Quality Journey — Toolshop Test Report"
+    />
+    <meta
+      name="twitter:description"
+      content="603 test cases across 10 modules, 530 executed, 50 defects logged — and an honest account of the 73 cases that were never run."
+    />
+
     <!-- Google Fonts: Syne, Instrument Serif, Plus Jakarta Sans, Space Mono -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@500;700;800&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!--
+      Boot curtain — critical, inlined deliberately.
+
+      This has to paint on the first frame, before the CSS bundle and before
+      React parses, so it cannot live in a component or in index.css. Without
+      it the hero headline paints at its final position and is then yanked to
+      yPercent: 115 by the GSAP entrance, and the Syne display face swaps in
+      underneath it. Both are visible as a jolt.
+
+      The curtain owns the first ~1.5s; src/lib/boot.ts is how the app finds
+      out it has lifted. Everything here is self-contained: no bundle class
+      names, no build step, no dependency on the app mounting successfully.
+    -->
+    <style>
+      /* While the curtain is up nothing underneath may scroll or show. */
+      html.is-loading,
+      html.is-loading body {
+        overflow: hidden !important;
+        height: 100%;
+      }
+
+      /* Opacity rather than visibility or a transform: a transform here would
+         make the fixed navbar position against #root instead of the viewport.
+
+         Deliberately not transitioned. Revealing the page is the one thing
+         that must never depend on an animation frame arriving — a background
+         tab, an embedded frame or a throttled renderer can suspend
+         transitions indefinitely, which would leave the site invisible. So
+         the reveal is the removal of this rule, and nothing else; the lifting
+         curtain above supplies the motion. */
+      html.is-loading #root {
+        opacity: 0;
+      }
+
+      #boot-curtain {
+        position: fixed;
+        inset: 0;
+        z-index: 2147483647;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: clamp(1.25rem, 4vw, 3rem);
+        background: #faf9f6;
+        color: #181818;
+        font-family: 'Space Mono', Menlo, ui-monospace, monospace;
+        transform: translateY(0);
+        transition: transform 0.85s cubic-bezier(0.76, 0, 0.24, 1);
+      }
+
+      /* The architectural column rules, carried over from the hero. */
+      #boot-curtain .bc-grid {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 0 clamp(1.25rem, 4vw, 3rem);
+        pointer-events: none;
+        opacity: 0.45;
+      }
+
+      #boot-curtain .bc-grid span {
+        border-right: 1px solid rgba(24, 24, 24, 0.07);
+      }
+
+      #boot-curtain .bc-grid span:last-child {
+        border-right: 0;
+      }
+
+      @media (min-width: 1024px) {
+        #boot-curtain .bc-grid {
+          grid-template-columns: repeat(12, 1fr);
+        }
+      }
+
+      /* A hairline of accent sits on the curtain's trailing edge, so the lift
+         reads as a sheet being drawn up rather than a box disappearing. */
+      #boot-curtain::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        background: #315bfa;
+        transform: scaleX(0);
+        transform-origin: 0 50%;
+        transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+
+      #boot-curtain .bc-row {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        font-size: 10.5px;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #7e7e7e;
+      }
+
+      #boot-curtain .bc-row b {
+        font-weight: 400;
+        color: #181818;
+      }
+
+      #boot-curtain .bc-dot {
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        margin-right: 0.55em;
+        border-radius: 50%;
+        background: #315bfa;
+        animation: bc-pulse 1.4s ease-in-out infinite;
+      }
+
+      #boot-curtain .bc-middle {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        flex: 1;
+        padding: clamp(1.5rem, 5vh, 3rem) 0;
+      }
+
+      #boot-curtain h1 {
+        margin: 0 0 clamp(1.25rem, 3vh, 2rem);
+        font-family: 'Syne', 'Plus Jakarta Sans', system-ui, sans-serif;
+        font-weight: 800;
+        font-size: clamp(2.25rem, 7.5vw, 6rem);
+        line-height: 1.02;
+        letter-spacing: -0.035em;
+        text-transform: uppercase;
+      }
+
+      /* Each line rides inside its own mask, exactly like the hero's. */
+      #boot-curtain h1 .bc-mask {
+        display: block;
+        overflow: hidden;
+        padding-bottom: 0.1em;
+        margin-bottom: -0.1em;
+      }
+
+      #boot-curtain h1 .bc-mask > span {
+        display: block;
+        transform: translateY(110%);
+        animation: bc-rise 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+
+      #boot-curtain h1 .bc-mask:nth-child(1) > span {
+        animation-delay: 0.05s;
+      }
+
+      #boot-curtain h1 .bc-mask:nth-child(2) > span {
+        animation-delay: 0.16s;
+      }
+
+      #boot-curtain h1 .bc-accent {
+        color: #315bfa;
+      }
+
+      /* Visible from frame one, deliberately. A suspended renderer holds a
+         CSS animation on its first keyframe, so anything that animates *into*
+         view can stall out of sight — and the counter is the one part of this
+         screen that carries information. It is driven by a timer rather than
+         an animation frame for the same reason. */
+      #boot-curtain .bc-meter {
+        display: flex;
+        align-items: baseline;
+        gap: clamp(0.75rem, 2vw, 1.5rem);
+      }
+
+      #boot-curtain .bc-track {
+        position: relative;
+        flex: 1;
+        height: 1px;
+        background: rgba(24, 24, 24, 0.14);
+      }
+
+      #boot-curtain .bc-fill {
+        position: absolute;
+        inset: 0 auto 0 0;
+        width: 0%;
+        background: #315bfa;
+      }
+
+      /* The counter is the only thing the script writes into, and it is
+         tabular so the rule beside it never shifts as digits change. */
+      #boot-curtain .bc-count {
+        font-size: clamp(0.95rem, 1.4vw, 1.15rem);
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: 'tnum';
+        letter-spacing: 0.06em;
+        color: #181818;
+      }
+
+      #boot-curtain .bc-stage {
+        margin-top: 0.85rem;
+        min-height: 1.2em;
+        font-size: 11px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #525252;
+      }
+
+      /* ---- Exit --------------------------------------------------------- */
+
+      /* The headline withdraws under its own masks first, then the sheet
+         lifts, so the two motions read as one gesture. */
+      html[data-boot='out'] #boot-curtain h1 .bc-mask > span {
+        animation: bc-sink 0.5s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+      }
+
+      html[data-boot='out'] #boot-curtain h1 .bc-mask:nth-child(2) > span {
+        animation-delay: 0.06s;
+      }
+
+      html[data-boot='out'] #boot-curtain .bc-meter,
+      html[data-boot='out'] #boot-curtain .bc-stage,
+      html[data-boot='out'] #boot-curtain .bc-row {
+        animation: none;
+        opacity: 0;
+        transition: opacity 0.35s ease;
+      }
+
+      html[data-boot='out'] #boot-curtain::after {
+        transform: scaleX(1);
+      }
+
+      html[data-boot='lift'] #boot-curtain {
+        transform: translateY(-100%);
+      }
+
+      /* ---- Fallbacks ---------------------------------------------------- */
+
+      @media (prefers-reduced-motion: reduce) {
+        #boot-curtain,
+        #boot-curtain * {
+          animation: none !important;
+          transition: opacity 0.2s linear !important;
+        }
+
+        #boot-curtain h1 .bc-mask > span {
+          transform: none;
+        }
+
+        html[data-boot='lift'] #boot-curtain {
+          opacity: 0;
+          transform: none;
+        }
+      }
+
+      @keyframes bc-rise {
+        to {
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes bc-sink {
+        from {
+          transform: translateY(0);
+        }
+        to {
+          transform: translateY(-110%);
+        }
+      }
+
+      @keyframes bc-pulse {
+        0%,
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.35;
+          transform: scale(0.72);
+        }
+      }
+    </style>
+
+    <noscript>
+      <style>
+        html.is-loading,
+        html.is-loading body {
+          overflow: visible !important;
+          height: auto;
+        }
+        html.is-loading #root {
+          opacity: 1;
+        }
+        #boot-curtain {
+          display: none;
+        }
+      </style>
+    </noscript>
   </head>
-  <body class="bg-cream-50 text-charcoal-900 font-sans antialiased selection:bg-cobalt-600 selection:text-white">
+  <body
+    class="bg-cream-50 text-charcoal-900 font-sans antialiased selection:bg-cobalt-600 selection:text-white"
+  >
+    <div id="boot-curtain" role="status" aria-live="polite" aria-label="Loading the test report">
+      <div class="bc-grid" aria-hidden="true">
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span>
+      </div>
+
+      <div class="bc-row">
+        <span><i class="bc-dot" aria-hidden="true"></i><b>Bug Hunters QA Team</b></span>
+        <span data-bc-step>01 / 05</span>
+      </div>
+
+      <div class="bc-middle">
+        <h1>
+          <span class="bc-mask"><span>The Quality</span></span>
+          <span class="bc-mask"><span>Journey<i class="bc-accent">.</i></span></span>
+        </h1>
+
+        <div class="bc-meter">
+          <span class="bc-count" data-bc-count>000</span>
+          <span class="bc-track"><span class="bc-fill" data-bc-fill></span></span>
+        </div>
+
+        <div class="bc-stage" data-bc-stage>Opening the workbooks</div>
+      </div>
+
+      <div class="bc-row">
+        <span>Practice Software Testing — Toolshop</span>
+        <span>DEPI / Software Testing</span>
+      </div>
+    </div>
+
     <div id="root"></div>
+
+    <script>
+      /*
+       * Drives the boot curtain and then gets out of the way.
+       *
+       * Progress tracks real milestones (webfonts resolved, the app mounted,
+       * the window loaded) rather than a decorative timer, but it is floored
+       * against elapsed time so a fast cache still reads as motion and a slow
+       * asset cannot stall the bar. A hard cap lifts the curtain regardless,
+       * so a failure to mount can never leave the site hidden behind it.
+       */
+      (function () {
+        var html = document.documentElement;
+        var curtain = document.getElementById('boot-curtain');
+        if (!curtain) return;
+
+        var countEl = curtain.querySelector('[data-bc-count]');
+        var fillEl = curtain.querySelector('[data-bc-fill]');
+        var stageEl = curtain.querySelector('[data-bc-stage]');
+        var stepEl = curtain.querySelector('[data-bc-step]');
+
+        var STAGES = [
+          'Opening the workbooks',
+          'Counting 603 test cases',
+          'Reconciling the figures',
+          'Logging 50 defects',
+          'Composing the report',
+        ];
+
+        var calm = false;
+        try {
+          calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        } catch (e) {}
+
+        /* A return visit in the same tab gets a courtesy glance, not the full
+           overture. sessionStorage throws in some privacy modes. */
+        var seen = false;
+        try {
+          seen = sessionStorage.getItem('qj:booted') === '1';
+          sessionStorage.setItem('qj:booted', '1');
+        } catch (e) {}
+
+        var MIN_MS = calm ? 0 : seen ? 650 : 1750;
+        /* Absolute failsafe. Nothing below it waits on the network any more,
+           so reaching this means something genuinely broke — and the site
+           must still appear. */
+        var CAP_MS = 5000;
+        var started = Date.now();
+
+        var target = 14;
+        var shown = 0;
+        var done = false;
+        var timer = null;
+
+        function reach(value) {
+          if (value > target) target = value;
+        }
+
+        function paint() {
+          var whole = Math.round(shown);
+          var text = whole < 10 ? '00' + whole : whole < 100 ? '0' + whole : '100';
+          if (countEl) countEl.textContent = text;
+          if (fillEl) fillEl.style.width = whole + '%';
+
+          var index = Math.min(STAGES.length - 1, Math.floor((whole / 100) * STAGES.length));
+          if (stageEl && stageEl.textContent !== STAGES[index]) {
+            stageEl.textContent = STAGES[index];
+          }
+          if (stepEl) {
+            stepEl.textContent = '0' + (index + 1) + ' / 0' + STAGES.length;
+          }
+        }
+
+        /* setInterval rather than requestAnimationFrame: rAF is suspended in
+           background and embedded frames, which would freeze the counter and
+           strand the curtain. Easing is computed from the clock, so a sparse
+           tick still lands in the right place. */
+        function tick() {
+          var now = Date.now();
+          var elapsed = now - started;
+
+          /* floor keeps the bar moving when a milestone is slow to land;
+             pace stops a warm cache from finishing the count a beat early and
+             leaving it sitting on 100. Between them the count lands on 100 as
+             the exit begins, whatever the network did. */
+          var floor = MIN_MS ? Math.min(94, (elapsed / MIN_MS) * 94) : 100;
+          var pace = MIN_MS ? (elapsed / MIN_MS) * 100 : 100;
+          var ceiling = Math.min(Math.max(target, floor), pace);
+          shown += (ceiling - shown) * 0.3;
+
+          if (ceiling - shown < 0.4) shown = ceiling;
+          paint();
+
+          if ((shown >= 99.5 && elapsed >= MIN_MS) || elapsed >= CAP_MS) finish();
+        }
+
+        function finish() {
+          if (done) return;
+          done = true;
+          if (timer) clearInterval(timer);
+          shown = 100;
+          paint();
+
+          var outMs = calm ? 0 : 380;
+          var liftMs = calm ? 220 : 900;
+
+          /* data-booted and the app:booted event are the handoff: the hero
+             holds its GSAP entrance until this fires, so the headline animates
+             into a page the visitor is actually looking at. */
+          html.setAttribute('data-boot', 'out');
+
+          setTimeout(function () {
+            html.setAttribute('data-boot', 'lift');
+            html.setAttribute('data-booted', 'true');
+            html.classList.remove('is-loading');
+            window.__qjBooted = true;
+            try {
+              window.dispatchEvent(new CustomEvent('app:booted'));
+            } catch (e) {
+              var legacy = document.createEvent('Event');
+              legacy.initEvent('app:booted', false, false);
+              window.dispatchEvent(legacy);
+            }
+          }, outMs);
+
+          setTimeout(function () {
+            if (curtain.parentNode) curtain.parentNode.removeChild(curtain);
+            html.removeAttribute('data-boot');
+          }, outMs + liftMs + 120);
+        }
+
+        /* Milestones. Each one is a real signal, not a step on a timer.
+         *
+         * Deliberately NOT the window load event: that waits on every
+         * subresource on the page, the team photographs included, which are
+         * far below the fold and irrelevant to whether the first screen is
+         * ready. Gating on it stalled the count at the floor and left the
+         * failsafe to lift the curtain seconds late. */
+        var fontsDone = false;
+        var mountDone = false;
+
+        function settle() {
+          /* Webfaces resolved and the app committed: nothing else is worth
+             waiting for, so let the clock carry the count home. */
+          if (fontsDone && mountDone) reach(100);
+        }
+
+        function markFonts() {
+          if (fontsDone) return;
+          fontsDone = true;
+          reach(52);
+          settle();
+        }
+
+        function markMount() {
+          if (mountDone) return;
+          mountDone = true;
+          reach(88);
+          settle();
+        }
+
+        if (document.fonts && document.fonts.ready) {
+          document.fonts.ready.then(markFonts);
+          // A slow or blocked font CDN must not hold the page hostage.
+          setTimeout(markFonts, 2500);
+        } else {
+          markFonts();
+        }
+
+        window.addEventListener('app:mounted', markMount);
+        /* The app may have mounted before this listener existed. */
+        if (window.__qjMounted) markMount();
+
+        paint();
+        timer = setInterval(tick, 24);
+        setTimeout(finish, CAP_MS);
+      })();
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

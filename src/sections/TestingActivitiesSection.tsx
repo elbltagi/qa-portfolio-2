@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { BlurTextReveal } from '../components/BlurTextReveal';
 import { CheckCircle2, AlertCircle, ArrowUpRight } from 'lucide-react';
 import { gsap } from '../lib/gsap';
 import type { TestingActivitiesRecord } from '../types';
@@ -55,14 +56,17 @@ export const TestingActivitiesSection: React.FC<TestingActivitiesSectionProps> =
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-5 section-header-spacing border-b border-canvas-border">
           <div>
             <span className="font-tech text-xs tracking-widest uppercase text-accent block mb-1.5">
-              06 / Proposed QA Workflow
+              06 / QA Workflow Carried Out
             </span>
-            <h2 className="text-fluid-section-title font-display font-black text-ink uppercase">
-              Testing Activities<span className="text-accent">.</span>
-            </h2>
+            <BlurTextReveal
+              as="h2"
+              text="Testing Activities"
+              accentSuffix="."
+              className="text-fluid-section-title font-display font-black text-ink uppercase"
+            />
           </div>
           <p className="text-ink-muted max-w-md text-sm sm:text-base leading-relaxed font-light">
-            Explore the planned hands-on QA activities our team will perform across every testing phase.
+            The hands-on activities the team actually performed in each discipline, and what each one produced.
           </p>
         </div>
 
@@ -83,7 +87,7 @@ export const TestingActivitiesSection: React.FC<TestingActivitiesSectionProps> =
                 }`}
               >
                 <span>{cat.title}</span>
-                {cat.isConditional && (
+                {cat.wasSkipped && (
                   <span
                     className={`ml-1.5 text-[9px] px-1.5 py-0.5 rounded-sm font-bold ${
                       isSelected
@@ -91,7 +95,7 @@ export const TestingActivitiesSection: React.FC<TestingActivitiesSectionProps> =
                         : 'bg-amber-500/20 text-amber-700'
                     }`}
                   >
-                    Conditional
+                    Partial
                   </span>
                 )}
               </button>

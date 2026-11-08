@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { BlurTextReveal } from '../components/BlurTextReveal';
 import { Calendar, ChevronDown, PackageCheck } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '../lib/gsap';
@@ -87,21 +88,24 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
             <span className="font-tech text-xs tracking-widest uppercase text-accent block mb-1.5">
               08 / Project Schedule
             </span>
-            <h2 className="text-fluid-section-title font-display font-black text-ink uppercase">
-              Testing Timeline<span className="text-accent">.</span>
-            </h2>
+            <BlurTextReveal
+              as="h2"
+              text="Testing Timeline"
+              accentSuffix="."
+              className="text-fluid-section-title font-display font-black text-ink uppercase"
+            />
           </div>
           <div className="flex flex-col items-start md:items-end gap-0.5">
             <span className="text-xl sm:text-2xl font-display font-bold text-accent">
-              9 Weeks Total
+              {phases.length} Stages
             </span>
             <span className="text-[11px] font-tech uppercase text-ink-subtle tracking-wider">
-              One Cohesive Quality Journey
+              Story to delivered report
             </span>
           </div>
         </div>
 
-        {/* Planning Horizon Banner */}
+        {/* Delivery pipeline banner */}
         <div className="my-7 sm:my-8 p-4 sm:p-5 rounded-2xl bg-canvas-surface border border-canvas-border flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-accent-subtle text-accent flex items-center justify-center shrink-0">
@@ -109,17 +113,17 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
             </div>
             <div>
               <h4 className="text-sm font-display font-bold text-ink">
-                Proposed 9-Week Execution Horizon
+                The Delivery Pipeline
               </h4>
               <p className="text-xs text-ink-muted">
-                This schedule outlines our planned progression from initial exploratory scope to final graduation defense.
+                The stages this project actually went through. These are delivery stages, not dated weeks — the workbooks record artifacts and verdicts, not a calendar.
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-canvas-muted text-ink text-xs font-tech shrink-0">
-            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span>Current Stage: Week 1 (Planning / Proposal)</span>
+            <span className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span>Complete — reporting delivered</span>
           </div>
         </div>
 
@@ -135,7 +139,7 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
 
           {phases.map((phase, index) => {
             const isExpanded = expandedWeek === phase.id;
-            const isCurrent = phase.isCurrent;
+            const isCurrent = phase.isFinal;
 
             return (
               <div
@@ -200,7 +204,7 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
 
                   <div className="flex items-center gap-3 shrink-0">
                     <span className="text-xs font-tech text-ink-ghost hidden md:inline-block">
-                      {phase.keyActivities.length} Planned Activities
+                      {phase.keyActivities.length} Recorded Facts
                     </span>
                     <div
                       className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all ${
@@ -229,7 +233,7 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
 
                       <div className="space-y-2">
                         <span className="text-xs font-tech uppercase text-ink-subtle tracking-wider font-semibold block">
-                          Key Planned Activities:
+                          What Happened:
                         </span>
                         <ul className="space-y-2">
                           {phase.keyActivities.map((act, i) => (
@@ -246,10 +250,10 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
                       <div>
                         <div className="flex items-center gap-1.5 text-xs font-tech text-accent font-bold uppercase mb-1.5">
                           <PackageCheck className="w-4 h-4" />
-                          <span>Planned Deliverables</span>
+                          <span>Delivered</span>
                         </div>
                         <p className="text-xs text-ink font-medium leading-relaxed">
-                          {phase.plannedDeliverables}
+                          {phase.deliverables}
                         </p>
                       </div>
 

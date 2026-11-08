@@ -1,5 +1,7 @@
 import React from 'react';
 import { ArrowUp, ExternalLink, ShieldCheck } from 'lucide-react';
+import { Link } from '../lib/router';
+import { chapters, detailPages } from '../lib/chapters';
 import type { ProjectMeta } from '../types';
 
 interface FooterProps {
@@ -18,13 +20,13 @@ export const Footer: React.FC<FooterProps> = ({ meta }) => {
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 pb-12 border-b border-charcoal-800">
           <div className="space-y-4 max-w-xl">
             <span className="text-xs font-tech tracking-widest uppercase text-accent block">
-              Graduation Project Presentation • Version 2
+              Test Execution Report • Delivered {meta.reportDate}
             </span>
             <h2 className="text-4xl sm:text-5xl font-display font-extrabold uppercase tracking-tight text-canvas-surface">
               The Quality Journey
             </h2>
             <p className="text-charcoal-400 text-sm leading-relaxed font-light">
-              Digital Egypt Pioneers Initiative (DEPI) Software Testing Track graduation project. An interactive digital exhibition detailing our planned 9-week quality assurance mission on Automation Test Store.
+Digital Egypt Pioneers Initiative (DEPI) Software Testing Track graduation project. The {meta.team} tested Practice Software Testing — Toolshop and reported the result, including the coverage the run did not achieve.
             </p>
           </div>
 
@@ -35,7 +37,7 @@ export const Footer: React.FC<FooterProps> = ({ meta }) => {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-5 py-3 rounded-full bg-charcoal-900 border border-charcoal-700 text-xs font-semibold text-white hover:bg-accent hover:border-accent transition-colors shadow-xs"
             >
-              <span className="text-white">Visit Automation Test Store</span>
+              <span className="text-white">Visit the Toolshop</span>
               <ExternalLink className="w-3.5 h-3.5 text-white" />
             </a>
 
@@ -50,6 +52,54 @@ export const Footer: React.FC<FooterProps> = ({ meta }) => {
           </div>
         </div>
 
+        {/* Site navigation */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16 pb-12 border-b border-charcoal-800">
+          <div>
+            <span className="uppercase text-canvas-surface font-bold tracking-wider text-xs font-tech block mb-4">
+              The Exhibition
+            </span>
+            <ul className="grid grid-cols-2 gap-x-6 gap-y-2">
+              {chapters.map((chapter) => (
+                <li key={chapter.id}>
+                  <a
+                    href={`#${chapter.id}`}
+                    className="group inline-flex items-baseline gap-2 text-xs text-charcoal-400 hover:text-white transition-colors"
+                  >
+                    <span className="font-tech text-[10px] text-charcoal-500 group-hover:text-accent transition-colors">
+                      {chapter.index}
+                    </span>
+                    <span>{chapter.label}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <span className="uppercase text-canvas-surface font-bold tracking-wider text-xs font-tech block mb-4">
+              The Work in Detail
+            </span>
+            <ul className="space-y-2">
+              {detailPages.map((page) => (
+                <li key={page.path}>
+                  <Link
+                    to={page.path}
+                    className="group inline-flex items-baseline gap-2 text-xs text-charcoal-400 hover:text-white transition-colors"
+                  >
+                    <span className="font-tech text-[10px] text-charcoal-500 group-hover:text-accent transition-colors">
+                      {page.index}
+                    </span>
+                    <span>{page.title}</span>
+                    <span className="font-tech text-[10px] text-charcoal-600 tabular-nums">
+                      {page.figure}
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
         {/* Attribution & Metadata Columns */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-xs font-tech text-charcoal-400">
           <div className="space-y-2">
@@ -61,8 +111,8 @@ export const Footer: React.FC<FooterProps> = ({ meta }) => {
 
           <div className="space-y-2">
             <span className="uppercase text-canvas-surface font-bold tracking-wider block">Academic Scope</span>
-            <p>Target: Automation Test Store (AbanteCart)</p>
-            <p>Duration: {meta.duration}</p>
+            <p>Target: Practice Software Testing — Toolshop</p>
+            <p>Reported: {meta.reportDate}</p>
             <p>Stage: {meta.status}</p>
           </div>
 
@@ -79,7 +129,7 @@ export const Footer: React.FC<FooterProps> = ({ meta }) => {
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-4 h-4 text-accent" />
             <span>
-              Academic Planning Proposal: No testing executions or defects have been fabricated.
+Every figure on this site is read from the delivered test workbooks and reports. Nothing is estimated.
             </span>
           </div>
 

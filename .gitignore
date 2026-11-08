@@ -27,3 +27,9 @@ dist-ssr
 .env
 .env*.local
 !.env.example
+
+# Local dev-server config for the Claude Code browser pane
+.claude/
+
+# Stale pre-retarget duplicate left by an editor auto-copy; not part of the build.
+qa-portfolio-2/

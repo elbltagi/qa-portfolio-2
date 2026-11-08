@@ -19,6 +19,22 @@
     background-color: #315BFA;
     color: #FFFFFF;
   }
+
+  /* Anchor jumps must clear the fixed navbar. */
+  section[id] {
+    scroll-margin-top: 5rem;
+  }
+
+  /* Keyboard focus stays visible everywhere. */
+  :focus-visible {
+    outline: 2px solid #315BFA;
+    outline-offset: 2px;
+  }
+}
+
+/* Chevron-free disclosure arrows for the designed test cases. */
+summary::-webkit-details-marker {
+  display: none;
 }
 
 /* Editorial typography classes */

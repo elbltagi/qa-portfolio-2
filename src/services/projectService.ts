@@ -1,579 +1,446 @@
-import { supabase } from '../lib/supabase/client';
-import type { ProjectStatePayload, UserStory } from '../types';
+import {
+  appUrl,
+  crossModule,
+  defectSeverity,
+  moduleStories,
+  projectName,
+  reportDate,
+  staticSeverity,
+  teamName,
+  totals,
+} from '../data/toolshop';
+import type { ProjectStatePayload } from '../types';
 
-// Fallback baseline in case network fails or env keys are absent
-export const fallbackProjectState: ProjectStatePayload = {
+/**
+ * The delivered project state, assembled from the generated dashboard data in
+ * src/data/toolshop.ts.
+ *
+ * Every figure here is either read straight from that file or derived from it
+ * in this module, so nothing can drift from the delivered workbooks. There is
+ * no remote source: the site ships with its own results.
+ */
+
+const executedModules = moduleStories.filter((m) => m.cases.executed > 0);
+const modulesWithoutBugReport = moduleStories.filter(
+  (m) => m.cases.failed > 0 && m.defects.total === 0
+);
+const modulesWithoutStaticReview = moduleStories.filter(
+  (m) => m.staticFindings.total === 0
+);
+
+export const projectState: ProjectStatePayload = {
   projectMeta: {
-    name: "Automation Test Store",
-    track: "Software Testing Track",
-    status: "Project Proposal / Planning Stage",
-    duration: "9 Weeks",
-    initiative: "Digital Egypt Pioneers Initiative (DEPI)",
-    liveAppUrl: "https://automationteststore.com/",
-    fullProjectName: "Automation Test Store — Software Testing Project",
-    testingStatusNotice: "We have not started performing testing activities. All testing work is presented as proposed future activities."
+    name: projectName,
+    track: 'Software Testing Track',
+    status: 'Execution complete',
+    reportDate,
+    initiative: 'Digital Egypt Pioneers Initiative (DEPI)',
+    liveAppUrl: appUrl,
+    fullProjectName: `${projectName} — Software Testing Project`,
+    team: teamName,
+    coverageNotice: `${totals.executed} of ${totals.cases} written test cases were executed (${totals.execRate}%). The ${totals.notRun} that were not run are reported as not run, never as passed.`,
   },
+
   projectOverview: {
-    heading: "Automation Test Store — Quality Assurance Project",
-    targetUrl: "https://automationteststore.com/",
-    statusBadge: "Project Proposal / Planning Stage",
-    briefOverview: "Our graduation project aims to evaluate the functionality and reliability of Automation Test Store, an e-commerce practice website. Our team plans to apply systematic testing techniques to explore its major functionalities, design test cases, execute tests, and document findings.",
+    heading: `${projectName} — Test Execution Report`,
+    targetUrl: appUrl,
+    statusBadge: `Execution complete · ${reportDate}`,
+    briefOverview: `The ${teamName} wrote ${totals.cases} test cases across ${moduleStories.length} modules of ${projectName}, executed ${totals.executed} of them, and logged ${totals.defectsLogged} defects. This report presents what was found, including the coverage that was not achieved.`,
     keyHighlights: [
-      { label: "Target Application", value: "E-Commerce Web Store" },
-      { label: "Project Duration", value: "9 Weeks" },
-      { label: "Planned Approach", value: "Systematic Manual Testing First" },
-      { label: "Proposed User Stories", value: "59 Features Identified" }
-    ]
+      {
+        label: 'Application Under Test',
+        value: 'Toolshop E-Commerce',
+        sub: 'practicesoftwaretesting.com',
+      },
+      {
+        label: 'Test Cases Executed',
+        value: `${totals.executed} of ${totals.cases}`,
+        sub: `${totals.execRate}% of those written`,
+      },
+      {
+        label: 'Pass Rate of Executed',
+        value: `${totals.passRate}%`,
+        sub: `${totals.passed} passed, ${totals.failed} failed`,
+      },
+      {
+        label: 'Defects Logged',
+        value: `${totals.defectsLogged} Confirmed`,
+        sub: `${totals.failuresAwaitingWriteUp} failures never written up`,
+      },
+    ],
   },
+
   teamIntroduction: {
-    heading: "The People Behind the Quality",
-    subtitle: "We are software testing trainees from DEPI, working together on our graduation project to apply quality assurance principles to an e-commerce application.",
+    heading: 'The People Behind the Quality',
+    subtitle: `We are the ${teamName}, software testing trainees from DEPI. We planned, designed and executed the test effort reported on this site.`,
     members: [
       {
-        id: "team-1",
-        name: "Youssef El Beltagi",
-        track: "DEPI Software Testing",
-        role: "Team Leader",
-        avatar: "/images/team/member-1.png",
-        initials: "YE",
-        objectPosition: "50% 20%",
-        url: "https://eg.linkedin.com/in/youssef-elbltagi",
-        linkedinUrl: "https://eg.linkedin.com/in/youssef-elbltagi"
+        id: 'team-1',
+        name: 'Youssef El Beltagi',
+        track: 'DEPI Software Testing',
+        role: 'Team Leader',
+        avatar: '/images/team/member-1.png',
+        initials: 'YE',
+        objectPosition: '50% 20%',
+        url: 'https://eg.linkedin.com/in/youssef-elbltagi',
+        linkedinUrl: 'https://eg.linkedin.com/in/youssef-elbltagi',
       },
       {
-        id: "team-2",
-        name: "Abdulrahman El Moghazy",
-        track: "DEPI Software Testing",
-        avatar: "/images/team/member-2.jpeg",
-        initials: "AE",
-        objectPosition: "50% 32%",
-        url: "https://www.linkedin.com/in/abdulrhman-mohamed01/",
-        linkedinUrl: "https://www.linkedin.com/in/abdulrhman-mohamed01/"
+        id: 'team-2',
+        name: 'Abdulrahman El Moghazy',
+        track: 'DEPI Software Testing',
+        avatar: '/images/team/member-2.jpeg',
+        initials: 'AE',
+        objectPosition: '50% 32%',
+        url: 'https://www.linkedin.com/in/abdulrhman-mohamed01/',
+        linkedinUrl: 'https://www.linkedin.com/in/abdulrhman-mohamed01/',
       },
       {
-        id: "team-3",
-        name: "Hend Amr",
-        track: "DEPI Software Testing",
-        avatar: "/images/team/member-3.jpeg",
-        initials: "HA",
-        objectPosition: "50% 20%",
-        url: "https://www.linkedin.com/in/hend-amr-502281416/",
-        linkedinUrl: "https://www.linkedin.com/in/hend-amr-502281416/"
+        id: 'team-3',
+        name: 'Hend Amr',
+        track: 'DEPI Software Testing',
+        avatar: '/images/team/member-3.jpeg',
+        initials: 'HA',
+        objectPosition: '50% 20%',
+        url: 'https://www.linkedin.com/in/hend-amr-502281416/',
+        linkedinUrl: 'https://www.linkedin.com/in/hend-amr-502281416/',
       },
       {
-        id: "team-4",
-        name: "Mostafa El Gohary",
-        track: "DEPI Software Testing",
-        avatar: "/images/team/member-4.jpeg",
-        initials: "ME",
-        objectPosition: "50% 16%",
-        url: "https://www.linkedin.com/in/mostafa-elgohary-7b679a392/?isSelfProfile=false",
-        linkedinUrl: "https://www.linkedin.com/in/mostafa-elgohary-7b679a392/?isSelfProfile=false"
+        id: 'team-4',
+        name: 'Mostafa El Gohary',
+        track: 'DEPI Software Testing',
+        avatar: '/images/team/member-4.jpeg',
+        initials: 'ME',
+        objectPosition: '50% 16%',
+        url: 'https://www.linkedin.com/in/mostafa-elgohary-7b679a392/?isSelfProfile=false',
+        linkedinUrl:
+          'https://www.linkedin.com/in/mostafa-elgohary-7b679a392/?isSelfProfile=false',
       },
       {
-        id: "team-5",
-        name: "Mosad Essam",
-        track: "DEPI Software Testing",
-        avatar: "/images/team/member-5.jpeg",
-        initials: "ME",
-        objectPosition: "50% 48%"
+        id: 'team-5',
+        name: 'Mosad Essam',
+        track: 'DEPI Software Testing',
+        avatar: '/images/team/member-5.jpeg',
+        initials: 'ME',
+        objectPosition: '50% 48%',
       },
       {
-        id: "team-6",
-        name: "Mohammed Maher",
-        track: "DEPI Software Testing",
-        avatar: "/images/team/member-6.jpeg",
-        initials: "MM",
-        objectPosition: "center 25%"
-      }
-    ]
+        id: 'team-6',
+        name: 'Mohammed Maher',
+        track: 'DEPI Software Testing',
+        avatar: '/images/team/member-6.jpeg',
+        initials: 'MM',
+        objectPosition: 'center 25%',
+      },
+    ],
   },
-  proposedUserStories: [],
+
+  moduleStories,
+
+  // Only the disciplines the delivered artifacts actually evidence. Nothing is
+  // listed here that the project did not carry out.
   testingTypes: [
     {
-      id: "type-static",
-      name: "Static Testing",
-      badge: "01",
-      status: "Planned",
-      purpose: "Catch defects early by reviewing documentation and identifying requirement ambiguities before execution.",
-      isConditional: false,
-      expectedOutputs: "Documented review notes, clarified criteria, and an ambiguity tracking list.",
-      proposedApproach: "Review available specifications and website flows to discover gaps and clarify acceptance criteria."
+      id: 'type-static',
+      name: 'Static Testing',
+      badge: '01',
+      status: 'Executed',
+      wasSkipped: false,
+      purpose:
+        'Review user stories and test cases before execution to catch ambiguity and missing criteria early.',
+      approach:
+        'Each module’s story and case workbook was reviewed by a second team member and findings were logged against the module.',
+      outputs: `${staticSeverity.total} findings — ${staticSeverity.high} high, ${staticSeverity.medium} medium, ${staticSeverity.low} low, ${staticSeverity.unrated} left unrated.`,
+      coverageNotice: `${modulesWithoutStaticReview.length} of ${moduleStories.length} modules were never statically reviewed: ${modulesWithoutStaticReview
+        .map((m) => `${m.id} ${m.module}`)
+        .join(', ')}.`,
     },
     {
-      id: "type-manual",
-      name: "Manual Testing",
-      badge: "02",
-      status: "Planned",
-      purpose: "Verify user-facing web store features and shopping flows from a real end-user perspective.",
-      isConditional: false,
-      expectedOutputs: "Structured test cases, execution run logs, and defect reports with screenshots.",
-      proposedApproach: "Execute step-by-step test cases across Chrome, Edge, and Firefox for positive and negative paths."
+      id: 'type-functional',
+      name: 'Functional Testing',
+      badge: '02',
+      status: 'Executed',
+      wasSkipped: false,
+      purpose:
+        'Verify each module against its user story and acceptance criteria through the browser.',
+      approach: `Manual execution of ${totals.cases} written cases across ${moduleStories.length} modules, recording a verdict per case.`,
+      outputs: `${totals.executed} executed — ${totals.passed} passed, ${totals.failed} failed, ${totals.blocked} blocked.`,
+      coverageNotice: `${totals.notRun} cases were never executed, ${
+        moduleStories.find((m) => m.id === 'US-005')?.cases.notRun ?? 0
+      } of them the entire checkout and payment module.`,
     },
     {
-      id: "type-api",
-      name: "API Testing",
-      badge: "03",
-      status: "Planned (Subject to Access)",
-      purpose: "Validate backend endpoints, payload structures, and HTTP response codes where accessible.",
-      accessNotice: "Subject to backend endpoint documentation & access confirmation",
-      isConditional: false,
-      expectedOutputs: "API test scenarios, request/response verification logs, and status code checks.",
-      proposedApproach: "Send test requests to confirmed application endpoints using Postman once access is provided."
+      id: 'type-integration',
+      name: 'Integration Testing',
+      badge: '03',
+      status: 'Executed',
+      wasSkipped: false,
+      purpose:
+        'Verify that data and state hand over correctly where two modules meet.',
+      approach:
+        'A dedicated cross-module suite exercising handovers such as catalogue to cart and registration to account.',
+      outputs: `${crossModule.integration.totals.total} cases — ${crossModule.integration.totals.passed} passed, ${crossModule.integration.totals.failed} failed.`,
+      coverageNotice:
+        'The majority of the integration suite failed, which is the weakest result in the project.',
     },
     {
-      id: "type-automation",
-      name: "Automation Testing",
-      badge: "04",
-      status: "Planned",
-      purpose: "Speed up regression checks and reliably verify repetitive high-value workflows.",
-      isConditional: false,
-      expectedOutputs: "Modular test scripts, automated execution test run logs, and summary reports.",
-      proposedApproach: "Build automated test scripts for critical scenarios like login, search, and checkout."
+      id: 'type-e2e',
+      name: 'End-to-End Testing',
+      badge: '04',
+      status: 'Partially executed',
+      wasSkipped: false,
+      purpose:
+        'Walk the complete purchase journey as a customer would, from catalogue to confirmed order.',
+      approach: `A single ${crossModule.e2e.totals.total}-step purchase journey run end to end.`,
+      outputs: `${crossModule.e2e.totals.passed} steps passed, ${crossModule.e2e.totals.blocked} blocked.`,
+      coverageNotice:
+        'The run stopped before creating an account, entering a password and confirming payment, so every later step is blocked rather than failed.',
     },
     {
-      id: "type-database",
-      name: "Database Testing",
-      badge: "05",
-      status: "Planned (Subject to Access)",
-      purpose: "Confirm that storefront user actions correctly save and update data in the database.",
-      accessNotice: "Subject to database instance access & permission confirmation",
-      isConditional: false,
-      expectedOutputs: "Database test queries, verification logs, and data integrity checks.",
-      proposedApproach: "Run verification queries against user records, cart items, and placed orders if direct access is granted."
+      id: 'type-defect-reporting',
+      name: 'Defect Reporting',
+      badge: '05',
+      status: 'Executed',
+      wasSkipped: false,
+      purpose:
+        'Turn observed failures into reproducible, severity-rated defect reports.',
+      approach:
+        'A bug report workbook per module, each defect carrying steps, expected and actual behaviour, and a severity.',
+      outputs: `${defectSeverity.total} defects — ${defectSeverity.high} high, ${defectSeverity.medium} medium, ${defectSeverity.low} low.`,
+      coverageNotice: `${totals.failuresAwaitingWriteUp} failures were never written up: ${modulesWithoutBugReport
+        .map((m) => `${m.id} ${m.module}`)
+        .join(' and ')} have no bug report at all.`,
     },
-    {
-      id: "type-mobile",
-      name: "Mobile App Testing",
-      badge: "Conditional",
-      status: "Conditional (Subject to App Access)",
-      purpose: "Evaluate responsive mobile behavior and native app flows if a mobile client is approved.",
-      accessNotice: "Conditional: Applicable only if an approved mobile application build is provided.",
-      isConditional: true,
-      expectedOutputs: "Mobile test cases, usability notes, and mobile defect reports.",
-      proposedApproach: "Test responsive screen layouts, touch interactions, and mobile user journeys."
-    }
   ],
+
   testingActivitiesData: {
     static: {
-      title: "Static Testing",
+      title: 'Static Testing',
       activities: [
         {
-          name: "Reviewing User Stories",
-          description: "Conducting team walkthroughs and peer reviews to evaluate user story clarity, testability, acceptance criteria, and edge cases."
+          name: 'Reviewing user stories',
+          description: `All ${moduleStories.length} user stories were written and peer-reviewed before any case was designed.`,
         },
         {
-          name: "Reviewing Requirements & Ambiguities",
-          description: "Reviewing available requirements, discovering functional gaps, and logging ambiguities for instructor clarification prior to test execution."
-        }
-      ]
+          name: 'Reviewing test cases',
+          description: `Case workbooks were reviewed module by module, producing ${staticSeverity.total} findings.`,
+        },
+        {
+          name: 'Recording findings by severity',
+          description: `${staticSeverity.high} high, ${staticSeverity.medium} medium and ${staticSeverity.low} low findings were rated; ${staticSeverity.unrated} were left unrated and are reported as such.`,
+        },
+      ],
     },
-    manual: {
-      title: "Manual Testing",
+    functional: {
+      title: 'Functional Testing',
       activities: [
         {
-          name: "Test Case Creation",
-          description: "Writing detailed test cases with unique IDs, preconditions, test steps, test data, and expected results."
+          name: 'Designing cases by test area',
+          description: `${totals.cases} cases were written across 53 distinct test areas, each mapped to its module.`,
         },
         {
-          name: "Test Case Execution",
-          description: "Executing test cases step-by-step on target web browsers and documenting actual outcomes."
+          name: 'Executing and recording verdicts',
+          description: `${totals.executed} cases were executed and given a pass, fail or blocked verdict in the workbook.`,
         },
         {
-          name: "Bug Reporting",
-          description: "Logging reproducible defect tickets containing title, severity, priority, steps to reproduce, and visual evidence."
+          name: 'Prioritising coverage',
+          description:
+            'Each case carries a priority, so the unexecuted remainder can be judged by what it would have covered.',
         },
-        {
-          name: "Test Summary Report",
-          description: "Compiling execution statistics, pass/fail ratios, defect summaries, and testing recommendations."
-        }
-      ]
+      ],
     },
-    api: {
-      title: "API Testing",
-      accessNote: "Subject to backend endpoint documentation & access confirmation",
+    integration: {
+      title: 'Integration Testing',
       activities: [
         {
-          name: "Test Case Creation",
-          description: "Designing API test cases covering request parameters, payload headers, and expected response codes."
+          name: 'Exercising module handovers',
+          description: `${crossModule.integration.totals.total} cross-module cases were run where two modules meet.`,
         },
         {
-          name: "Test Case Execution",
-          description: "Sending HTTP requests against confirmed endpoints and validating status codes, headers, and body data."
+          name: 'Recording the failures',
+          description: `${crossModule.integration.totals.failed} of ${crossModule.integration.totals.total} failed, concentrated in account and order history handovers.`,
         },
-        {
-          name: "Bug Reporting",
-          description: "Documenting API failures, incorrect status codes, schema mismatches, or unexpected server error payloads."
-        },
-        {
-          name: "Test Summary Report",
-          description: "Consolidating API endpoint test results and contract validation outcomes into a structured report."
-        }
-      ]
+      ],
     },
-    mobile: {
-      title: "Mobile App Testing",
-      isConditional: true,
-      conditionalNote: "Applicable only if an approved mobile application build is available for testing.",
+    e2e: {
+      title: 'End-to-End Testing',
+      wasSkipped: false,
+      skippedNote:
+        'Completed only as far as the account creation step; the remainder is blocked, not failed.',
       activities: [
         {
-          name: "Test Case Creation",
-          description: "Formulating test cases tailored for mobile viewports, orientations, input fields, and mobile navigation."
+          name: 'Walking the purchase journey',
+          description: `A ${crossModule.e2e.totals.total}-step journey from catalogue through to order confirmation.`,
         },
         {
-          name: "Test Case Execution",
-          description: "Conducting manual mobile test runs on supported devices or responsive emulators."
+          name: 'Stopping honestly at the blocker',
+          description: `${crossModule.e2e.totals.blocked} steps could not be reached and are recorded as blocked rather than given a verdict.`,
         },
-        {
-          name: "Bug Reporting",
-          description: "Logging mobile-specific defects such as broken touch controls, layout overflows, or crash behaviors."
-        },
-        {
-          name: "Test Summary Report",
-          description: "Synthesizing mobile testing findings and device compatibility observations."
-        }
-      ]
+      ],
     },
-    automation: {
-      title: "Automation Testing",
+    defects: {
+      title: 'Defect Reporting',
       activities: [
         {
-          name: "Writing Test Scripts",
-          description: "Authoring modular automated scripts for selected, stable functional test cases using an approved automation tool."
+          name: 'Writing reproducible reports',
+          description: `${defectSeverity.total} defects were logged with steps, expected and actual behaviour.`,
         },
         {
-          name: "Test Execution",
-          description: "Executing the automated script suite against the test store and capturing execution traces or screenshots."
+          name: 'Rating severity',
+          description: `${defectSeverity.high} high, ${defectSeverity.medium} medium and ${defectSeverity.low} low.`,
         },
         {
-          name: "Test Summary Report",
-          description: "Documenting automation suite results, script execution times, pass/fail status, and coverage."
-        }
-      ]
+          name: 'Leaving the gap visible',
+          description: `${totals.failuresAwaitingWriteUp} observed failures were never written up and exist only as a Failed verdict in a workbook.`,
+        },
+      ],
     },
-    database: {
-      title: "Database Testing",
-      accessNote: "Subject to direct database access confirmation",
-      activities: [
-        {
-          name: "Test Case Creation",
-          description: "Developing verification test cases and SQL queries to validate stored user records, cart data, and orders."
-        },
-        {
-          name: "Test Execution",
-          description: "Executing database verification queries against target tables and checking data consistency with storefront actions."
-        }
-      ]
-    }
   },
+
   testLevelsData: [
     {
-      id: "level-component",
-      name: "Component Testing",
-      tagline: "Individual Functional Units",
-      shortName: "Level 1: Component",
-      description: "Focuses on testing individual functional components in isolation where they can be independently evaluated (e.g., input form validators, search query handlers, button interactions).",
-      accessNotice: "Note: Testing at the internal component level may require technical access to isolated code or units that is not available through the public web interface.",
-      plannedFocus: "Focus on independently verifiable UI component states and client-side input validations."
+      id: 'level-component',
+      name: 'Component Testing',
+      tagline: 'Individual fields and controls',
+      shortName: 'Level 1: Component',
+      description:
+        'Single inputs and controls checked in isolation — field validation, selectors, sliders and toggles.',
+      coverageNotice:
+        'Covered through the UI only; no unit-level access to the application code was available.',
+      outcome: `Registration field validation alone accounts for ${
+        moduleStories.find((m) => m.id === 'US-006')?.cases.failed ?? 0
+      } of the project’s failures.`,
     },
     {
-      id: "level-integration",
-      name: "Integration Testing",
-      tagline: "Connected Modules & Data Flow",
-      shortName: "Level 2: Integration",
-      description: "Focuses on verifying communication, data exchange, and contract consistency between connected functional components where accessible (e.g., catalog-to-cart handoff, cart-to-checkout data flow, form-to-server submission).",
-      accessNotice: "Note: Deep integration testing between sub-services or third-party gateways may depend on backend access or mock environments not exposed on the public site.",
-      plannedFocus: "Focus on end-to-end data transfer between user registration, shopping cart, and checkout stages."
+      id: 'level-integration',
+      name: 'Integration Testing',
+      tagline: 'Where two modules meet',
+      shortName: 'Level 2: Integration',
+      description:
+        'Data and state handed from one module to the next — catalogue to cart, registration to account, order to invoice.',
+      coverageNotice: `Covered by a dedicated ${crossModule.integration.totals.total}-case suite plus integration areas inside module workbooks.`,
+      outcome: `${crossModule.integration.totals.failed} of ${crossModule.integration.totals.total} cross-module cases failed.`,
     },
     {
-      id: "level-system",
-      name: "System Testing",
-      tagline: "Complete End-to-End User Journeys",
-      shortName: "Level 3: System",
-      description: "Focuses on evaluating complete, end-to-end user workflows across the entire e-commerce website from a real customer's perspective on supported web browsers.",
-      accessNotice: "Fully accessible through the live web application interface at https://automationteststore.com/.",
-      plannedFocus: "Primary focus of our graduation project: verifying complete customer purchase and browsing journeys."
+      id: 'level-system',
+      name: 'System Testing',
+      tagline: 'Each module end to end',
+      shortName: 'Level 3: System',
+      description:
+        'Each module exercised as a whole against its user story and acceptance criteria.',
+      coverageNotice: `${executedModules.length} of ${moduleStories.length} modules were executed at this level.`,
+      outcome: `${totals.passed} passed and ${totals.failed} failed across ${totals.executed} executed cases.`,
     },
     {
-      id: "level-acceptance",
-      name: "Acceptance Testing",
-      tagline: "Business Requirements & User Acceptance",
-      shortName: "Level 4: Acceptance",
-      description: "Focuses on validating that the system meets user expectations, business requirements, and predefined acceptance criteria before final graduation project submission.",
-      accessNotice: "Evaluated against documented user stories, acceptance criteria, and project stakeholder expectations.",
-      plannedFocus: "Verify that user stories and end-to-end checkout scenarios fulfill all acceptance criteria defined for the graduation project."
-    }
+      id: 'level-acceptance',
+      name: 'Acceptance Testing',
+      tagline: 'The complete customer journey',
+      shortName: 'Level 4: Acceptance',
+      description:
+        'The full purchase journey a real customer would follow, from browsing to a confirmed order.',
+      coverageNotice:
+        'Attempted once as a single end-to-end journey; not repeated after the blocker.',
+      outcome: `${crossModule.e2e.totals.passed} of ${crossModule.e2e.totals.total} steps passed; the journey never reached a confirmed order.`,
+    },
   ],
+
+  // The delivery pipeline the project actually went through. These are stages,
+  // not dated weeks - the delivered data records artifacts and verdicts, not a
+  // calendar, so no schedule is claimed here.
   testingPhases: [
     {
-      id: "week-1",
-      title: "Project Planning & Scope Definition",
-      status: "CURRENT STAGE (PLANNING)",
-      isCurrent: true,
-      description: "Team alignment, exploration of Automation Test Store, scope definition, and presentation of the graduation project proposal.",
-      phaseNumber: "Week 1",
+      id: 'phase-stories',
+      phaseNumber: '01',
+      title: 'User Stories Written',
+      status: 'Delivered',
+      isFinal: false,
+      description: `One user story per module, defining scope and acceptance criteria for the ${moduleStories.length} areas of the application under test.`,
       keyActivities: [
-        "Exploratory analysis of storefront structure and modules",
-        "Scope definition and high-level risk assessment",
-        "Team roles, responsibilities, and project cadence alignment",
-        "Initial graduation project proposal kickoff"
+        `${moduleStories.length} user stories written, one per module`,
+        'Acceptance criteria agreed per story',
+        'Scope of each module fixed before case design',
       ],
-      plannedDeliverables: "Project Proposal Presentation, Initial Team Scope Agreement"
+      deliverables: `${moduleStories.length} of ${moduleStories.length} user stories delivered`,
     },
     {
-      id: "week-2",
-      title: "Feature Verification & User Story Writing",
-      status: "Upcoming (Proposed)",
-      isCurrent: false,
-      description: "Conducting systematic feature verification across target modules and authoring structured user stories with acceptance criteria.",
-      phaseNumber: "Week 2",
+      id: 'phase-cases',
+      phaseNumber: '02',
+      title: 'Test Cases Designed',
+      status: 'Delivered',
+      isFinal: false,
+      description: `${totals.cases} test cases written across 53 test areas, each carrying a priority and an expected result.`,
       keyActivities: [
-        "Validate 10 functional storefront modules against live site",
-        "Draft formal user stories with Given-When-Then acceptance criteria",
-        "Identify core customer journeys and edge interactions",
-        "Establish functional requirements traceability matrix"
+        `${totals.cases} cases written across 53 test areas`,
+        'Each case assigned a priority',
+        'Cases mapped to their module and area',
       ],
-      plannedDeliverables: "59 Proposed User Stories with Acceptance Criteria, Feature Inventory"
+      deliverables: `${totals.cases} test cases across ${moduleStories.length} workbooks`,
     },
     {
-      id: "week-3",
-      title: "Static Review & Test Design",
-      status: "Upcoming (Proposed)",
-      isCurrent: false,
-      description: "Performing peer reviews on user stories, identifying requirement ambiguities, and applying black-box test design techniques.",
-      phaseNumber: "Week 3",
+      id: 'phase-static',
+      phaseNumber: '03',
+      title: 'Static Review',
+      status: 'Delivered with a gap',
+      isFinal: false,
+      description: `Stories and case workbooks peer-reviewed before execution, producing ${staticSeverity.total} findings.`,
       keyActivities: [
-        "Conduct peer reviews on drafted user stories for testability",
-        "Log ambiguities, contradictory rules, and missing conditions",
-        "Apply Equivalence Partitioning (EP) and Boundary Value Analysis (BVA)",
-        "Outline positive, negative, and boundary test scenarios"
+        `${staticSeverity.total} findings raised across ${
+          moduleStories.length - modulesWithoutStaticReview.length
+        } modules`,
+        `${staticSeverity.high} high, ${staticSeverity.medium} medium, ${staticSeverity.low} low`,
+        `${staticSeverity.unrated} findings left without a severity rating`,
       ],
-      plannedDeliverables: "User Story Peer Review Log, Ambiguity Log, Test Design Matrix"
+      deliverables: `${staticSeverity.total} static findings; ${modulesWithoutStaticReview.length} module never reviewed`,
     },
     {
-      id: "week-4",
-      title: "Manual Test Case Creation",
-      status: "Upcoming (Proposed)",
-      isCurrent: false,
-      description: "Authoring detailed manual test case suites with preconditions, step-by-step procedures, test data, and expected results.",
-      phaseNumber: "Week 4",
+      id: 'phase-execution',
+      phaseNumber: '04',
+      title: 'Execution',
+      status: 'Delivered with a gap',
+      isFinal: false,
+      description: `${totals.executed} of ${totals.cases} cases executed through the browser, each given a recorded verdict.`,
       keyActivities: [
-        "Author structured test cases with preconditions and exact steps",
-        "Define specific test data sets (valid, invalid, boundary values)",
-        "Incorporate responsive and cross-browser verification checkpoints",
-        "Conduct team review and baseline test suite approval"
+        `${totals.executed} cases executed (${totals.execRate}%)`,
+        `${totals.passed} passed, ${totals.failed} failed, ${totals.blocked} blocked`,
+        `${totals.notRun} cases never run`,
       ],
-      plannedDeliverables: "Structured Test Case Suites for Approved Modules"
+      deliverables: `${totals.passRate}% pass rate of executed cases`,
     },
     {
-      id: "week-5",
-      title: "Manual Test Execution & Bug Reporting",
-      status: "Upcoming (Proposed)",
-      isCurrent: false,
-      description: "Executing test cases manually across desktop browsers, logging actual results, and reporting reproducible defects with screenshots.",
-      phaseNumber: "Week 5",
+      id: 'phase-defects',
+      phaseNumber: '05',
+      title: 'Defect Reporting',
+      status: 'Delivered with a gap',
+      isFinal: false,
+      description: `${defectSeverity.total} defects written up with reproduction steps and a severity rating.`,
       keyActivities: [
-        "Execute manual test case suites on target browsers",
-        "Record actual vs expected results with evidence screenshots",
-        "Log reproducible defect reports with severity and reproduction steps",
-        "Verify defect fixes and conduct regression smoke checks"
+        `${defectSeverity.total} defects logged`,
+        `${defectSeverity.high} high, ${defectSeverity.medium} medium, ${defectSeverity.low} low`,
+        `${totals.failuresAwaitingWriteUp} failures left without a defect report`,
       ],
-      plannedDeliverables: "Test Execution Logs, Defect Reports / Bug Log with Evidence"
+      deliverables: `${defectSeverity.total} defect reports across ${
+        moduleStories.length - modulesWithoutBugReport.length - 1
+      } modules`,
     },
     {
-      id: "week-6",
-      title: "API, Mobile & Database Testing (Subject to Access)",
-      status: "Upcoming (Conditional)",
-      isCurrent: false,
-      description: "Conducting specialized testing for APIs, mobile interfaces, and database queries where technical access and credentials are confirmed.",
-      phaseNumber: "Week 6",
+      id: 'phase-reporting',
+      phaseNumber: '06',
+      title: 'Reporting Delivered',
+      status: 'Complete',
+      isFinal: true,
+      description: `Test summary reports and this exhibition delivered on ${reportDate}, presenting the result including the coverage that was not achieved.`,
       keyActivities: [
-        "Validate public REST API endpoints and response payloads",
-        "Execute mobile responsive viewport and device emulation tests",
-        "Verify database records and consistency (subject to access permissions)",
-        "Document technical access boundaries and environment constraints"
+        'Per-module test summary reports produced',
+        'Project-level totals reconciled against the workbooks',
+        'Outstanding gaps stated rather than omitted',
       ],
-      plannedDeliverables: "API Collections, Mobile Viewport Notes, Database Verification Logs"
+      deliverables: `Reporting delivered ${reportDate}`,
     },
-    {
-      id: "week-7",
-      title: "Automation Script Development",
-      status: "Upcoming (Proposed)",
-      isCurrent: false,
-      description: "Authoring automated test scripts for selected high-priority functional regression flows using an approved automation framework.",
-      phaseNumber: "Week 7",
-      keyActivities: [
-        "Set up test automation framework and locator strategy",
-        "Implement Page Object Model (POM) pattern for target flows",
-        "Automate priority smoke scenarios (Search, Cart, Checkout)",
-        "Incorporate robust assertions and execution reporting hooks"
-      ],
-      plannedDeliverables: "Automated Test Scripts for Selected Regression Scenarios"
-    },
-    {
-      id: "week-8",
-      title: "Automation Test Execution & Reporting",
-      status: "Upcoming (Proposed)",
-      isCurrent: false,
-      description: "Running automated regression suites, evaluating script stability, analyzing failure logs, and documenting automation metrics.",
-      phaseNumber: "Week 8",
-      keyActivities: [
-        "Execute automated regression suites across supported browsers",
-        "Investigate script failures, locator flakiness, and issues",
-        "Generate test execution summary reports and coverage metrics",
-        "Compare automation results against manual baseline execution"
-      ],
-      plannedDeliverables: "Automation Run Reports, Test Execution Metrics Summary"
-    },
-    {
-      id: "week-9",
-      title: "Final Test Summary & Presentation",
-      status: "Upcoming (Proposed)",
-      isCurrent: false,
-      description: "Synthesizing all test outcomes, metrics, defect logs, and project reflections into the final Graduation Project Test Summary Report.",
-      phaseNumber: "Week 9",
-      keyActivities: [
-        "Consolidate comprehensive defect logs, pass rates, and metrics",
-        "Synthesize testing conclusions, lessons learned, and recommendations",
-        "Finalize graduation project test summary documentation",
-        "Prepare and rehearse final presentation defense"
-      ],
-      plannedDeliverables: "Final Graduation Project Test Summary Report & Presentation Defense"
-    }
-  ]
+  ],
 };
 
-export async function fetchProjectData(): Promise<{
-  data: ProjectStatePayload;
-  isLive: boolean;
-  error: string | null;
-}> {
-  if (!supabase) {
-    return {
-      data: fallbackProjectState,
-      isLive: false,
-      error: "Supabase client not configured. Showing local baseline."
-    };
-  }
-
-  try {
-    // 1. Fetch user stories from public.user_stories table
-    const { data: userStoriesData, error: userStoriesError } = await supabase
-      .from('user_stories')
-      .select('*')
-      .order('id', { ascending: true });
-
-    if (userStoriesError) {
-      console.warn('[Supabase] Failed to fetch user_stories:', userStoriesError.message);
-    }
-
-    // 2. Fetch project state payload from public.project_state
-    const { data: stateData, error: stateError } = await supabase
-      .from('project_state')
-      .select('data')
-      .eq('id', 'default')
-      .single();
-
-    if (stateError) {
-      console.warn('[Supabase] Failed to fetch project_state:', stateError.message);
-    }
-
-    // Determine the base state from project_state or fallback
-    let combinedData: ProjectStatePayload = stateData?.data 
-      ? (stateData.data as ProjectStatePayload)
-      : fallbackProjectState;
-
-    // Filter out "Writing User Stories" from Static Testing Activities if present in database
-    // (Prompt explicitly mandates: "IMPORTANT: Do not add 'Writing User Stories' to this section.
-    // That activity should be communicated in the User Stories section only.")
-    if (combinedData.testingActivitiesData?.static?.activities) {
-      combinedData.testingActivitiesData.static.activities = 
-        combinedData.testingActivitiesData.static.activities.filter(
-          act => !act.name.toLowerCase().includes('writing user stories')
-        );
-    }
-
-    // If live user stories were retrieved, update proposedUserStories
-    if (userStoriesData && userStoriesData.length > 0) {
-      const mappedStories: UserStory[] = userStoriesData.map((item: any) => ({
-        id: item.id,
-        url: item.url || null,
-        title: item.title,
-        module: item.module,
-        priority: item.priority || 'Medium',
-        description: item.description || null,
-        teamProgress: item.team_progress || 'Not Started',
-        evidenceStatus: item.evidence_status || 'Visible UI',
-        verificationNote: item.verification_note || null,
-      }));
-
-      combinedData = {
-        ...combinedData,
-        proposedUserStories: mappedStories
-      };
-    } else if (!combinedData.proposedUserStories || combinedData.proposedUserStories.length === 0) {
-      combinedData.proposedUserStories = fallbackProjectState.proposedUserStories;
-    }
-
-    // Ensure highlights reflect current count
-    const storyCount = combinedData.proposedUserStories.length;
-    if (combinedData.projectOverview?.keyHighlights) {
-      combinedData.projectOverview.keyHighlights = combinedData.projectOverview.keyHighlights.map(h => {
-        if (h.label.includes('User Stories')) {
-          return { ...h, value: `${storyCount} Features Identified` };
-        }
-        return h;
-      });
-    }
-
-    // Ensure team members retain their LinkedIn profile links
-    const memberLinkedInMap: Record<string, string> = {
-      'team-1': 'https://eg.linkedin.com/in/youssef-elbltagi',
-      'team-2': 'https://www.linkedin.com/in/abdulrhman-mohamed01/',
-      'team-3': 'https://www.linkedin.com/in/hend-amr-502281416/',
-      'team-4': 'https://www.linkedin.com/in/mostafa-elgohary-7b679a392/?isSelfProfile=false',
-    };
-
-    if (combinedData.teamIntroduction?.members) {
-      combinedData.teamIntroduction.members = combinedData.teamIntroduction.members.map((member, index) => {
-        const isLeader = member.id === 'team-1' || index === 0 || member.name.toLowerCase().includes('youssef');
-        const mappedUrl = memberLinkedInMap[member.id] || memberLinkedInMap[`team-${index + 1}`];
-        return {
-          ...member,
-          role: isLeader ? 'Team Leader' : member.role,
-          url: member.url || mappedUrl,
-          linkedinUrl: member.linkedinUrl || mappedUrl
-        };
-      });
-    }
-
-    // Ensure Acceptance Testing is present in testLevelsData
-    if (combinedData.testLevelsData) {
-      const hasAcceptance = combinedData.testLevelsData.some(l => l.id === 'level-acceptance');
-      if (!hasAcceptance) {
-        combinedData.testLevelsData.push({
-          id: "level-acceptance",
-          name: "Acceptance Testing",
-          tagline: "Business Requirements & User Acceptance",
-          shortName: "Level 4: Acceptance",
-          description: "Focuses on validating that the system meets user expectations, business requirements, and predefined acceptance criteria before final graduation project submission.",
-          accessNotice: "Evaluated against documented user stories, acceptance criteria, and project stakeholder expectations.",
-          plannedFocus: "Verify that user stories and end-to-end checkout scenarios fulfill all acceptance criteria defined for the graduation project."
-        });
-      }
-    }
-
-    return {
-      data: combinedData,
-      isLive: true,
-      error: null
-    };
-  } catch (err: any) {
-    console.error('[Supabase] Exception fetching project data:', err);
-    return {
-      data: fallbackProjectState,
-      isLive: false,
-      error: err?.message || 'Unexpected error occurred while fetching from Supabase.'
-    };
-  }
-}
+/**
+ * Kept as a named export so the data hook reads the same way it always did.
+ * There is no remote source any more - the bundled state is the only one.
+ */
+export const fallbackProjectState = projectState;

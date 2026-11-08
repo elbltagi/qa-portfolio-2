@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { BlurTextReveal } from '../components/BlurTextReveal';
 import { Layers, Box, Cpu, Workflow, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '../lib/gsap';
@@ -92,9 +93,12 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
             <span className="font-tech text-xs tracking-widest uppercase text-accent block mb-1.5">
               07 / Hierarchy of Verification
             </span>
-            <h2 className="text-fluid-section-title font-display font-black text-ink uppercase">
-              Test Levels<span className="text-accent">.</span>
-            </h2>
+            <BlurTextReveal
+              as="h2"
+              text="Test Levels"
+              accentSuffix="."
+              className="text-fluid-section-title font-display font-black text-ink uppercase"
+            />
           </div>
           <p className="text-ink-muted max-w-md text-sm sm:text-base leading-relaxed font-light">
             Understanding software verification from isolated unit components up to full end-to-end customer workflows.
@@ -173,16 +177,16 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
                         </div>
                         <div className="p-3.5 rounded-xl bg-charcoal-900 border border-charcoal-800 space-y-1">
                           <span className="text-[10px] font-tech uppercase text-accent font-bold tracking-wider block">
-                            Proposed Project Scope
+                            Result at This Level
                           </span>
                           <p className="text-canvas-surface/90 leading-relaxed text-[11px]">
-                            {lvl.plannedFocus}
+                            {lvl.outcome}
                           </p>
                         </div>
                         <div className="p-3 rounded-xl bg-charcoal-900/60 border border-charcoal-800 flex items-start gap-2 text-[11px] text-charcoal-300">
                           <AlertCircle className="w-3.5 h-3.5 text-accent shrink-0 mt-0.5" />
                           <p className="leading-relaxed">
-                            <strong>Access Boundary:</strong> {lvl.accessNotice}
+                            <strong>Coverage:</strong> {lvl.coverageNotice}
                           </p>
                         </div>
                       </div>
@@ -220,13 +224,13 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
                   </p>
                 </div>
 
-                {/* Planned Focus */}
+                {/* Result at this level */}
                 <div className="p-5 rounded-2xl bg-canvas-muted/40 border border-canvas-border space-y-1.5">
                   <span className="text-xs font-tech uppercase text-accent font-bold tracking-wider block">
-                    Proposed Graduation Project Application
+                    Result at This Level
                   </span>
                   <p className="text-sm text-ink leading-relaxed">
-                    {activeLevel.plannedFocus}
+                    {activeLevel.outcome}
                   </p>
                 </div>
 
@@ -234,7 +238,7 @@ export const TestLevelsSection: React.FC<TestLevelsSectionProps> = ({ levels }) 
                 <div className="p-4 rounded-xl bg-canvas-muted/70 border border-canvas-border flex items-start gap-3 text-xs text-ink-muted">
                   <AlertCircle className="w-4 h-4 text-ink-ghost shrink-0 mt-0.5" />
                   <p className="leading-relaxed">
-                    <strong>Access Boundary Clarification:</strong> {activeLevel.accessNotice}
+                    <strong>Coverage:</strong> {activeLevel.coverageNotice}
                   </p>
                 </div>
               </div>

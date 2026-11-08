@@ -1,12 +1,30 @@
+import type { ModuleStory } from '../data/toolshop';
+
+export type {
+  CaseCounts,
+  CrossModuleRefs,
+  ModuleArtifacts,
+  ModuleState,
+  ModuleStory,
+  PriorityCounts,
+  SeverityCounts,
+  TestArea,
+} from '../data/toolshop';
+
 export interface ProjectMeta {
   name: string;
   track: string;
+  /** Where the project stands, e.g. "Execution complete". */
   status: string;
-  duration: string;
+  /** Date the reporting was delivered. */
+  reportDate: string;
   initiative: string;
   liveAppUrl: string;
   fullProjectName: string;
-  testingStatusNotice: string;
+  /** The team that carried out the testing. */
+  team: string;
+  /** One line on the coverage the run did and did not achieve. */
+  coverageNotice: string;
 }
 
 export interface ProjectOverviewData {
@@ -17,6 +35,7 @@ export interface ProjectOverviewData {
   keyHighlights: Array<{
     label: string;
     value: string;
+    sub: string;
   }>;
 }
 
@@ -38,28 +57,21 @@ export interface TeamIntroductionData {
   members: TeamMember[];
 }
 
-export interface UserStory {
-  id: string;
-  url?: string | null;
-  title: string;
-  module: string;
-  priority: string;
-  description?: string | null;
-  teamProgress?: string;
-  evidenceStatus: string;
-  verificationNote?: string | null;
-}
-
 export interface TestingType {
   id: string;
   name: string;
   badge: string;
+  /** What actually happened, e.g. "Executed" or "Not performed". */
   status: string;
   purpose: string;
-  isConditional: boolean;
-  expectedOutputs: string;
-  proposedApproach: string;
-  accessNotice?: string;
+  /** True when the discipline was not carried out on this project. */
+  wasSkipped: boolean;
+  /** What the discipline actually produced. */
+  outputs: string;
+  /** How it was carried out. */
+  approach: string;
+  /** Shown when coverage was partial or absent. */
+  coverageNotice?: string;
 }
 
 export interface TestingActivityItem {
@@ -70,8 +82,9 @@ export interface TestingActivityItem {
 export interface TestingActivityCategory {
   title: string;
   accessNote?: string;
-  isConditional?: boolean;
-  conditionalNote?: string;
+  /** True when the category was not carried out. */
+  wasSkipped?: boolean;
+  skippedNote?: string;
   activities: TestingActivityItem[];
 }
 
@@ -83,26 +96,31 @@ export interface TestLevel {
   tagline: string;
   shortName: string;
   description: string;
-  accessNotice: string;
-  plannedFocus: string;
+  /** What this level actually covered on this project. */
+  coverageNotice: string;
+  /** The result observed at this level. */
+  outcome: string;
 }
 
 export interface TestingPhase {
   id: string;
   title: string;
   status: string;
-  isCurrent: boolean;
+  /** True for the phase the project finished on. */
+  isFinal: boolean;
   description: string;
   phaseNumber: string;
   keyActivities: string[];
-  plannedDeliverables: string;
+  /** What the phase actually delivered. */
+  deliverables: string;
 }
 
 export interface ProjectStatePayload {
   projectMeta: ProjectMeta;
   projectOverview: ProjectOverviewData;
   teamIntroduction: TeamIntroductionData;
-  proposedUserStories: UserStory[];
+  /** The ten user stories, one per module, with their execution results. */
+  moduleStories: ModuleStory[];
   testingTypes: TestingType[];
   testingActivitiesData: TestingActivitiesRecord;
   testLevelsData: TestLevel[];
