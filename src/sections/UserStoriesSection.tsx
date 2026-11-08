@@ -138,7 +138,7 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({
               type="button"
               onClick={() => setStateFilter('all')}
               aria-pressed={stateFilter === 'all'}
-              className={`px-3 py-1.5 rounded-lg border font-tech text-[11px] uppercase tracking-wider transition-all ${
+              className={`min-h-[40px] px-3 py-2 rounded-lg border font-tech text-[11px] uppercase tracking-wider transition-all ${
                 stateFilter === 'all'
                   ? 'bg-ink text-canvas-surface border-ink shadow-sm'
                   : 'bg-canvas-surface text-ink-muted border-canvas-border hover:border-accent/50'
@@ -152,7 +152,7 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({
                 type="button"
                 onClick={() => setStateFilter(state)}
                 aria-pressed={stateFilter === state}
-                className={`px-3 py-1.5 rounded-lg border font-tech text-[11px] uppercase tracking-wider transition-all ${
+                className={`min-h-[40px] px-3 py-2 rounded-lg border font-tech text-[11px] uppercase tracking-wider transition-all ${
                   stateFilter === state
                     ? 'bg-ink text-canvas-surface border-ink shadow-sm'
                     : `${stateTone[state]} hover:-translate-y-0.5`
@@ -185,7 +185,7 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({
                             {story.id}
                           </code>
                           <span
-                            className={`font-tech text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                            className={`font-tech text-[10px] sm:text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
                               stateTone[story.state]
                             }`}
                           >
@@ -285,7 +285,7 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({
                         className="overflow-hidden border-t border-canvas-border bg-canvas"
                       >
                         <div className="p-4 sm:p-5">
-                          <span className="font-tech text-[9px] uppercase tracking-ultra text-ink-ghost block mb-2.5">
+                          <span className="font-tech text-[10px] sm:text-[9px] uppercase tracking-ultra text-ink-ghost block mb-2.5">
                             Test areas ({story.areas.length})
                           </span>
                           <ul className="space-y-1.5">

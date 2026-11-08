@@ -231,7 +231,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta, stories }) => {
               </span>
             </span>
             <span className="overflow-clip-mask block text-accent font-display">
-              <span className="inline-flex flex-wrap text-[#315BFA]">
+              {/* Each letter is its own inline-block for the stagger, so a
+                  wrapping container would break the word at an arbitrary
+                  letter — "CURIOSIT / Y." on a phone. It fits on one line at
+                  every width now, so it is never allowed to split. */}
+              <span className="inline-flex flex-nowrap text-[#315BFA]">
                 {curiosityWord.split('').map((char, i) => (
                   <span
                     key={i}
@@ -264,7 +268,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta, stories }) => {
                 href="#overview"
                 onMouseMove={handleMouseMove}
                 onMouseLeave={handleMouseLeave}
-                className="group relative inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-ink text-white font-medium text-xs sm:text-sm hover:bg-accent transition-colors duration-300 shadow-sm hover:shadow-md text-center"
+                className="group relative inline-flex min-h-[48px] items-center justify-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-full bg-ink text-white font-medium text-xs sm:text-sm hover:bg-accent transition-colors duration-300 shadow-sm hover:shadow-md text-center"
               >
                 <Compass className="w-4 h-4 text-accent group-hover:text-white transition-colors" />
                 <span className="tracking-wide">Explore the Project</span>
@@ -273,7 +277,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta, stories }) => {
 
               <a
                 href="#/stories"
-                className="inline-flex items-center justify-center gap-2 px-4.5 sm:px-5 py-2.5 sm:py-3 rounded-full border border-canvas-border text-ink text-xs sm:text-sm font-medium hover:bg-canvas-muted transition-colors text-center"
+                className="inline-flex min-h-[48px] items-center justify-center gap-2 px-4.5 sm:px-5 py-2.5 sm:py-3 rounded-full border border-canvas-border text-ink text-xs sm:text-sm font-medium hover:bg-canvas-muted transition-colors text-center"
               >
                 <span>See the modules</span>
                 <span className="text-xs font-tech text-ink-subtle">→</span>
@@ -293,7 +297,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({ meta, stories }) => {
             { value: `${totals.passRate}%`, label: 'Pass rate of executed' },
             { value: String(totals.defectsLogged), label: 'Defects logged' },
           ].map((figure) => (
-            <div key={figure.label} className="flex items-baseline gap-2">
+            // Stacked on phones: side by side, the label gets a half-column
+            // and "Pass rate of executed" breaks across three lines.
+            <div
+              key={figure.label}
+              className="flex flex-col gap-0.5 sm:flex-row sm:items-baseline sm:gap-2"
+            >
               <span className="font-display font-black text-xl sm:text-2xl text-ink tabular-nums">
                 {figure.value}
               </span>

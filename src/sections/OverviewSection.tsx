@@ -189,7 +189,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('mission')}
-                className={`flex-1 sm:flex-initial text-center px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
+                className={`flex-1 sm:flex-initial inline-flex min-h-[40px] items-center justify-center text-center px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
                   activeTab === 'mission'
                     ? 'bg-ink text-canvas-surface shadow-xs'
                     : 'text-ink-muted hover:text-ink'
@@ -200,7 +200,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('target')}
-                className={`flex-1 sm:flex-initial text-center px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
+                className={`flex-1 sm:flex-initial inline-flex min-h-[40px] items-center justify-center text-center px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
                   activeTab === 'target'
                     ? 'bg-ink text-canvas-surface shadow-xs'
                     : 'text-ink-muted hover:text-ink'
@@ -211,7 +211,7 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
               <button
                 type="button"
                 onClick={() => setActiveTab('scope')}
-                className={`flex-1 sm:flex-initial text-center px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
+                className={`flex-1 sm:flex-initial inline-flex min-h-[40px] items-center justify-center text-center px-3.5 sm:px-4 py-1.5 rounded-xl sm:rounded-full text-xs font-semibold tracking-wide transition-all whitespace-nowrap ${
                   activeTab === 'scope'
                     ? 'bg-ink text-canvas-surface shadow-xs'
                     : 'text-ink-muted hover:text-ink'
@@ -376,17 +376,23 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
               className="rounded-2xl sm:rounded-3xl bg-ink text-canvas-surface p-5 sm:p-6 lg:p-7 shadow-xl border border-charcoal-800 relative overflow-hidden transition-all"
             >
               {/* Browser mockup chrome */}
-              <div className="flex items-center justify-between pb-3.5 border-b border-charcoal-800 mb-4 sm:mb-5">
-                <div className="flex items-center gap-2">
+              {/* The address pill is the only flexible item here: on a phone
+                  it is wider than the space left by the dots and the label,
+                  so it must be allowed to shrink and truncate rather than
+                  push "Under test" off the card. */}
+              <div className="flex items-center gap-2 sm:gap-3 pb-3.5 border-b border-charcoal-800 mb-4 sm:mb-5">
+                <div className="flex items-center gap-2 shrink-0">
                   <div className="w-2.5 h-2.5 rounded-full bg-rose-500/80" />
                   <div className="w-2.5 h-2.5 rounded-full bg-amber-500/80" />
                   <div className="w-2.5 h-2.5 rounded-full bg-emerald-500/80" />
                 </div>
-                <div className="flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-charcoal-900 text-charcoal-400 text-xs font-tech">
-                  <Globe className="w-3.5 h-3.5 text-accent" />
-                  <span>{meta.liveAppUrl}</span>
+                <div className="flex min-w-0 flex-1 items-center gap-2 px-2.5 py-0.5 rounded-full bg-charcoal-900 text-charcoal-400 text-[11px] sm:text-xs font-tech">
+                  <Globe className="w-3.5 h-3.5 text-accent shrink-0" />
+                  <span className="truncate">{meta.liveAppUrl}</span>
                 </div>
-                <span className="text-[10px] font-tech text-charcoal-500 uppercase">Under test</span>
+                <span className="text-[10px] font-tech text-charcoal-500 uppercase shrink-0">
+                  Under test
+                </span>
               </div>
 
               {/* Architectural storefront preview details */}

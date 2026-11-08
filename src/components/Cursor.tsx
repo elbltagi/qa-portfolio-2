@@ -36,9 +36,19 @@ export const Cursor: React.FC = () => {
     if (typeof window === 'undefined' || !window.matchMedia) return;
 
     const fine = window.matchMedia('(pointer: fine)');
-    if (!fine.matches) return;
+    let stop = () => {};
 
-    const stop = onBooted(() => setActive(true));
+    // Re-evaluated on change, not just at mount: a tablet whose keyboard is
+    // attached or removed switches pointer type under a live page.
+    const sync = () => {
+      stop();
+      stop = () => {};
+      if (fine.matches) stop = onBooted(() => setActive(true));
+      else setActive(false);
+    };
+
+    sync();
+    fine.addEventListener('change', sync);
 
     // A hybrid device that starts on a mouse and moves to touch.
     const onTouch = () => setActive(false);
@@ -46,6 +56,7 @@ export const Cursor: React.FC = () => {
 
     return () => {
       stop();
+      fine.removeEventListener('change', sync);
       window.removeEventListener('touchstart', onTouch);
     };
   }, []);

@@ -75,7 +75,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="font-display font-bold text-[11px] sm:text-xs tracking-widest uppercase text-ink">
                 The Quality Journey
               </span>
-              <span className="text-[9px] sm:text-[10px] tracking-wider text-ink-subtle uppercase font-tech">
+              <span className="text-[10px] tracking-wider text-ink-subtle uppercase font-tech">
                 Bug Hunters QA / DEPI
               </span>
             </div>
@@ -95,7 +95,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
             <span
               title="Reporting delivered"
-              className="hidden lg:inline-flex items-center gap-1.5 font-tech text-[9px] uppercase tracking-wider text-ink-subtle px-2 py-1 rounded-full border border-canvas-border"
+              className="hidden lg:inline-flex items-center gap-1.5 font-tech text-[10px] sm:text-[9px] uppercase tracking-wider text-ink-subtle px-2 py-1 rounded-full border border-canvas-border"
             >
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
               {reportDate}
@@ -116,7 +116,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               onClick={() => setIndexOpen(true)}
               aria-label="Open site index"
               aria-expanded={indexOpen}
-              className="inline-flex items-center gap-2 px-3 py-2 rounded-full border border-canvas-border text-ink hover:border-accent hover:text-accent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-2 px-3 py-2 rounded-full border border-canvas-border text-ink hover:border-accent hover:text-accent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
               <LayoutGrid className="w-4 h-4" />
               <span className="hidden sm:inline font-tech text-[10px] uppercase tracking-widest">
@@ -149,7 +149,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                   type="button"
                   onClick={() => setIndexOpen(false)}
                   aria-label="Close site index"
-                  className="p-2 rounded-lg text-white hover:bg-white/10 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+                  className="inline-flex min-h-[44px] min-w-[44px] items-center justify-center p-2 rounded-lg text-white hover:bg-white/10 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-accent"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -172,7 +172,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           initial={{ opacity: 0, y: 12 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.025 * i, duration: 0.3 }}
-                          className="group flex items-baseline gap-4 py-2.5 border-b border-white/10 hover:border-accent/50 transition-colors"
+                          className="group flex min-h-[44px] items-baseline gap-4 py-3 sm:py-2.5 border-b border-white/10 hover:border-accent/50 transition-colors"
                         >
                           <span
                             className={`font-tech text-[11px] shrink-0 transition-colors ${
@@ -193,7 +193,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                             {chapter.label}
                           </span>
                           {isActive && (
-                            <span className="font-tech text-[9px] uppercase tracking-wider text-accent/70 ml-auto shrink-0">
+                            <span className="font-tech text-[10px] sm:text-[9px] uppercase tracking-wider text-accent/70 ml-auto shrink-0">
                               Reading
                             </span>
                           )}
@@ -221,7 +221,7 @@ export const Navbar: React.FC<NavbarProps> = ({
                           <Link
                             to={page.path}
                             onClick={() => setIndexOpen(false)}
-                            className="group flex items-baseline gap-4 py-2.5 border-b border-white/10 hover:border-accent/50 transition-colors"
+                            className="group flex min-h-[44px] items-baseline gap-4 py-3 sm:py-2.5 border-b border-white/10 hover:border-accent/50 transition-colors"
                           >
                             <span
                               className={`font-tech text-[11px] shrink-0 transition-colors ${

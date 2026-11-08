@@ -82,7 +82,7 @@ export const TestingActivitiesSection: React.FC<TestingActivitiesSectionProps> =
                 key={key}
                 type="button"
                 onClick={() => setSelectedKey(key)}
-                className={`px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all border ${
+                className={`inline-flex min-h-[40px] items-center px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-xl text-[11px] sm:text-xs font-bold uppercase tracking-wider transition-all border ${
                   isSelected
                     ? 'bg-accent text-white border-accent shadow-sm shadow-accent/20 ring-1 ring-accent/30'
                     : 'bg-canvas-surface text-ink-muted border-canvas-border hover:border-canvas-muted hover:text-ink shadow-xs'
@@ -91,7 +91,7 @@ export const TestingActivitiesSection: React.FC<TestingActivitiesSectionProps> =
                 <span>{cat.title}</span>
                 {cat.wasSkipped && (
                   <span
-                    className={`ml-1.5 text-[9px] px-1.5 py-0.5 rounded-sm font-bold ${
+                    className={`ml-1.5 text-[10px] sm:text-[9px] px-1.5 py-0.5 rounded-sm font-bold ${
                       isSelected
                         ? 'bg-white/20 text-white'
                         : 'bg-amber-500/20 text-amber-700'
@@ -168,7 +168,7 @@ export const TestingActivitiesSection: React.FC<TestingActivitiesSectionProps> =
             </span>
             <a
               href="#/stories"
-              className="inline-flex items-center gap-1 text-accent hover:underline font-semibold"
+              className="inline-flex min-h-[44px] items-center gap-1 text-accent hover:underline font-semibold"
             >
               <span>Open User Stories</span>
               <ArrowUpRight className="w-3.5 h-3.5" />

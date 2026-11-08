@@ -63,7 +63,7 @@ Digital Egypt Pioneers Initiative (DEPI) Software Testing Track graduation proje
                 <li key={chapter.id}>
                   <a
                     href={`#${chapter.id}`}
-                    className="group inline-flex items-baseline gap-2 text-xs text-charcoal-400 hover:text-white transition-colors"
+                    className="group inline-flex min-h-[40px] items-center gap-2 text-xs text-charcoal-400 hover:text-white transition-colors"
                   >
                     <span className="font-tech text-[10px] text-charcoal-500 group-hover:text-accent transition-colors">
                       {chapter.index}
@@ -84,7 +84,7 @@ Digital Egypt Pioneers Initiative (DEPI) Software Testing Track graduation proje
                 <li key={page.path}>
                   <Link
                     to={page.path}
-                    className="group inline-flex items-baseline gap-2 text-xs text-charcoal-400 hover:text-white transition-colors"
+                    className="group inline-flex min-h-[40px] items-center gap-2 text-xs text-charcoal-400 hover:text-white transition-colors"
                   >
                     <span className="font-tech text-[10px] text-charcoal-500 group-hover:text-accent transition-colors">
                       {page.index}

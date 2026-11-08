@@ -117,7 +117,7 @@ export const TraceabilitySection: React.FC<TraceabilitySectionProps> = ({
                 <button
                   type="button"
                   onClick={() => setActiveModule(null)}
-                  className="font-tech text-[10px] uppercase tracking-wider text-accent hover:text-white transition-colors"
+                  className="inline-flex min-h-[40px] items-center font-tech text-[10px] uppercase tracking-wider text-accent hover:text-white transition-colors"
                 >
                   Clear filter
                 </button>
@@ -138,7 +138,7 @@ export const TraceabilitySection: React.FC<TraceabilitySectionProps> = ({
                       setActiveModule(isActive ? null : module.storyId)
                     }
                     aria-pressed={isActive}
-                    className={`w-full group flex items-center gap-3 sm:gap-4 text-left rounded-lg px-2 py-1.5 -mx-2 transition-colors ${
+                    className={`w-full group flex min-h-[40px] items-center gap-3 sm:gap-4 text-left rounded-lg px-2 py-2 -mx-2 transition-colors ${
                       isActive ? 'bg-white/[0.06]' : 'hover:bg-white/[0.04]'
                     }`}
                   >
@@ -201,12 +201,27 @@ export const TraceabilitySection: React.FC<TraceabilitySectionProps> = ({
               </span>
             </div>
 
+            {/* The table is 760px wide and the scroller works, but on a phone
+                nothing on screen says the pass/fail columns exist. */}
+            <p className="sm:hidden px-3 pb-2 font-tech text-[10px] uppercase tracking-wider text-white/40">
+              Swipe the table sideways for pass, fail and blocked — the story
+              column stays put →
+            </p>
+
             <div className="overflow-x-auto">
-              <table className="w-full text-xs min-w-[760px]">
+              {/* On a phone the Story column stays put while the counts are
+                  swiped into view, so a row never loses its label. Its fill
+                  is the section's bg-ink plus the panel's 3% white, since a
+                  sticky cell cannot be transparent. Module is dropped there:
+                  it is 1:1 with Story (US-002 is Product Details), so it only
+                  pushed the numbers further off screen. */}
+              <table className="w-full text-xs min-w-[600px] sm:min-w-[760px]">
                 <thead>
-                  <tr className="text-left font-tech text-[9px] uppercase tracking-ultra text-white/40">
-                    <th className="px-5 sm:px-6 py-3 font-normal">Story</th>
-                    <th className="px-3 py-3 font-normal">Module</th>
+                  <tr className="text-left font-tech text-[10px] sm:text-[9px] uppercase tracking-ultra text-white/40">
+                    <th className="sticky left-0 z-10 bg-[#1d1d1d] sm:bg-transparent px-3 sm:px-6 py-3 font-normal">
+                      Story
+                    </th>
+                    <th className="hidden sm:table-cell px-3 py-3 font-normal">Module</th>
                     <th className="px-3 py-3 font-normal">Test area</th>
                     <th className="px-3 py-3 font-normal text-right">Cases</th>
                     <th className="px-3 py-3 font-normal text-right">Pass</th>
@@ -224,12 +239,12 @@ export const TraceabilitySection: React.FC<TraceabilitySectionProps> = ({
                       key={row.key}
                       className="border-t border-white/[0.07] hover:bg-white/[0.03] transition-colors"
                     >
-                      <td className="px-5 sm:px-6 py-3">
+                      <td className="sticky left-0 z-10 bg-[#1d1d1d] sm:bg-transparent px-3 sm:px-6 py-3">
                         <code className="font-tech text-[10px] text-accent">
                           {row.storyId}
                         </code>
                       </td>
-                      <td className="px-3 py-3 text-white/60 max-w-[180px] truncate">
+                      <td className="hidden sm:table-cell px-3 py-3 text-white/60 max-w-[180px] truncate">
                         {row.shortName}
                       </td>
                       <td className="px-3 py-3 text-white/85 max-w-[200px] truncate">
@@ -252,7 +267,7 @@ export const TraceabilitySection: React.FC<TraceabilitySectionProps> = ({
                       </td>
                       <td className="px-5 sm:px-6 py-3 text-right">
                         <span
-                          className={`font-tech text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                          className={`font-tech text-[10px] sm:text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
                             verdictTone[row.verdict]
                           }`}
                         >

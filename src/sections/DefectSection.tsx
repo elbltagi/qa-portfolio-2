@@ -84,7 +84,7 @@ export const DefectSection: React.FC<DefectSectionProps> = ({
                     type="button"
                     onClick={() => setActiveState(state.id)}
                     aria-pressed={isActive}
-                    className={`px-3 py-2 rounded-lg border font-tech text-[11px] uppercase tracking-wider transition-all duration-200 ${
+                    className={`min-h-[40px] px-3 py-2 rounded-lg border font-tech text-[11px] uppercase tracking-wider transition-all duration-200 ${
                       isActive
                         ? 'bg-ink text-canvas-surface border-ink shadow-md -translate-y-0.5'
                         : `${kindTone[state.kind]} hover:-translate-y-0.5`
@@ -120,7 +120,7 @@ export const DefectSection: React.FC<DefectSectionProps> = ({
                 </p>
 
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-tech text-[9px] uppercase tracking-ultra text-ink-ghost">
+                  <span className="font-tech text-[10px] sm:text-[9px] uppercase tracking-ultra text-ink-ghost">
                     {current.next.length ? 'Can move to' : 'Terminal state'}
                   </span>
                   {current.next.map((nextId) => {
@@ -398,7 +398,7 @@ export const DefectSection: React.FC<DefectSectionProps> = ({
                         : ''
                     }`}
                   >
-                    <dt className="font-tech text-[9px] uppercase tracking-ultra text-ink-ghost mb-1">
+                    <dt className="font-tech text-[10px] sm:text-[9px] uppercase tracking-ultra text-ink-ghost mb-1">
                       {field.label}
                     </dt>
                     <dd className="text-xs text-ink-muted leading-relaxed">

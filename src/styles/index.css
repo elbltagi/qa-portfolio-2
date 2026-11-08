@@ -76,8 +76,23 @@ summary::-webkit-details-marker {
 }
 
 /* Fluid Editorial Typography System - Calibrated for Laptops (1280-1600px) and Large Monitors (1920px+) */
+/* The floor, not the vw term, is what phones get: at 375px the vw term is
+   only 19px, so the minimum is the size actually rendered. 2.5rem put
+   "STARTS WITH" at 449px inside a 343px column, which wrapped the headline
+   into five lines and broke "CURIOSITY." mid-word. 1.75rem fits every
+   headline line down to a 360px screen. The vw term and the cap are
+   unchanged, so nothing above ~560px moves. */
 .text-fluid-hero {
-  font-size: clamp(2.5rem, 5vw, 5.25rem);
+  font-size: clamp(1.75rem, 5vw, 5.25rem);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+}
+
+/* Detail page titles need a lower floor still: they are single long words
+   like "Traceability" and "Management", which cannot break at all, where
+   the hero's longest unbreakable run is "Quality". Identical above ~500px. */
+.text-fluid-page-title {
+  font-size: clamp(1.5rem, 5vw, 5.25rem);
   line-height: 1.02;
   letter-spacing: -0.03em;
 }

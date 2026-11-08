@@ -231,14 +231,14 @@ Risk register — every one of these materialised
                         {risk.risk}
                       </p>
                       <span
-                        className={`font-tech text-[9px] uppercase tracking-wider px-2 py-0.5 rounded border shrink-0 ${exposure.className}`}
+                        className={`font-tech text-[10px] sm:text-[9px] uppercase tracking-wider px-2 py-0.5 rounded border shrink-0 ${exposure.className}`}
                       >
                         {exposure.label}
                       </span>
                     </div>
 
                     <div className="pl-[34px]">
-                      <div className="flex flex-wrap gap-x-4 gap-y-1 mb-1.5 font-tech text-[9px] uppercase tracking-wider text-white/35">
+                      <div className="flex flex-wrap gap-x-4 gap-y-1 mb-1.5 font-tech text-[10px] sm:text-[9px] uppercase tracking-wider text-white/35">
                         <span>Likelihood: {risk.likelihood}</span>
                         <span>Impact: {risk.impact}</span>
                       </div>

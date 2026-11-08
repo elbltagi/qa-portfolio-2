@@ -115,8 +115,11 @@ export const BlurTextReveal: React.FC<BlurTextRevealProps> = ({
     >
       {words.map((value, index) => (
         <React.Fragment key={`${value}-${index}`}>
+          {/* max-w-full + break-words: each word is its own inline-block, so
+              a word wider than the column cannot wrap and would otherwise
+              spill past the viewport rather than shrink or break. */}
           <motion.span
-            className="inline-block will-change-[filter,transform,opacity]"
+            className="inline-block max-w-full break-words will-change-[filter,transform,opacity]"
             variants={word}
           >
             {value}

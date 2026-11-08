@@ -278,7 +278,9 @@ export const TestDesignSection: React.FC<TestDesignSectionProps> = ({
           <div
             role="tablist"
             aria-label="Test design techniques"
-            className="flex gap-2 overflow-x-auto no-scrollbar pb-1 -mx-1 px-1"
+            // snap + a visible edge: four tabs do not fit a phone, and
+            // no-scrollbar removes the only hint that more exist.
+            className="flex gap-2 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-1 -mx-1 px-1"
           >
             {techniqueSpecimens.map((technique) => {
               const isActive = technique.id === activeId;
@@ -289,7 +291,7 @@ export const TestDesignSection: React.FC<TestDesignSectionProps> = ({
                   role="tab"
                   aria-selected={isActive}
                   onClick={() => setActiveId(technique.id)}
-                  className={`group shrink-0 text-left px-4 py-3 rounded-xl border transition-all duration-300 ${
+                  className={`group shrink-0 snap-start min-h-[44px] text-left px-4 py-3 rounded-xl border transition-all duration-300 ${
                     isActive
                       ? 'bg-ink text-canvas-surface border-ink shadow-md'
                       : 'bg-canvas-surface text-ink border-canvas-border hover:border-accent/50 hover:-translate-y-0.5'
@@ -357,12 +359,15 @@ export const TestDesignSection: React.FC<TestDesignSectionProps> = ({
                     <span className="font-tech text-[10px] tracking-ultra uppercase text-white/50 block mb-3">
                       Coverage economics
                     </span>
-                    <div className="flex items-center gap-3 mb-2.5">
-                      <span className="font-display font-black text-xl text-white/40 line-through">
+                    {/* Both halves are prose-length ("5 classes → 4 cases"),
+                        so on a phone the row has to wrap rather than run off
+                        the card. */}
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2.5">
+                      <span className="font-display font-black text-base sm:text-xl text-white/40 line-through">
                         {specimen.reduction.exhaustive}
                       </span>
                       <ArrowRight className="w-4 h-4 text-accent shrink-0" />
-                      <span className="font-display font-black text-xl text-accent">
+                      <span className="font-display font-black text-base sm:text-xl text-accent">
                         {specimen.reduction.designed}
                       </span>
                     </div>
@@ -414,12 +419,12 @@ export const TestDesignSection: React.FC<TestDesignSectionProps> = ({
                         </span>
                         <span className="flex items-center gap-1.5 shrink-0">
                           {testCase.negative && (
-                            <span className="font-tech text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 border border-rose-200">
+                            <span className="font-tech text-[10px] sm:text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded bg-rose-50 text-rose-600 border border-rose-200">
                               Neg
                             </span>
                           )}
                           <span
-                            className={`font-tech text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                            className={`font-tech text-[10px] sm:text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
                               testCase.priority === 'High'
                                 ? 'bg-accent/10 text-accent border-accent/25'
                                 : 'bg-canvas-muted text-ink-muted border-canvas-border'
@@ -432,7 +437,7 @@ export const TestDesignSection: React.FC<TestDesignSectionProps> = ({
 
                       <div className="px-3.5 pb-4 pt-1 space-y-3 text-xs border-t border-canvas-border/70 mt-1">
                         <div className="pt-3">
-                          <span className="font-tech text-[9px] uppercase tracking-ultra text-ink-ghost block mb-1">
+                          <span className="font-tech text-[10px] sm:text-[9px] uppercase tracking-ultra text-ink-ghost block mb-1">
                             Precondition
                           </span>
                           <p className="text-ink-muted leading-relaxed">
@@ -441,7 +446,7 @@ export const TestDesignSection: React.FC<TestDesignSectionProps> = ({
                         </div>
 
                         <div>
-                          <span className="font-tech text-[9px] uppercase tracking-ultra text-ink-ghost block mb-1.5">
+                          <span className="font-tech text-[10px] sm:text-[9px] uppercase tracking-ultra text-ink-ghost block mb-1.5">
                             Steps
                           </span>
                           <ol className="space-y-1">
@@ -460,7 +465,7 @@ export const TestDesignSection: React.FC<TestDesignSectionProps> = ({
                         </div>
 
                         <div>
-                          <span className="font-tech text-[9px] uppercase tracking-ultra text-ink-ghost block mb-1">
+                          <span className="font-tech text-[10px] sm:text-[9px] uppercase tracking-ultra text-ink-ghost block mb-1">
                             Test data
                           </span>
                           <code className="font-tech bg-canvas-muted text-ink px-1.5 py-0.5 rounded">
@@ -469,7 +474,7 @@ export const TestDesignSection: React.FC<TestDesignSectionProps> = ({
                         </div>
 
                         <div className="rounded-lg bg-emerald-50 border border-emerald-200 p-2.5">
-                          <span className="font-tech text-[9px] uppercase tracking-ultra text-emerald-700 block mb-1">
+                          <span className="font-tech text-[10px] sm:text-[9px] uppercase tracking-ultra text-emerald-700 block mb-1">
                             Expected result
                           </span>
                           <p className="text-emerald-900/85 leading-relaxed">

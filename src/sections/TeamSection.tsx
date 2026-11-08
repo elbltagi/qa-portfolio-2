@@ -199,7 +199,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
                   />
 
                   {/* Top Identifier Pill */}
-                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-ink/80 backdrop-blur-md text-canvas-surface text-[9px] sm:text-xs font-tech flex items-center gap-1 sm:gap-1.5 shadow-xs">
+                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full bg-ink/80 backdrop-blur-md text-canvas-surface text-[10px] sm:text-xs font-tech flex items-center gap-1 sm:gap-1.5 shadow-xs">
                     <span className="w-1.5 h-1.5 rounded-full bg-accent" />
                     <span className="uppercase tracking-wider">
                       {isLeader ? 'Team Leader' : `Curator 0${index + 1}`}
@@ -231,7 +231,7 @@ export const TeamSection: React.FC<TeamSectionProps> = ({ team }) => {
                       {member.track}
                     </span>
                     {memberUrl ? (
-                      <span className="text-[9px] sm:text-[10px] font-tech text-accent/85 font-bold uppercase tracking-wider shrink-0 flex items-center gap-0.5 group-hover:text-accent transition-colors">
+                      <span className="text-[10px] font-tech text-accent/85 font-bold uppercase tracking-wider shrink-0 flex items-center gap-0.5 group-hover:text-accent transition-colors">
                         LinkedIn <ArrowUpRight className="w-2.5 h-2.5" />
                       </span>
                     ) : (

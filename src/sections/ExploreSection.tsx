@@ -64,7 +64,7 @@ export const ExploreSection: React.FC<ExploreSectionProps> = ({ stories }) => (
                     <span className="block font-display font-bold text-sm text-white/85 truncate">
                       {stat.value}
                     </span>
-                    <span className="block font-tech text-[9px] uppercase tracking-wider text-white/35">
+                    <span className="block font-tech text-[10px] sm:text-[9px] uppercase tracking-wider text-white/35">
                       {stat.label}
                     </span>
                   </div>
