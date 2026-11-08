@@ -27,7 +27,7 @@ export const chapters: Chapter[] = [
   { id: 'testing-types', index: '05', label: 'Disciplines', short: 'Disciplines' },
   { id: 'testing-activities', index: '06', label: 'Activities', short: 'Activities' },
   { id: 'test-levels', index: '07', label: 'Levels', short: 'Levels' },
-  { id: 'timeline', index: '08', label: 'Delivery', short: 'Delivery' },
+  { id: 'timeline', index: '08', label: 'Timeline', short: 'Timeline' },
 ];
 
 export interface DetailPage {

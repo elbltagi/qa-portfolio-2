@@ -428,14 +428,34 @@ export const projectState: ProjectStatePayload = {
   // The delivery pipeline the project actually went through. These are stages,
   // not dated weeks - the delivered data records artifacts and verdicts, not a
   // calendar, so no schedule is claimed here.
+  // The nine-week plan the project set out to follow. Six stages were
+  // delivered and three were never carried out. The delivered workbooks
+  // record artifacts and verdicts, not dates, so a week here is the planned
+  // slot, and each stage is judged by what it produced rather than by when.
   testingPhases: [
     {
-      id: 'phase-stories',
-      phaseNumber: '01',
-      title: 'User Stories Written',
-      status: 'Delivered',
+      id: 'phase-planning',
+      phaseNumber: 'Week 1',
+      title: 'Project Planning & Scope Definition',
+      status: 'Completed',
       isFinal: false,
-      description: `One user story per module, defining scope and acceptance criteria for the ${moduleStories.length} areas of the application under test.`,
+      wasSkipped: false,
+      description: `The application under test was chosen and its scope fixed at ${moduleStories.length} functional modules, each assigned to a team member.`,
+      keyActivities: [
+        `${moduleStories.length} modules agreed as the scope of testing`,
+        'One owner assigned per module',
+        'Four artifacts planned per module: story, cases, static review, bug report',
+      ],
+      deliverables: `Scope fixed at ${moduleStories.length} modules`,
+    },
+    {
+      id: 'phase-stories',
+      phaseNumber: 'Week 2',
+      title: 'Feature Verification & User Story Writing',
+      status: 'Completed',
+      isFinal: false,
+      wasSkipped: false,
+      description: `The storefront was explored module by module and one user story written per module, each with its acceptance criteria.`,
       keyActivities: [
         `${moduleStories.length} user stories written, one per module`,
         'Acceptance criteria agreed per story',
@@ -444,72 +464,112 @@ export const projectState: ProjectStatePayload = {
       deliverables: `${moduleStories.length} of ${moduleStories.length} user stories delivered`,
     },
     {
-      id: 'phase-cases',
-      phaseNumber: '02',
-      title: 'Test Cases Designed',
-      status: 'Delivered',
+      id: 'phase-static',
+      phaseNumber: 'Week 3',
+      title: 'Static Review & Test Design',
+      status: 'Completed with a gap',
       isFinal: false,
-      description: `${totals.cases} test cases written across 53 test areas, each carrying a priority and an expected result.`,
+      wasSkipped: false,
+      description: `Stories and workbooks were peer-reviewed before any case was executed, producing ${staticSeverity.total} findings, and the ${areaCount} test areas were identified.`,
       keyActivities: [
-        `${totals.cases} cases written across 53 test areas`,
+        `${staticSeverity.total} findings raised across ${
+          moduleStories.length - modulesWithoutStaticReview.length
+        } modules`,
+        `${staticSeverity.high} high, ${staticSeverity.medium} medium, ${staticSeverity.low} low, ${staticSeverity.unrated} left unrated`,
+        `${modulesWithoutStaticReview.length} module was never reviewed at all: ${modulesWithoutStaticReview
+          .map((m) => `${m.id} ${m.module}`)
+          .join(', ')}`,
+      ],
+      deliverables: `${staticSeverity.total} static findings; ${modulesWithoutStaticReview.length} module never reviewed`,
+    },
+    {
+      id: 'phase-cases',
+      phaseNumber: 'Week 4',
+      title: 'Manual Test Case Creation',
+      status: 'Completed',
+      isFinal: false,
+      wasSkipped: false,
+      description: `${totals.cases} test cases written across ${areaCount} test areas, each carrying an ID, preconditions, steps, data, a priority and an expected result.`,
+      keyActivities: [
+        `${totals.cases} cases written across ${areaCount} test areas`,
         'Each case assigned a priority',
         'Cases mapped to their module and area',
       ],
       deliverables: `${totals.cases} test cases across ${moduleStories.length} workbooks`,
     },
     {
-      id: 'phase-static',
-      phaseNumber: '03',
-      title: 'Static Review',
-      status: 'Delivered with a gap',
-      isFinal: false,
-      description: `Stories and case workbooks peer-reviewed before execution, producing ${staticSeverity.total} findings.`,
-      keyActivities: [
-        `${staticSeverity.total} findings raised across ${
-          moduleStories.length - modulesWithoutStaticReview.length
-        } modules`,
-        `${staticSeverity.high} high, ${staticSeverity.medium} medium, ${staticSeverity.low} low`,
-        `${staticSeverity.unrated} findings left without a severity rating`,
-      ],
-      deliverables: `${staticSeverity.total} static findings; ${modulesWithoutStaticReview.length} module never reviewed`,
-    },
-    {
       id: 'phase-execution',
-      phaseNumber: '04',
-      title: 'Execution',
-      status: 'Delivered with a gap',
+      phaseNumber: 'Week 5',
+      title: 'Manual Test Execution & Bug Reporting',
+      status: 'Completed with gaps',
       isFinal: false,
-      description: `${totals.executed} of ${totals.cases} cases executed through the browser, each given a recorded verdict.`,
+      wasSkipped: false,
+      description: `${totals.executed} of ${totals.cases} cases executed by hand through the browser, and ${defectSeverity.total} defects written up. This is the stage where the coverage gaps opened.`,
       keyActivities: [
-        `${totals.executed} cases executed (${totals.execRate}%)`,
-        `${totals.passed} passed, ${totals.failed} failed, ${totals.blocked} blocked`,
-        `${totals.notRun} cases never run`,
+        `${totals.executed} cases executed (${totals.execRate}%) — ${totals.passed} passed, ${totals.failed} failed, ${totals.blocked} blocked`,
+        `${defectSeverity.total} defects logged: ${defectSeverity.high} high, ${defectSeverity.medium} medium, ${defectSeverity.low} low`,
+        `${totals.notRun} cases never run; ${totals.failuresAwaitingWriteUp} failures never written up — ${modulesWithoutBugReport
+          .map((m) => m.id)
+          .join(' and ')} have no bug report at all`,
       ],
-      deliverables: `${totals.passRate}% pass rate of executed cases`,
+      deliverables: `${totals.passRate}% pass rate of executed cases; ${defectSeverity.total} defect reports`,
     },
     {
-      id: 'phase-defects',
-      phaseNumber: '05',
-      title: 'Defect Reporting',
-      status: 'Delivered with a gap',
+      id: 'phase-api-mobile-db',
+      phaseNumber: 'Week 6',
+      title: 'API, Mobile & Database Testing',
+      status: 'Not carried out',
       isFinal: false,
-      description: `${defectSeverity.total} defects written up with reproduction steps and a severity rating.`,
+      wasSkipped: true,
+      description:
+        'Planned as a conditional stage, dependent on credentials and a mobile build that were never obtained. No part of it was carried out.',
       keyActivities: [
-        `${defectSeverity.total} defects logged`,
-        `${defectSeverity.high} high, ${defectSeverity.medium} medium, ${defectSeverity.low} low`,
-        `${totals.failuresAwaitingWriteUp} failures left without a defect report`,
+        'No API endpoint documentation or credentials were obtained',
+        'No database access was granted, so no query was run',
+        'No mobile build was made available',
       ],
-      deliverables: `${defectSeverity.total} defect reports across ${
-        moduleStories.length - modulesWithoutBugReport.length - 1
-      } modules`,
+      deliverables: 'Nothing delivered — no case written or executed',
+    },
+    {
+      id: 'phase-automation-scripts',
+      phaseNumber: 'Week 7',
+      title: 'Automation Script Development',
+      status: 'Not carried out',
+      isFinal: false,
+      wasSkipped: true,
+      description:
+        'Planned as the point where the stable functional cases would be turned into automated scripts. No script was written.',
+      keyActivities: [
+        'No automation tool was adopted',
+        'No script was authored against any of the stable cases',
+        `All ${totals.executed} executed cases were run by hand instead`,
+      ],
+      deliverables: 'Nothing delivered — no automated suite exists',
+    },
+    {
+      id: 'phase-automation-run',
+      phaseNumber: 'Week 8',
+      title: 'Automation Test Execution & Reporting',
+      status: 'Not carried out',
+      isFinal: false,
+      wasSkipped: true,
+      description:
+        'Dependent on Week 7, which did not happen. With no suite to run, there was nothing to execute or report at this stage.',
+      keyActivities: [
+        'No suite existed to execute',
+        'No execution traces or automation screenshots were captured',
+        'No automation coverage figure is reported anywhere on this site',
+      ],
+      deliverables: 'Nothing delivered — nothing to run',
     },
     {
       id: 'phase-reporting',
-      phaseNumber: '06',
-      title: 'Reporting Delivered',
-      status: 'Complete',
+      phaseNumber: 'Week 9',
+      title: 'Final Test Summary & Presentation',
+      status: 'Completed',
       isFinal: true,
-      description: `Test summary reports and this exhibition delivered on ${reportDate}, presenting the result including the coverage that was not achieved.`,
+      wasSkipped: false,
+      description: `Test summary reports and this exhibition delivered on ${reportDate}, presenting the result including the coverage that was never achieved.`,
       keyActivities: [
         'Per-module test summary reports produced',
         'Project-level totals reconciled against the workbooks',

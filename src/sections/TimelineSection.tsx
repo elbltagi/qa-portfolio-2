@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { BlurTextReveal } from '../components/BlurTextReveal';
-import { Calendar, ChevronDown, PackageCheck } from 'lucide-react';
+import { Calendar, ChevronDown, PackageCheck, PackageX } from 'lucide-react';
 import { useGSAP } from '@gsap/react';
 import { gsap } from '../lib/gsap';
 import type { TestingPhase } from '../types';
@@ -11,6 +11,10 @@ interface TimelineSectionProps {
 
 export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
   const [expandedWeek, setExpandedWeek] = useState<string>('week-1');
+
+  // Counted from the data so the header cannot disagree with the stages.
+  const skippedCount = phases.filter((p) => p.wasSkipped).length;
+  const deliveredCount = phases.length - skippedCount;
 
   const sectionRef = useRef<HTMLElement>(null);
   const timelineTrackRef = useRef<HTMLDivElement>(null);
@@ -97,10 +101,10 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
           </div>
           <div className="flex flex-col items-start md:items-end gap-0.5">
             <span className="text-xl sm:text-2xl font-display font-bold text-accent">
-              {phases.length} Stages
+              {phases.length} Weeks Planned
             </span>
             <span className="text-[11px] font-tech uppercase text-ink-subtle tracking-wider">
-              Story to delivered report
+              {deliveredCount} delivered · {skippedCount} never run
             </span>
           </div>
         </div>
@@ -113,10 +117,13 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
             </div>
             <div>
               <h4 className="text-sm font-display font-bold text-ink">
-                The Delivery Pipeline
+                The {phases.length}-Week Plan
               </h4>
               <p className="text-xs text-ink-muted">
-                The stages this project actually went through. These are delivery stages, not dated weeks — the workbooks record artifacts and verdicts, not a calendar.
+                The schedule the project set out to follow. {deliveredCount}{' '}
+                stages were delivered and {skippedCount} were never carried
+                out. The workbooks record artifacts and verdicts rather than
+                dates, so each week is judged by what it produced, not by when.
               </p>
             </div>
           </div>
@@ -190,9 +197,16 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
                         <h3 className="text-sm sm:text-base lg:text-lg font-display font-bold text-ink group-hover:text-accent transition-colors">
                           {phase.title}
                         </h3>
+                        {/* The project is finished, so the last stage is the
+                            final one, never the "current" one. */}
                         {isCurrent && (
                           <span className="text-[10px] font-tech uppercase px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold">
-                            Current Stage
+                            Final Stage
+                          </span>
+                        )}
+                        {phase.wasSkipped && (
+                          <span className="text-[10px] font-tech uppercase px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 font-bold">
+                            Not run
                           </span>
                         )}
                       </div>
@@ -204,7 +218,8 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
 
                   <div className="flex items-center gap-3 shrink-0">
                     <span className="text-xs font-tech text-ink-ghost hidden md:inline-block">
-                      {phase.keyActivities.length} Recorded Facts
+                      {phase.keyActivities.length}{' '}
+                      {phase.wasSkipped ? 'Notes' : 'Recorded Facts'}
                     </span>
                     <div
                       className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center transition-all ${
@@ -233,7 +248,7 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
 
                       <div className="space-y-2">
                         <span className="text-xs font-tech uppercase text-ink-subtle tracking-wider font-semibold block">
-                          What Happened:
+                          {phase.wasSkipped ? 'Why It Did Not Happen:' : 'What Happened:'}
                         </span>
                         <ul className="space-y-2">
                           {phase.keyActivities.map((act, i) => (
@@ -248,9 +263,17 @@ export const TimelineSection: React.FC<TimelineSectionProps> = ({ phases }) => {
 
                     <div className="lg:col-span-5 flex flex-col justify-between p-5 rounded-2xl bg-canvas-muted/50 border border-canvas-border space-y-4">
                       <div>
-                        <div className="flex items-center gap-1.5 text-xs font-tech text-accent font-bold uppercase mb-1.5">
-                          <PackageCheck className="w-4 h-4" />
-                          <span>Delivered</span>
+                        <div
+                          className={`flex items-center gap-1.5 text-xs font-tech font-bold uppercase mb-1.5 ${
+                            phase.wasSkipped ? 'text-amber-700' : 'text-accent'
+                          }`}
+                        >
+                          {phase.wasSkipped ? (
+                            <PackageX className="w-4 h-4" />
+                          ) : (
+                            <PackageCheck className="w-4 h-4" />
+                          )}
+                          <span>{phase.wasSkipped ? 'Not Delivered' : 'Delivered'}</span>
                         </div>
                         <p className="text-xs text-ink font-medium leading-relaxed">
                           {phase.deliverables}

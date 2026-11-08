@@ -108,6 +108,8 @@ export interface TestingPhase {
   status: string;
   /** True for the phase the project finished on. */
   isFinal: boolean;
+  /** True for a planned stage the project never carried out. */
+  wasSkipped: boolean;
   description: string;
   phaseNumber: string;
   keyActivities: string[];
