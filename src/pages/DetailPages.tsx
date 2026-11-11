@@ -3,7 +3,7 @@ import { PageShell } from '../components/PageShell';
 import { UserStoriesSection } from '../sections/UserStoriesSection';
 import { TraceabilitySection } from '../sections/TraceabilitySection';
 import { DefectSection } from '../sections/DefectSection';
-import { MetricsSection } from '../sections/MetricsSection';
+import { TestSummaryReport } from '../sections/TestSummaryReport';
 import { findDetailPage } from '../lib/chapters';
 import type { ModuleStory } from '../types';
 
@@ -38,6 +38,6 @@ export const BugsPage: React.FC = () => (
 
 export const SummaryPage: React.FC = () => (
   <PageShell page={page('/summary')}>
-    <MetricsSection hideHeading />
+    <TestSummaryReport hideHeading />
   </PageShell>
 );
