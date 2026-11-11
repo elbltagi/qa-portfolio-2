@@ -252,8 +252,10 @@ export const TestSummaryReport: React.FC<TestSummaryReportProps> = ({
               <p className="text-sm sm:text-base text-ink-muted font-light leading-relaxed">
                 {moduleStories.length} modules of the live storefront, broken into{' '}
                 {areaCount} test areas, each owned by one member of the team. Testing
-                was carried out by hand through the browser. No API, database or
-                mobile testing was performed, and no automated suite was written.
+                was carried out by hand through the browser. No API or database
+                testing was performed, and no automated suite was written. Mobile
+                app testing was carried out separately, against a mobile
+                application, and is not counted in these figures.
               </p>
 
               {/* Which of the four artefacts each module actually produced. */}
@@ -315,7 +317,7 @@ export const TestSummaryReport: React.FC<TestSummaryReportProps> = ({
                   `The end-to-end purchase journey reached every one of its ${crossModule.e2e.totals.total} steps, but ${crossModule.e2e.totals.failed} failed.`,
                   `${crossModule.integration.totals.failed} of ${crossModule.integration.totals.total} cross-module integration cases failed.`,
                   `${staticSeverity.unrated} static findings carry no severity rating and are reported as unrated.`,
-                  'Three planned weeks — API, mobile and database testing, and both automation weeks — were never carried out.',
+                  'API and database testing, and both automation weeks, were never carried out.',
                 ].map((line) => (
                   <li key={line} className="flex gap-3">
                     <span

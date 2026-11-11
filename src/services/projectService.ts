@@ -219,15 +219,15 @@ export const projectState: ProjectStatePayload = {
       id: 'type-mobile',
       name: 'Mobile App Testing',
       badge: '06',
-      status: 'Not performed (no app access)',
-      wasSkipped: true,
+      status: 'Executed',
+      wasSkipped: false,
       purpose:
-        'Verify the storefront on mobile builds and small viewports, where layout and interaction differ from the desktop.',
+        'Verify an application on a mobile build, where layout, touch interaction and device behaviour differ from the desktop.',
       approach:
-        'Not carried out. No mobile build was made available, and the delivered workbooks record no viewport or device detail for any case.',
-      outputs: 'No mobile case was written or executed.',
+        'Carried out as a separate effort against a mobile app, with its own test cases, bug reports and summary reports.',
+      outputs: 'Cases written, executed and reported, with defects logged.',
       coverageNotice:
-        'Every verdict in this report comes from a desktop browser session.',
+        'This discipline was exercised on a separate mobile application, so its figures are not part of the Toolshop totals on this site.',
     },
   ],
 
@@ -349,28 +349,26 @@ export const projectState: ProjectStatePayload = {
     },
     mobile: {
       title: 'Mobile App Testing',
-      wasSkipped: true,
-      accessNote: 'Not performed — no mobile build was made available',
+      wasSkipped: false,
       activities: [
         {
           name: 'Test case creation',
           description:
-            'Would have tailored cases for mobile viewports, orientations, input fields and mobile navigation.',
+            'Cases tailored for mobile screens, orientations, input fields and touch navigation.',
         },
         {
           name: 'Test case execution',
-          description:
-            'Would have run them on supported devices or responsive emulators.',
+          description: 'Run on a mobile build and given a recorded verdict.',
         },
         {
           name: 'Bug reporting',
           description:
-            'Would have logged mobile-specific defects such as broken touch controls, layout overflows and crash behaviour.',
+            'Mobile-specific defects logged with steps, expected and actual behaviour and a severity.',
         },
         {
           name: 'Test summary report',
           description:
-            'Would have synthesised mobile findings and device compatibility observations. No mobile case was executed.',
+            'Findings consolidated into per-module summary reports for the mobile effort.',
         },
       ],
     },
@@ -516,17 +514,19 @@ export const projectState: ProjectStatePayload = {
       id: 'phase-api-mobile-db',
       phaseNumber: 'Week 6',
       title: 'API, Mobile & Database Testing',
-      status: 'Not carried out',
+      // One of the three happened. The week is not "carried out" on the
+      // strength of that, and the other two are still not absolved.
+      status: 'Partly carried out',
       isFinal: false,
-      wasSkipped: true,
+      wasSkipped: false,
       description:
-        'Planned as a conditional stage, dependent on credentials and a mobile build that were never obtained. No part of it was carried out.',
+        'Planned as a conditional stage across three disciplines. Mobile app testing was carried out; the API and database work depended on credentials that were never obtained.',
       keyActivities: [
+        'Mobile app testing was carried out as a separate effort',
         'No API endpoint documentation or credentials were obtained',
         'No database access was granted, so no query was run',
-        'No mobile build was made available',
       ],
-      deliverables: 'Nothing delivered — no case written or executed',
+      deliverables: 'Mobile testing delivered; no API or database case written',
     },
     {
       id: 'phase-automation-scripts',

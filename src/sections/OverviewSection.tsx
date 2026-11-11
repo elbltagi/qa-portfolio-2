@@ -441,10 +441,10 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                     <span className="font-semibold uppercase tracking-wider">Coverage Boundary</span>
                   </div>
                   <p className="text-xs text-charcoal-400 leading-relaxed">
-                    Testing was carried out against the live web interface only. No
-                    backend API, database or mobile testing was performed. The
-                    module shown in red was written and reviewed but never
-                    executed.
+                    Toolshop was tested against the live web interface only. No
+                    backend API or database testing was performed. Mobile app
+                    testing was carried out, but as a separate effort against a
+                    mobile application, so it is not counted in these figures.
                   </p>
                 </div>
               </div>
