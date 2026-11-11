@@ -4,181 +4,567 @@ import { Link } from '../lib/router';
 import { Reveal } from '../components/Reveal';
 import {
   crossModule,
-  defectSeverity,
   moduleStories,
-  staticSeverity,
-  totals,
+  reportDate,
+  teamName,
+  projectName,
 } from '../data/toolshop';
-import type { ModuleStory } from '../data/toolshop';
+import type { ModuleStory, SeverityCounts, TestArea } from '../data/toolshop';
 
 /**
- * The test summary figures, one module at a time.
+ * The delivered dashboard, rendered on the site.
  *
- * This mirrors the delivered dashboard in 06 Dashboard: counts, rates and
- * totals for a chosen user story, and nothing else — no case titles, no
- * defect descriptions, no commentary. The written detail is the report
- * directly below this on the page.
+ * This is a port of "06 Dashboard/index.html" rather than a new design: the
+ * same panel, the same subheads in the same order, the same KPI tiles, rings,
+ * bars and tables, so the page here and the file the team hands over are one
+ * artefact. Its styling lives under `.tsd` in src/styles/index.css, lifted
+ * from that file's stylesheet.
  *
- * Everything is derived from the generated data, including the project-wide
- * view, which is summed here rather than read from a second copy.
+ * Figures come from the generated data, which is produced from the very same
+ * JSON the original reads at runtime.
  */
 
-interface Props {
-  hideHeading?: boolean;
-}
+const CROSS = 'X-MOD';
 
-/** A project-wide row shaped like a module so one renderer handles both. */
-type View = {
-  id: string;
-  label: string;
-  written: number;
-  executed: number;
-  passed: number;
-  failed: number;
-  blocked: number;
-  notRun: number;
-  passRate: number | null;
-  execRate: number;
-  defects: { total: number; high: number; medium: number; low: number };
-  statics: number;
-  areas: number;
-  owner: string | null;
-  stateLabel: string;
-  reported: boolean;
-  failuresUnlogged: number;
+/** "US-004" -> "04", matching the chapter numbering of the house style. */
+const ix = (id: string) =>
+  String(Number(String(id).replace(/\D/g, '')) || 0).padStart(2, '0');
+
+const n = (v: number | null | undefined) =>
+  v == null ? '—' : Number(v).toLocaleString('en-GB');
+const pct = (v: number | null) => (v == null ? '—' : `${v}%`);
+
+/** A tile is only coloured when it has something to report; a zero stays quiet. */
+const k = (v: number, cls: string) => (v ? ` is-${cls}` : ' is-zero');
+
+const STATE_TONE: Record<string, string> = {
+  Complete: 'pass',
+  'Partial coverage': 'blocked',
+  'No bug report': 'blocked',
+  'Not executed': 'notrun',
+  'No coverage': 'fail',
 };
 
-const projectView = (): View => ({
-  id: 'ALL',
-  label: 'All modules',
-  written: totals.cases,
-  executed: totals.executed,
-  passed: totals.passed,
-  failed: totals.failed,
-  blocked: totals.blocked,
-  notRun: totals.notRun,
-  passRate: totals.passRate,
-  execRate: totals.execRate,
-  defects: {
-    total: defectSeverity.total,
-    high: defectSeverity.high,
-    medium: defectSeverity.medium,
-    low: defectSeverity.low,
-  },
-  statics: staticSeverity.total,
-  areas: moduleStories.reduce((n, m) => n + m.areas.length, 0),
-  owner: null,
-  stateLabel: `${moduleStories.length} modules`,
-  reported: moduleStories.every((m) => m.defects.reported),
-  failuresUnlogged: totals.failuresAwaitingWriteUp,
-});
+type Cell = { v: string; cls?: string; html?: React.ReactNode };
+const tone = (v: number, cls: string): Cell =>
+  v ? { v: String(v), cls } : { v: '0', cls: 'zero' };
+const z = (v: number): Cell => (v ? { v: String(v) } : { v: '0', cls: 'zero' });
 
-const moduleView = (m: ModuleStory): View => ({
-  id: m.id,
-  label: m.module,
-  written: m.cases.written,
-  executed: m.cases.executed,
-  passed: m.cases.passed,
-  failed: m.cases.failed,
-  blocked: m.cases.blocked,
-  notRun: m.cases.notRun,
-  passRate: m.cases.passRate,
-  execRate: m.cases.execRate,
-  defects: {
-    total: m.defects.total,
-    high: m.defects.high,
-    medium: m.defects.medium,
-    low: m.defects.low,
-  },
-  statics: m.staticFindings.total,
-  areas: m.areas.length,
-  owner: m.owner,
-  stateLabel: m.stateLabel,
-  reported: m.defects.reported,
-  failuresUnlogged: m.defects.failuresUnlogged,
-});
+const Subhead: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <div className="subhead">{children}</div>
+);
 
-/** A single figure. The number leads; the label explains it. */
-const Tile: React.FC<{ value: string | number; label: string; tone?: string }> = ({
-  value,
+const Kpi: React.FC<{ label: string; value: React.ReactNode; tone?: string }> = ({
   label,
-  tone = 'text-ink',
+  value,
+  tone: t,
 }) => (
-  <div className="rounded-xl border border-canvas-border bg-canvas-surface px-3.5 py-3">
-    <span
-      className={`block font-display font-black text-xl sm:text-2xl tabular-nums leading-none ${tone}`}
-    >
-      {value}
-    </span>
-    <span className="mt-1.5 block font-tech text-[10px] uppercase tracking-wider text-ink-subtle leading-tight">
-      {label}
-    </span>
+  <div className={`kpi${t ?? ''}`}>
+    <dt>{label}</dt>
+    <dd>{value}</dd>
   </div>
 );
 
-/** A labelled proportional bar. Segments of zero are dropped, not rendered flat. */
+/** The stacked bar plus its legend. Segments of zero are dropped entirely. */
 const Bar: React.FC<{
-  parts: Array<{ label: string; value: number; fill: string }>;
   total: number;
-}> = ({ parts, total }) => {
+  parts: Array<{ cls: string; label: string; value: number }>;
+  label: string;
+}> = ({ total, parts, label }) => {
+  if (!total) return null;
   const shown = parts.filter((p) => p.value > 0);
-  if (total <= 0 || shown.length === 0) {
-    return (
-      <div className="h-2.5 w-full rounded-full bg-canvas-muted" aria-hidden="true" />
-    );
-  }
   return (
     <>
-      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-canvas-muted">
+      <div className="bar" role="img" aria-label={label}>
         {shown.map((p) => (
-          <div
-            key={p.label}
-            className={p.fill}
-            style={{ width: `${(p.value / total) * 100}%` }}
-            title={`${p.label}: ${p.value}`}
+          <i
+            key={p.cls}
+            className={p.cls}
+            style={{ width: `${((p.value / total) * 100).toFixed(3)}%` }}
           />
         ))}
       </div>
-      <ul className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1.5">
+      <div className="legend">
         {shown.map((p) => (
-          <li
-            key={p.label}
-            className="flex items-center gap-1.5 font-tech text-[10px] uppercase tracking-wider text-ink-subtle"
-          >
-            <span className={`h-2 w-2 rounded-full ${p.fill}`} aria-hidden="true" />
-            {p.label}
-            <span className="text-ink font-bold tabular-nums">{p.value}</span>
-          </li>
+          <span key={p.cls}>
+            <i className={`dot ${p.cls}`} />
+            {p.label} <b>{p.value}</b>
+          </span>
         ))}
-      </ul>
+      </div>
     </>
   );
 };
 
-export const TestSummaryDashboard: React.FC<Props> = ({ hideHeading }) => {
-  const [selected, setSelected] = useState<string>('ALL');
+const Ring: React.FC<{
+  value: number | null;
+  label: string;
+  sub: string;
+  tone: string;
+}> = ({ value, label, sub, tone: t }) => {
+  const r = 34;
+  const C = 2 * Math.PI * r;
+  const v = value == null ? 0 : Math.max(0, Math.min(100, value));
+  return (
+    <figure className="ring">
+      <svg viewBox="0 0 80 80" aria-hidden="true">
+        <circle className="tr" cx="40" cy="40" r={r} fill="none" strokeWidth="9" />
+        <circle
+          className="vl"
+          cx="40"
+          cy="40"
+          r={r}
+          fill="none"
+          strokeWidth="9"
+          stroke={`var(--${t})`}
+          strokeDasharray={`${((C * v) / 100).toFixed(2)} ${C.toFixed(2)}`}
+        />
+      </svg>
+      <figcaption>
+        <span className="big">{value == null ? '—' : pct(value)}</span>
+        {label}
+        <br />
+        {sub}
+      </figcaption>
+    </figure>
+  );
+};
+
+const Table: React.FC<{
+  headers: string[];
+  rows: Array<Array<string | Cell>>;
+  num?: number[];
+  foot?: string[];
+}> = ({ headers, rows, num = [], foot }) => {
+  if (!rows.length) return null;
+  return (
+    <div className="scroll-x">
+      <table className="tbl">
+        <thead>
+          <tr>
+            {headers.map((h, i) => (
+              <th key={h} className={num.includes(i) ? 'num' : undefined}>
+                {h}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, ri) => (
+            <tr key={ri}>
+              {row.map((cell, i) => {
+                const c: Cell = typeof cell === 'string' ? { v: cell } : cell;
+                const cls = [num.includes(i) ? 'num' : '', c.cls ?? '']
+                  .filter(Boolean)
+                  .join(' ');
+                return (
+                  <td key={i} className={cls || undefined}>
+                    {c.html ?? c.v}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+        {foot && (
+          <tfoot>
+            <tr>
+              {foot.map((c, i) => (
+                <td key={i} className={num.includes(i) ? 'num' : undefined}>
+                  {c}
+                </td>
+              ))}
+            </tr>
+          </tfoot>
+        )}
+      </table>
+    </div>
+  );
+};
+
+const sevRow = (cls: string, name: string): Cell => ({
+  v: name,
+  html: (
+    <span className={`sev ${cls}`}>
+      <i />
+      {name}
+    </span>
+  ),
+});
+
+const SeverityTable: React.FC<{ label: string; g: SeverityCounts }> = ({ label, g }) => {
+  const rows: Array<Array<string | Cell>> = [
+    [sevRow('s-high', 'High'), tone(g.high, 'v-fail')],
+    [sevRow('s-med', 'Medium'), tone(g.medium, 'v-blocked')],
+    [sevRow('s-low', 'Low'), tone(g.low, 'v-low')],
+  ];
+  // Only the Home Page static review leaves findings without a severity.
+  if (g.unrated) rows.push([sevRow('s-unrated', 'Unrated'), tone(g.unrated, 'v-notrun')]);
+  return (
+    <Table headers={[label, 'Count']} rows={rows} num={[1]} foot={['Total', String(g.total)]} />
+  );
+};
+
+/**
+ * Severity alone, in a third of a row, buried the two numbers that matter
+ * most: how bad the logged defects are, and how many failures were never
+ * written up at all. Both lead here, as they do in the original.
+ */
+const Defects: React.FC<{ d: ModuleStory['defects'] }> = ({ d }) => {
+  if (!d.total) {
+    return (
+      <>
+        <dl className="kpis">
+          <Kpi label="Logged" value="0" tone=" is-zero" />
+          {d.failuresUnlogged > 0 && (
+            <Kpi
+              label="Failed, never written up"
+              value={n(d.failuresUnlogged)}
+              tone=" is-fail"
+            />
+          )}
+        </dl>
+        <div className="arts mt">
+          <span className={`chip c-${d.failuresUnlogged ? 'fail' : 'notrun'}`}>
+            {d.failuresUnlogged ? 'No bug report' : 'No defects logged'}
+          </span>
+        </div>
+      </>
+    );
+  }
+
+  const p = d.priority;
+  const r = d.rootCause;
+  const priorityRows: Array<Array<string | Cell>> = [
+    ['High', tone(p.high, 'v-fail')],
+    ['Medium', tone(p.medium, 'v-blocked')],
+    ['Low', tone(p.low, 'v-low')],
+  ];
+  if (p.unset) priorityRows.push(['Not set', tone(p.unset, 'v-notrun')]);
+
+  return (
+    <>
+      <dl className="kpis">
+        <Kpi label="Logged" value={n(d.total)} />
+        <Kpi label="High" value={n(d.high)} tone={k(d.high, 'fail')} />
+        <Kpi label="Medium" value={n(d.medium)} tone={k(d.medium, 'blocked')} />
+        <Kpi label="Low" value={n(d.low)} tone={k(d.low, 'low')} />
+        {d.unrated > 0 && <Kpi label="Unrated" value={n(d.unrated)} tone=" is-notrun" />}
+      </dl>
+      <div className="mt">
+        <Bar
+          total={d.total}
+          label={`${d.high} high, ${d.medium} medium, ${d.low} low of ${d.total} defects`}
+          parts={[
+            { cls: 'h', label: 'High', value: d.high },
+            { cls: 'm', label: 'Medium', value: d.medium },
+            { cls: 'l', label: 'Low', value: d.low },
+            { cls: 'u', label: 'Unrated', value: d.unrated },
+          ]}
+        />
+      </div>
+      <div className="grid-2 mt-lg">
+        <div>
+          <Subhead>Defect priority</Subhead>
+          <Table
+            headers={['Priority', 'Count']}
+            rows={priorityRows}
+            num={[1]}
+            foot={['Total', String(d.total)]}
+          />
+        </div>
+        <div>
+          <Subhead>Root cause</Subhead>
+          <Table
+            headers={['Layer', 'Count']}
+            rows={[
+              ['Front end', z(r.frontEnd)],
+              ['Back end', z(r.backEnd)],
+              ['Not stated', z(r.unstated)],
+            ]}
+            num={[1]}
+            foot={['Total', String(d.total)]}
+          />
+        </div>
+      </div>
+    </>
+  );
+};
+
+const PanelHead: React.FC<{
+  index: string;
+  title: string;
+  id: string;
+  meta: string;
+  state?: string;
+}> = ({ index, title, id, meta, state }) => (
+  <div className="panel-head">
+    <div className="eyebrow">
+      <span className="ix">{index}</span>
+      <i className="rule" />
+      Bug Hunters · Quality starts with our review
+    </div>
+    <h1>
+      {title}
+      <span className="dot">.</span>
+    </h1>
+    <div className="headline">
+      <span className="story-id">{id}</span>
+      <span className="meta">{meta}</span>
+      {state && <span className={`chip c-${STATE_TONE[state] ?? 'notrun'}`}>{state}</span>}
+    </div>
+  </div>
+);
+
+const StoryPanel: React.FC<{ s: ModuleStory }> = ({ s }) => {
+  const c = s.cases;
+  const art = (on: boolean, L: string, label: string) => (
+    <span
+      key={L}
+      className={`art${on ? ' on' : ''}`}
+      title={`${label}${on ? '' : ' — missing'}`}
+    >
+      <b>{L}</b>
+      {label}
+    </span>
+  );
+
+  return (
+    <div className="panel">
+      <PanelHead
+        index={ix(s.id)}
+        title={s.module}
+        id={s.id}
+        meta={`${s.owner} · ${reportDate}`}
+        state={s.stateLabel}
+      />
+      <div className="panel-body">
+        <Subhead>Test cases</Subhead>
+        <dl className="kpis">
+          <Kpi label="Written" value={n(c.written)} />
+          <Kpi label="Executed" value={n(c.executed)} />
+          <Kpi label="Passed" value={n(c.passed)} tone={k(c.passed, 'pass')} />
+          <Kpi label="Failed" value={n(c.failed)} tone={k(c.failed, 'fail')} />
+          <Kpi label="Blocked" value={n(c.blocked)} tone={k(c.blocked, 'blocked')} />
+          <Kpi label="Not run" value={n(c.notRun)} tone={k(c.notRun, 'notrun')} />
+        </dl>
+        <div className="mt">
+          <Bar
+            total={c.written}
+            label={`${c.passed} passed, ${c.failed} failed, ${c.blocked} blocked, ${c.notRun} not run of ${c.written}`}
+            parts={[
+              { cls: 'p', label: 'Passed', value: c.passed },
+              { cls: 'f', label: 'Failed', value: c.failed },
+              { cls: 'b', label: 'Blocked', value: c.blocked },
+              { cls: 'n', label: 'Not run', value: c.notRun },
+            ]}
+          />
+        </div>
+
+        <Subhead>Rates</Subhead>
+        <div className="rings">
+          <Ring
+            value={c.passRate}
+            label="pass rate"
+            sub={`${c.passed} of ${c.executed} executed`}
+            tone={
+              c.passRate == null
+                ? 'notrun'
+                : c.passRate >= 90
+                  ? 'pass'
+                  : c.passRate >= 70
+                    ? 'blocked'
+                    : 'fail'
+            }
+          />
+          <Ring
+            value={c.execRate}
+            label="executed"
+            sub={`${c.executed} of ${c.written} written`}
+            tone={c.execRate >= 100 ? 'pass' : c.execRate > 0 ? 'blocked' : 'notrun'}
+          />
+        </div>
+
+        <Subhead>Artifacts delivered</Subhead>
+        <div className="arts">
+          {art(s.artifacts.story, 'S', 'User story')}
+          {art(s.artifacts.cases, 'T', 'Test cases')}
+          {art(s.artifacts.static, 'R', 'Static testing report')}
+          {art(s.artifacts.bugReport, 'B', 'Bug report')}
+          <span className="art-count">
+            {s.artifacts.delivered} of {s.artifacts.of}
+          </span>
+        </div>
+
+        {s.areas.length > 1 && (
+          <>
+            <Subhead>By test area</Subhead>
+            <Table
+              headers={['Area', 'Total', 'Pass', 'Fail', 'Blocked', 'Not run']}
+              rows={s.areas.map((a: TestArea) => [
+                a.name,
+                String(a.total),
+                tone(a.passed, 'v-pass'),
+                tone(a.failed, 'v-fail'),
+                tone(a.blocked, 'v-blocked'),
+                tone(a.notRun, 'v-notrun'),
+              ])}
+              num={[1, 2, 3, 4, 5]}
+              foot={[
+                'Total',
+                String(c.written),
+                String(c.passed),
+                String(c.failed),
+                String(c.blocked),
+                String(c.notRun),
+              ]}
+            />
+          </>
+        )}
+
+        <Subhead>Defects</Subhead>
+        <Defects d={s.defects} />
+
+        <div className="grid-2 mt-lg">
+          <div>
+            <Subhead>Case priority</Subhead>
+            <Table
+              headers={['Priority', 'Count', 'Share']}
+              rows={(
+                [
+                  ['High', s.priority.high],
+                  ['Medium', s.priority.medium],
+                  ['Low', s.priority.low],
+                ] as Array<[string, number]>
+              )
+                .concat(s.priority.unset ? [['Not set', s.priority.unset]] : [])
+                .map(([label, v]) => [
+                  label,
+                  String(v),
+                  pct(+((v / c.written) * 100).toFixed(1)),
+                ])}
+              num={[1, 2]}
+            />
+          </div>
+          <div>
+            <Subhead>Static findings</Subhead>
+            <SeverityTable label="Severity" g={s.staticFindings} />
+          </div>
+        </div>
+
+        {(s.crossModule.integration.total > 0 || s.crossModule.e2e.total > 0) && (
+          <>
+            <Subhead>Cross-module coverage</Subhead>
+            {/* Both suites report the same four outcomes. The integration
+                workbook has no blocked or not-run case, but the columns stay
+                so the two rows line up. */}
+            <Table
+              headers={['Suite', 'Total', 'Pass', 'Fail', 'Blocked', 'Not run']}
+              rows={[
+                ...(s.crossModule.integration.total
+                  ? [
+                      [
+                        'Integration cases',
+                        String(s.crossModule.integration.total),
+                        tone(s.crossModule.integration.passed, 'v-pass'),
+                        tone(s.crossModule.integration.failed, 'v-fail'),
+                        tone(0, 'v-blocked'),
+                        tone(0, 'v-notrun'),
+                      ] as Array<string | Cell>,
+                    ]
+                  : []),
+                ...(s.crossModule.e2e.total
+                  ? [
+                      [
+                        'End-to-end steps',
+                        String(s.crossModule.e2e.total),
+                        tone(s.crossModule.e2e.passed, 'v-pass'),
+                        tone(0, 'v-fail'),
+                        tone(s.crossModule.e2e.blocked, 'v-blocked'),
+                        tone(0, 'v-notrun'),
+                      ] as Array<string | Cell>,
+                    ]
+                  : []),
+              ]}
+              num={[1, 2, 3, 4, 5]}
+            />
+          </>
+        )}
+      </div>
+    </div>
+  );
+};
+
+const CrossPanel: React.FC = () => {
+  const i = crossModule.integration.totals;
+  const e = crossModule.e2e.totals;
+  return (
+    <div className="panel">
+      <PanelHead
+        index="XM"
+        title="Cross-module suites"
+        id={CROSS}
+        meta={`Integration and end-to-end · ${reportDate}`}
+      />
+      <div className="panel-body">
+        <Subhead>Integration test cases</Subhead>
+        <dl className="kpis">
+          <Kpi label="Total" value={n(i.total)} />
+          <Kpi label="Passed" value={n(i.passed)} tone={k(i.passed, 'pass')} />
+          <Kpi label="Failed" value={n(i.failed)} tone={k(i.failed, 'fail')} />
+        </dl>
+        <div className="mt">
+          <Bar
+            total={i.total}
+            label={`${i.passed} passed, ${i.failed} failed of ${i.total}`}
+            parts={[
+              { cls: 'p', label: 'Passed', value: i.passed },
+              { cls: 'f', label: 'Failed', value: i.failed },
+            ]}
+          />
+        </div>
+
+        <Subhead>End-to-end purchase journey</Subhead>
+        <dl className="kpis">
+          <Kpi label="Steps" value={n(e.total)} />
+          <Kpi label="Passed" value={n(e.passed)} tone={k(e.passed, 'pass')} />
+          <Kpi label="Failed" value={n(0)} tone={k(0, 'fail')} />
+          <Kpi label="Blocked" value={n(e.blocked)} tone={k(e.blocked, 'blocked')} />
+          <Kpi label="Not run" value={n(0)} tone={k(0, 'notrun')} />
+        </dl>
+        <div className="mt">
+          <Bar
+            total={e.total}
+            label={`${e.passed} passed, ${e.blocked} blocked of ${e.total}`}
+            parts={[
+              { cls: 'p', label: 'Passed', value: e.passed },
+              { cls: 'b', label: 'Blocked', value: e.blocked },
+            ]}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const TestSummaryDashboard: React.FC<{ hideHeading?: boolean }> = ({
+  hideHeading,
+}) => {
+  const ids = [...moduleStories.map((m) => m.id), CROSS];
+  const [selected, setSelected] = useState<string>(moduleStories[0].id);
+
+  const position = ids.indexOf(selected);
+  const step = (delta: number) => {
+    const next = ids[position + delta];
+    if (next) setSelected(next);
+  };
 
   const story = moduleStories.find((m) => m.id === selected);
-  const v = story ? moduleView(story) : projectView();
-  const isAll = v.id === 'ALL';
-
-  const outcome = [
-    { label: 'Passed', value: v.passed, fill: 'bg-emerald-500' },
-    { label: 'Failed', value: v.failed, fill: 'bg-rose-500' },
-    { label: 'Blocked', value: v.blocked, fill: 'bg-amber-500' },
-    { label: 'Never run', value: v.notRun, fill: 'bg-ink/25' },
-  ];
-
-  const severity = [
-    { label: 'High', value: v.defects.high, fill: 'bg-rose-600' },
-    { label: 'Medium', value: v.defects.medium, fill: 'bg-amber-500' },
-    { label: 'Low', value: v.defects.low, fill: 'bg-emerald-500' },
-  ];
 
   return (
     <section
       id="dashboard"
-      className="section-padding bg-canvas-muted/40 border-b border-canvas-border scroll-mt-20"
+      className="section-padding bg-canvas bg-canvas-texture border-b border-canvas-border scroll-mt-20"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 xl:px-12">
         {!hideHeading && (
@@ -187,178 +573,60 @@ export const TestSummaryDashboard: React.FC<Props> = ({ hideHeading }) => {
           </h2>
         )}
 
-        <Reveal>
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 mb-5">
-            <div>
-              <p className="font-tech text-[10px] sm:text-[11px] uppercase tracking-ultra text-accent">
-                Dashboard
-              </p>
-              <h3 className="font-display font-black uppercase tracking-tight text-lg sm:text-xl text-ink mt-1">
-                Figures, one module at a time
-              </h3>
+        <div className="tsd mx-auto max-w-[1020px]">
+          {/* The original's toolbar: step through the stories, or jump. */}
+          <Reveal>
+            <div className="picker mb-5">
+              <button
+                type="button"
+                onClick={() => step(-1)}
+                disabled={position <= 0}
+                aria-label="Previous story"
+                title="Previous story"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M15 5l-7 7 7 7" />
+                </svg>
+              </button>
+              <select
+                aria-label="Choose a user story"
+                value={selected}
+                onChange={(event) => setSelected(event.target.value)}
+              >
+                {moduleStories.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.id} — {m.module}
+                  </option>
+                ))}
+                <option value={CROSS}>Cross-module suites</option>
+              </select>
+              <button
+                type="button"
+                onClick={() => step(1)}
+                disabled={position >= ids.length - 1}
+                aria-label="Next story"
+                title="Next story"
+              >
+                <svg viewBox="0 0 24 24">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
             </div>
-            <p className="font-tech text-[10px] uppercase tracking-wider text-ink-subtle">
-              Counts and rates only — the written detail is below
-            </p>
-          </div>
-        </Reveal>
+          </Reveal>
 
-        {/* Module picker. Buttons rather than a select: there are only eleven
-            choices and they double as a legend of what exists. */}
-        <Reveal>
-          <div
-            role="tablist"
-            aria-label="Choose a module"
-            className="flex flex-wrap gap-2 mb-6"
-          >
-            {[
-              { id: 'ALL', label: 'All modules' },
-              ...moduleStories.map((m) => ({
-                id: m.id,
-                label: `${m.id} ${m.shortName}`,
-              })),
-            ].map((item) => {
-              const active = item.id === selected;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => setSelected(item.id)}
-                  className={`min-h-[40px] rounded-xl border px-3 py-2 font-tech text-[11px] uppercase tracking-wider transition-all ${
-                    active
-                      ? 'bg-ink text-canvas-surface border-ink shadow-sm'
-                      : 'bg-canvas-surface text-ink-muted border-canvas-border hover:border-accent/50 hover:text-ink'
-                  }`}
-                >
-                  {item.label}
-                </button>
-              );
-            })}
-          </div>
-        </Reveal>
+          <Reveal>{story ? <StoryPanel s={story} /> : <CrossPanel />}</Reveal>
 
-        <Reveal>
-          <div className="rounded-2xl sm:rounded-3xl border border-canvas-border bg-canvas-surface/60 p-4 sm:p-6 lg:p-7">
-            {/* Header of the selected view */}
-            <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1.5 pb-4 mb-5 border-b border-canvas-border">
-              <div className="flex items-baseline gap-3 min-w-0">
-                <code className="font-tech text-xs text-accent shrink-0">{v.id}</code>
-                <h4 className="font-display font-bold text-base sm:text-lg text-ink truncate">
-                  {v.label}
-                </h4>
-              </div>
-              <span className="font-tech text-[10px] uppercase tracking-wider text-ink-subtle">
-                {v.stateLabel}
-                {v.owner ? ` · ${v.owner}` : ''} · {v.areas}{' '}
-                {v.areas === 1 ? 'test area' : 'test areas'}
-              </span>
-            </div>
+          <p className="mt-4 font-tech text-[10px] uppercase tracking-wider text-ink-subtle leading-relaxed">
+            Figures only — counts and rates, read from the delivered workbooks
+            and reports. {teamName} · {projectName}
+          </p>
+        </div>
 
-            {/* Tiles */}
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5 sm:gap-3">
-              <Tile value={v.written} label="Cases written" />
-              <Tile value={v.executed} label="Executed" />
-              <Tile
-                value={`${v.execRate}%`}
-                label="Execution rate"
-                tone={v.execRate === 100 ? 'text-emerald-700' : 'text-amber-700'}
-              />
-              <Tile
-                value={v.passRate === null ? '—' : `${v.passRate}%`}
-                label="Pass rate of executed"
-                tone={v.passRate === null ? 'text-ink-ghost' : 'text-ink'}
-              />
-              <Tile
-                value={v.defects.total}
-                label="Defects logged"
-                tone={v.defects.total > 0 ? 'text-rose-700' : 'text-ink-ghost'}
-              />
-              <Tile value={v.statics} label="Static findings" />
-            </div>
-
-            {/* Case outcome */}
-            <div className="mt-6">
-              <p className="font-tech text-[10px] uppercase tracking-wider text-ink-subtle mb-2.5">
-                {v.written} written cases by outcome
-              </p>
-              <Bar parts={outcome} total={v.written} />
-            </div>
-
-            {/* Defect severity, or the reason there is none */}
-            <div className="mt-6 pt-5 border-t border-canvas-border">
-              <p className="font-tech text-[10px] uppercase tracking-wider text-ink-subtle mb-2.5">
-                {v.defects.total > 0
-                  ? `${v.defects.total} defects by severity`
-                  : 'Defects by severity'}
-              </p>
-              {v.defects.total > 0 ? (
-                <Bar parts={severity} total={v.defects.total} />
-              ) : (
-                <p className="flex items-start gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-xs text-orange-800 leading-relaxed">
-                  <span className="font-bold shrink-0">!</span>
-                  {v.failuresUnlogged > 0
-                    ? `No bug report was written for this module. ${v.failuresUnlogged} failed cases were never logged as defects.`
-                    : 'No defects were logged against this module.'}
-                </p>
-              )}
-            </div>
-
-            {/* Cross-module suites only belong to the project-wide view. */}
-            {isAll && (
-              <div className="mt-6 pt-5 border-t border-canvas-border grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div>
-                  <p className="font-tech text-[10px] uppercase tracking-wider text-ink-subtle mb-2.5">
-                    Integration suite
-                  </p>
-                  <Bar
-                    parts={[
-                      {
-                        label: 'Passed',
-                        value: crossModule.integration.totals.passed,
-                        fill: 'bg-emerald-500',
-                      },
-                      {
-                        label: 'Failed',
-                        value: crossModule.integration.totals.failed,
-                        fill: 'bg-rose-500',
-                      },
-                    ]}
-                    total={crossModule.integration.totals.total}
-                  />
-                </div>
-                <div>
-                  <p className="font-tech text-[10px] uppercase tracking-wider text-ink-subtle mb-2.5">
-                    End-to-end purchase journey
-                  </p>
-                  <Bar
-                    parts={[
-                      {
-                        label: 'Passed',
-                        value: crossModule.e2e.totals.passed,
-                        fill: 'bg-emerald-500',
-                      },
-                      {
-                        label: 'Blocked',
-                        value: crossModule.e2e.totals.blocked,
-                        fill: 'bg-amber-500',
-                      },
-                    ]}
-                    total={crossModule.e2e.totals.total}
-                  />
-                </div>
-              </div>
-            )}
-          </div>
-        </Reveal>
-
-        {/* The dashboard is reached from the report, so it has to lead back
-            to it: PageShell gives it no prev/next, only Home. */}
+        {/* Reached from the report, so it has to lead back to it. */}
         <Reveal>
           <Link
             to="/summary"
-            className="group mt-5 inline-flex min-h-[44px] items-center gap-2.5 rounded-xl border border-canvas-border bg-canvas-surface px-4 py-2.5 no-underline transition-colors hover:border-accent"
+            className="group mt-6 inline-flex min-h-[44px] items-center gap-2.5 rounded-xl border border-canvas-border bg-canvas-surface px-4 py-2.5 no-underline transition-colors hover:border-accent"
           >
             <ArrowLeft className="w-4 h-4 shrink-0 text-ink-ghost group-hover:text-accent group-hover:-translate-x-1 transition-all" />
             <span className="font-display font-bold text-sm text-ink group-hover:text-accent transition-colors">
