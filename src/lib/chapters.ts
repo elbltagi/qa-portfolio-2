@@ -1,6 +1,6 @@
 import { defectSeverity, moduleStories, staticSeverity, totals } from '../data/toolshop';
 import { countAreas } from './traceability';
-import { qualityMetrics, riskRegister } from '../data/quality';
+import { exitCriteria, qualityMetrics, riskRegister } from '../data/quality';
 
 /**
  * The site map. One source of truth for the navbar, the chapter rail, the
@@ -42,7 +42,9 @@ export interface DetailPage {
 }
 
 const areaCount = countAreas(moduleStories);
-const notMetCriteria = 6; // exit criteria recorded as not met
+// Counted, not typed: when the last unexecuted module was finally run, EX-2
+// flipped to met and this card would otherwise still have claimed 6 of 7.
+const notMetCriteria = exitCriteria.filter((c) => c.outcome !== 'met').length;
 
 export const detailPages: DetailPage[] = [
   {
@@ -101,14 +103,45 @@ export const detailPages: DetailPage[] = [
     figure: `${totals.passRate}%`,
     figureLabel: 'Pass rate of executed cases',
     stats: [
-      { value: `${notMetCriteria} of 7`, label: 'Exit criteria not met' },
+      { value: `${notMetCriteria} of ${exitCriteria.length}`, label: 'Exit criteria not met' },
       { value: `${riskRegister.length} of ${riskRegister.length}`, label: 'Risks materialised' },
     ],
   },
 ];
 
+/**
+ * The dashboard sits deliberately outside `detailPages`: The Work grid holds
+ * the four delivered artefacts and nothing else, and this is a way of looking
+ * at one of them rather than a fifth artefact. It is reached by the button on
+ * the test summary report, so it never needs a card.
+ */
+export const dashboardPage: DetailPage = {
+  path: '/dashboard',
+  index: '04a',
+  title: 'Summary Dashboard',
+  short: 'Dashboard',
+  eyebrow: 'Figures, Module by Module',
+  blurb:
+    'The same test summary figures, one module at a time: counts, rates and totals, with no written detail.',
+  figure: String(moduleStories.length),
+  figureLabel: 'Modules to inspect',
+  stats: [
+    { value: String(totals.cases), label: 'Cases written' },
+    { value: String(defectSeverity.total), label: 'Defects logged' },
+  ],
+};
+
 export const findDetailPage = (path: string): DetailPage | undefined =>
   detailPages.find((page) => page.path === path);
+
+/**
+ * Every page the router can land on, which is the four in The Work plus the
+ * dashboard. Routing must not use findDetailPage: the dashboard is absent
+ * from detailPages on purpose, so looking it up there resolves to nothing
+ * and the app falls through to the home page.
+ */
+export const findRoutablePage = (path: string): DetailPage | undefined =>
+  [...detailPages, dashboardPage].find((page) => page.path === path);
 
 /** Re-exported so pages can show the same roll-ups without re-deriving them. */
 export const siteTotals = { totals, defectSeverity, staticSeverity, areaCount, qualityMetrics };

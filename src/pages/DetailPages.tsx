@@ -5,7 +5,7 @@ import { TraceabilitySection } from '../sections/TraceabilitySection';
 import { DefectSection } from '../sections/DefectSection';
 import { TestSummaryDashboard } from '../sections/TestSummaryDashboard';
 import { TestSummaryReport } from '../sections/TestSummaryReport';
-import { findDetailPage } from '../lib/chapters';
+import { dashboardPage, findDetailPage } from '../lib/chapters';
 import type { ModuleStory } from '../types';
 
 /**
@@ -37,10 +37,19 @@ export const BugsPage: React.FC = () => (
   </PageShell>
 );
 
+/**
+ * Reached from the button on the summary report rather than from The Work,
+ * so it carries no prev/next: PageShell finds no position for a page that is
+ * not in detailPages, and the dashboard links back to the report itself.
+ */
+export const DashboardPage: React.FC = () => (
+  <PageShell page={dashboardPage}>
+    <TestSummaryDashboard hideHeading />
+  </PageShell>
+);
+
 export const SummaryPage: React.FC = () => (
   <PageShell page={page('/summary')}>
-    {/* Figures to scan first, then the written report. */}
-    <TestSummaryDashboard hideHeading />
     <TestSummaryReport hideHeading />
   </PageShell>
 );

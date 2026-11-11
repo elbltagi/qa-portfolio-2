@@ -1,4 +1,6 @@
 import React from 'react';
+import { ArrowRight } from 'lucide-react';
+import { Link } from '../lib/router';
 import { Reveal } from '../components/Reveal';
 import { SectionHeading } from '../components/SectionHeading';
 import {
@@ -225,6 +227,24 @@ export const TestSummaryReport: React.FC<TestSummaryReportProps> = ({
                   ))}
                 </dl>
               </div>
+
+              {/* The report gives the project's figures; the dashboard gives
+                  the same figures per module, for anyone who wants to know
+                  which module a number came from. */}
+              <Link
+                to="/dashboard"
+                className="group mt-7 flex min-h-[44px] items-center justify-between gap-4 rounded-xl border border-ink/15 bg-canvas-muted/40 px-4 py-3 no-underline transition-colors hover:border-accent hover:bg-accent-subtle"
+              >
+                <span className="min-w-0">
+                  <span className="block font-display font-bold text-sm text-ink group-hover:text-accent transition-colors">
+                    Open the summary dashboard
+                  </span>
+                  <span className="block font-tech text-[10px] uppercase tracking-wider text-ink-subtle mt-0.5">
+                    These figures module by module
+                  </span>
+                </span>
+                <ArrowRight className="w-4 h-4 shrink-0 text-ink-ghost group-hover:text-accent group-hover:translate-x-1 transition-all" />
+              </Link>
             </Clause>
 
             {/* ---- §02 Scope --------------------------------------------- */}

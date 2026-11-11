@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { ArrowLeft } from 'lucide-react';
+import { Link } from '../lib/router';
 import { Reveal } from '../components/Reveal';
 import {
   crossModule,
@@ -349,6 +351,20 @@ export const TestSummaryDashboard: React.FC<Props> = ({ hideHeading }) => {
               </div>
             )}
           </div>
+        </Reveal>
+
+        {/* The dashboard is reached from the report, so it has to lead back
+            to it: PageShell gives it no prev/next, only Home. */}
+        <Reveal>
+          <Link
+            to="/summary"
+            className="group mt-5 inline-flex min-h-[44px] items-center gap-2.5 rounded-xl border border-canvas-border bg-canvas-surface px-4 py-2.5 no-underline transition-colors hover:border-accent"
+          >
+            <ArrowLeft className="w-4 h-4 shrink-0 text-ink-ghost group-hover:text-accent group-hover:-translate-x-1 transition-all" />
+            <span className="font-display font-bold text-sm text-ink group-hover:text-accent transition-colors">
+              Back to the test summary report
+            </span>
+          </Link>
         </Reveal>
       </div>
     </section>

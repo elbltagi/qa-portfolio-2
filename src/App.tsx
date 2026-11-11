@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useProjectData } from './hooks/useProjectData';
 import { useActiveChapter } from './hooks/useActiveChapter';
 import { useRoute } from './lib/router';
-import { findDetailPage } from './lib/chapters';
+import { findRoutablePage } from './lib/chapters';
 import { announceMounted } from './lib/boot';
 import { Cursor } from './components/Cursor';
 import { Navbar } from './components/Navbar';
@@ -12,6 +12,7 @@ import { Footer } from './components/Footer';
 import { HomePage } from './pages/HomePage';
 import {
   BugsPage,
+  DashboardPage,
   StoriesPage,
   SummaryPage,
   TestCasesPage,
@@ -25,7 +26,7 @@ export const App: React.FC = () => {
   const { path } = useRoute();
   const { activeId, progress } = useActiveChapter();
 
-  const detailPage = findDetailPage(path);
+  const detailPage = findRoutablePage(path);
   const isHome = !detailPage;
 
   // Let the boot curtain know the app is up; it holds until this lands.
@@ -50,6 +51,8 @@ export const App: React.FC = () => {
         return <BugsPage />;
       case '/summary':
         return <SummaryPage />;
+      case '/dashboard':
+        return <DashboardPage />;
       default:
         return null;
     }
