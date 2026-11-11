@@ -259,10 +259,11 @@ export const OverviewSection: React.FC<OverviewSectionProps> = ({
                     <AlertTriangle className="w-5 h-5 text-amber-600 shrink-0 mt-0.5" />
                     <p className="text-sm text-ink font-light">
                       <strong className="font-semibold text-ink">
-                        {totals.notRun} cases never run:
+                        {totals.failuresAwaitingWriteUp} failures never written up:
                       </strong>{' '}
-                      the entire checkout and payment module was written, reviewed
-                      and never executed. That gap is reported, not hidden.
+                      two modules were executed and produced failures that exist
+                      only as a verdict in a workbook. That gap is reported, not
+                      hidden.
                     </p>
                   </div>
                 </div>

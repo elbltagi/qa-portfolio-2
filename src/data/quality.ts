@@ -80,8 +80,8 @@ export const exitCriteria: Criterion[] = [
   {
     id: 'EX-2',
     text: 'Every module in scope has been executed at least once.',
-    outcome: 'not-met',
-    evidence: `${executedModules} of ${moduleCount} modules were executed; US-005 Checkout, Address and Payment was not.`,
+    outcome: 'met',
+    evidence: `All ${executedModules} of ${moduleCount} modules were executed. US-005 Checkout, Address and Payment was the last to run.`,
   },
   {
     id: 'EX-3',
@@ -222,10 +222,8 @@ export const riskRegister: RiskEntry[] = [
     risk: 'A module is designed but never executed, leaving a silent coverage hole.',
     likelihood: 'Medium',
     impact: 'High',
-    outcome: 'materialised',
-    whatHappened: `US-005 Checkout, Address and Payment has ${
-      moduleStories.find((m) => m.id === 'US-005')?.cases.written ?? 0
-    } cases written, reviewed, and zero executed — the single largest gap in the project.`,
+    outcome: 'avoided',
+    whatHappened: `Every module was executed in the end. ${totals.notRun} written case across the project was never run, in US-010 Site Preferences.`,
   },
   {
     id: 'R-02',

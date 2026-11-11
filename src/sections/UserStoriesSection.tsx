@@ -18,12 +18,20 @@ interface UserStoriesSectionProps {
   hideHeading?: boolean;
 }
 
-const stateTone: Record<ModuleState, string> = {
+/**
+ * Keyed by string rather than ModuleState on purpose. The union is derived
+ * from the delivered data, so it narrows as the project progresses — when
+ * the last unexecuted module was finally run, 'not-executed' vanished from
+ * it and an exhaustive Record stopped compiling. The tones outlive the data.
+ */
+const stateTone: Record<string, string> = {
   executed: 'bg-emerald-50 text-emerald-700 border-emerald-200',
   partial: 'bg-amber-50 text-amber-700 border-amber-200',
   'executed-no-bugreport': 'bg-orange-50 text-orange-700 border-orange-200',
   'not-executed': 'bg-rose-50 text-rose-700 border-rose-200',
 };
+
+const FALLBACK_TONE = 'bg-canvas-muted text-ink-muted border-canvas-border';
 
 /** Proportional pass / fail / blocked / not-run bar for a module. */
 const ResultBar: React.FC<{ story: ModuleStory }> = ({ story }) => {
@@ -155,7 +163,7 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({
                 className={`min-h-[40px] px-3 py-2 rounded-lg border font-tech text-[11px] uppercase tracking-wider transition-all ${
                   stateFilter === state
                     ? 'bg-ink text-canvas-surface border-ink shadow-sm'
-                    : `${stateTone[state]} hover:-translate-y-0.5`
+                    : `${stateTone[state] ?? FALLBACK_TONE} hover:-translate-y-0.5`
                 }`}
               >
                 {label} <span className="opacity-60">{count}</span>
@@ -186,7 +194,7 @@ export const UserStoriesSection: React.FC<UserStoriesSectionProps> = ({
                           </code>
                           <span
                             className={`font-tech text-[10px] sm:text-[9px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
-                              stateTone[story.state]
+                              (stateTone[story.state] ?? FALLBACK_TONE)
                             }`}
                           >
                             {story.stateLabel}

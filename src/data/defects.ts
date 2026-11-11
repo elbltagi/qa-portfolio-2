@@ -213,7 +213,7 @@ export const workedDefectReport = {
   module: 'US-004 Shopping Cart Management',
   title:
     'Empty cart message does not show when opening the cart page with no cart in the session',
-  status: 'Logged 29 October 2026 — one of 50 defects on this project',
+  status: `Logged 29 October 2026 — one of ${defectSeverity.total} defects on this project`,
   fields: [
     { label: 'Module', value: 'Shopping Cart Management (US-004)' },
     { label: 'Severity', value: 'Low' },

@@ -19,13 +19,13 @@ Initiative (DEPI), Software Testing track.
 | --- | --- |
 | User stories (one per module) | 10 |
 | Test cases written | 603 |
-| Executed | 530 (87.9%) |
-| Passed | 425 |
-| Failed | 103 |
+| Executed | 602 (99.8%) |
+| Passed | 470 |
+| Failed | 130 |
 | Blocked | 2 |
-| Never run | 73 |
-| Pass rate of executed cases | 80.2% |
-| Defects logged | 50 |
+| Never run | 1 |
+| Pass rate of executed cases | 78.1% |
+| Defects logged | 59 |
 | Failures never written up | 29 |
 | Static review findings | 44 |
 
@@ -34,19 +34,24 @@ Initiative (DEPI), Software Testing track.
 The run finished, but it did not finish clean. These are stated on the pages
 themselves, not buried:
 
-- **US-005 Checkout, Address and Payment** has 72 cases written and reviewed and
-  **zero executed**. It reads as *not run* everywhere, never as passed.
 - **US-008 and US-009** were executed and produced **29 failures that were never
   written up** as defects. They exist only as a Failed verdict in a workbook.
 - **US-007 Authentication** is the one module that was **never statically
   reviewed**.
-- **US-010** has one case that was never executed.
+- **US-010** has one case that was never executed — the only one left in the
+  project.
 - The **end-to-end purchase journey is 12 steps blocked out of 21** — the run
   stopped before creating an account, entering a password and confirming payment.
+- **6 of the 10 cross-module integration cases failed**, the weakest result here.
 - Two static findings on US-001 carry **no severity**. They are reported as
   *Unrated*, never folded into Low.
-- The pass rate of 80.2% is of **executed** cases. It is never presented as
+- The pass rate of 78.1% is of **executed** cases. It is never presented as
   coverage.
+
+> Execution finished late in the project: US-005 Checkout was the last module to
+> run, which moved the figures from 530 executed / 50 defects to 602 / 59 and
+> dropped the pass rate from 80.2% to 78.1%. Re-running the generator is what
+> surfaced that, and it is why nothing on this site is typed by hand.
 
 ### Where the numbers come from
 
@@ -97,9 +102,9 @@ pages carry the evidence.
 | Route | Page | Headline figure |
 | --- | --- | --- |
 | `#/stories` | User Stories | 10 user stories delivered |
-| `#/test-cases` | Test Cases | 603 written, 530 run, 73 never run |
-| `#/bugs` | Bugs | 50 logged, 29 failures never written up |
-| `#/summary` | Test Summary Report | 80.2% pass rate of executed |
+| `#/test-cases` | Test Cases | 603 written, 602 run, 1 never run |
+| `#/bugs` | Bugs | 59 logged, 29 failures never written up |
+| `#/summary` | Test Summary Report | 78.1% pass rate of executed |
 
 ### Architecture notes
 

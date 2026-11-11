@@ -179,9 +179,9 @@ export const TraceabilitySection: React.FC<TraceabilitySectionProps> = ({
             </div>
 
             <p className="text-[10px] font-tech text-white/35 mt-4 leading-relaxed">
-              The pale bar is cases written; the solid bar is cases executed. US-005
-              Checkout shows a full pale bar and no solid one — 72 cases written and
-              reviewed, none run.
+              The pale bar is cases written; the solid bar is cases executed. Every
+              module now shows a solid bar: {totals.executed} of {totals.cases}
+              written cases were run.
             </p>
           </div>
         </Reveal>

@@ -104,6 +104,21 @@ export interface SeverityCounts {
   unrated: number;
 }
 
+/**
+ * A module's defects carry more than severity: the priority they were given,
+ * the root cause where the bug report stated one, and - when no report was
+ * written at all - how many failures that left unlogged.
+ */
+export interface DefectCounts extends SeverityCounts {
+  priority: PriorityCounts;
+  /** Only stated in reports written in the "defid" style; the rest are unstated. */
+  rootCause: { frontEnd: number; backEnd: number; unstated: number };
+  /** False when the module produced failures but no bug report. */
+  reported: boolean;
+  /** Failed cases never written up, which is only non-zero when !reported. */
+  failuresUnlogged: number;
+}
+
 export interface TestArea {
   name: string;
   total: number;
@@ -143,7 +158,7 @@ export interface ModuleStory {
   cases: CaseCounts;
   priority: PriorityCounts;
   areas: TestArea[];
-  defects: SeverityCounts;
+  defects: DefectCounts;
   staticFindings: SeverityCounts;
   crossModule: CrossModuleRefs;
 }

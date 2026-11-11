@@ -169,9 +169,7 @@ export const projectState: ProjectStatePayload = {
         'Execute every written test case against the live storefront by hand, and record a verdict for each one.',
       approach: `Manual execution through the browser across all ${moduleStories.length} modules. Every case was run and judged by a person; no tooling was involved at any point.`,
       outputs: `${totals.executed} executed — ${totals.passed} passed, ${totals.failed} failed, ${totals.blocked} blocked.`,
-      coverageNotice: `${totals.notRun} cases were never executed, ${
-        moduleStories.find((m) => m.id === 'US-005')?.cases.notRun ?? 0
-      } of them the entire checkout and payment module.`,
+      coverageNotice: `${totals.failuresAwaitingWriteUp} of the ${totals.failed} failures this produced were never written up as defects, and ${totals.notRun} case was never run.`,
     },
     {
       id: 'type-api',

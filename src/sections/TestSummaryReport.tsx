@@ -285,9 +285,7 @@ export const TestSummaryReport: React.FC<TestSummaryReportProps> = ({
             <Clause n="03" title="Where the run fell short of the plan">
               <ul className="space-y-3.5">
                 {[
-                  `US-005 Checkout, Address and Payment: ${
-                    moduleStories.find((m) => m.id === 'US-005')?.cases.written ?? 0
-                  } cases written and reviewed, none executed. ${executedModules} of ${moduleStories.length} modules were executed.`,
+                  `${totals.notRun} written case was never run, in US-010 Site Preferences. Every other case across all ${executedModules} modules was executed.`,
                   `${totals.failuresAwaitingWriteUp} observed failures were never written up as defects — ${noBugReport
                     .map((m) => m.id)
                     .join(' and ')} have no bug report at all.`,
@@ -441,19 +439,20 @@ export const TestSummaryReport: React.FC<TestSummaryReportProps> = ({
             {/* ---- §08 Conclusion ---------------------------------------- */}
             <Clause n="08" title="Conclusion">
               <p className="font-editorial-serif text-lg sm:text-xl leading-[1.45] text-ink">
-                On the evidence of this run, the application cannot be signed off. The
-                checkout and payment path — the one journey a storefront exists to
-                complete — was never executed, and the end-to-end journey never reached
-                a confirmed order.
+                On the evidence of this run, the application cannot be signed off.
+                Execution is effectively complete at {totals.execRate}%, but{' '}
+                {totals.failed} of the {totals.executed} cases run returned a failure,
+                and the end-to-end purchase journey still never reached a confirmed
+                order.
               </p>
               <p className="mt-4 text-sm text-ink-muted font-light leading-relaxed">
-                What the run does establish is {totals.executed} executed cases across{' '}
+                What the run establishes is {totals.executed} executed cases across all{' '}
                 {executedModules} modules at a {totals.passRate}% pass rate, and{' '}
                 {defectSeverity.total} defects documented well enough to reproduce. The
-                recommendation is to execute US-005, write up the{' '}
-                {totals.failuresAwaitingWriteUp} outstanding failures, and statically
-                review {noStatic.map((m) => m.id).join(', ')} before any release
-                decision is taken.
+                recommendation is to write up the {totals.failuresAwaitingWriteUp}{' '}
+                outstanding failures in {noBugReport.map((m) => m.id).join(' and ')},
+                statically review {noStatic.map((m) => m.id).join(', ')}, and unblock
+                the end-to-end journey before any release decision is taken.
               </p>
 
               {/* Sign-off, as a document ends. */}
