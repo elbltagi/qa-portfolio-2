@@ -106,7 +106,7 @@ const Ring: React.FC<{
   const C = 2 * Math.PI * r;
   const v = value == null ? 0 : Math.max(0, Math.min(100, value));
   return (
-    <figure className="ring">
+    <figure className="tsd-ring">
       <svg viewBox="0 0 80 80" aria-hidden="true">
         <circle className="tr" cx="40" cy="40" r={r} fill="none" strokeWidth="9" />
         <circle

@@ -340,21 +340,21 @@ summary::-webkit-details-marker {
   flex-wrap: wrap;
   align-items: center;
 }
-.tsd .ring {
+.tsd .tsd-ring {
   display: flex;
   align-items: center;
   gap: 16px;
   margin: 0;
 }
-.tsd .ring svg {
+.tsd .tsd-ring svg {
   width: 92px;
   height: 92px;
   flex: 0 0 auto;
   transform: rotate(-90deg);
 }
-.tsd .ring .tr { stroke: var(--muted); }
-.tsd .ring .vl { stroke-linecap: round; }
-.tsd .ring figcaption {
+.tsd .tsd-ring .tr { stroke: var(--muted); }
+.tsd .tsd-ring .vl { stroke-linecap: round; }
+.tsd .tsd-ring figcaption {
   font-family: var(--mono);
   font-size: 10.5px;
   letter-spacing: 0.12em;
@@ -362,7 +362,7 @@ summary::-webkit-details-marker {
   color: var(--ink-subtle);
   line-height: 1.7;
 }
-.tsd .ring .big {
+.tsd .tsd-ring .big {
   display: block;
   font-family: var(--display);
   font-size: 30px;
@@ -619,5 +619,5 @@ summary::-webkit-details-marker {
   .tsd .panel-body { padding: 20px 18px 24px; }
   .tsd .kpi dd { font-size: 28px; }
   .tsd .rings { gap: 20px; }
-  .tsd .ring svg { width: 76px; height: 76px; }
+  .tsd .tsd-ring svg { width: 76px; height: 76px; }
 }
