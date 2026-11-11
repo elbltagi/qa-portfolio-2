@@ -104,8 +104,11 @@ export const exitCriteria: Criterion[] = [
   {
     id: 'EX-6',
     text: 'The end-to-end purchase journey completes to a confirmed order.',
-    outcome: 'not-met',
-    evidence: `${crossModule.e2e.totals.blocked} of ${crossModule.e2e.totals.total} steps are blocked; the journey never reached confirmation.`,
+    // Partial, not met: the journey is no longer blocked part-way, so every
+    // step was reached, but three of them failed. Run to the end is not the
+    // same as run cleanly, and the workbook does not say which steps failed.
+    outcome: 'partial',
+    evidence: `The journey was run to the end — ${crossModule.e2e.totals.passed} of ${crossModule.e2e.totals.total} steps passed with none blocked, but ${crossModule.e2e.totals.failed} failed.`,
   },
   {
     id: 'EX-7',
@@ -247,8 +250,8 @@ export const riskRegister: RiskEntry[] = [
     risk: 'The end-to-end journey cannot complete because account creation or payment blocks it.',
     likelihood: 'High',
     impact: 'High',
-    outcome: 'materialised',
-    whatHappened: `${crossModule.e2e.totals.blocked} of ${crossModule.e2e.totals.total} journey steps are blocked. The run stopped before creating an account, entering a password and confirming payment.`,
+    outcome: 'avoided',
+    whatHappened: `No journey step is blocked. All ${crossModule.e2e.totals.total} steps were reached, ${crossModule.e2e.totals.passed} passed and ${crossModule.e2e.totals.failed} failed, with the failures written up as defects.`,
   },
   {
     id: 'R-05',

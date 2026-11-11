@@ -418,8 +418,8 @@ export const projectState: ProjectStatePayload = {
       description:
         'The full purchase journey a real customer would follow, from browsing to a confirmed order.',
       coverageNotice:
-        'Attempted once as a single end-to-end journey; not repeated after the blocker.',
-      outcome: `${crossModule.e2e.totals.passed} of ${crossModule.e2e.totals.total} steps passed; the journey never reached a confirmed order.`,
+        'Run once as a single end-to-end journey, reaching every step.',
+      outcome: `${crossModule.e2e.totals.passed} of ${crossModule.e2e.totals.total} steps passed; ${crossModule.e2e.totals.failed} failed and none were blocked.`,
     },
   ],
 

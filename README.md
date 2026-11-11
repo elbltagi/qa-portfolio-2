@@ -40,8 +40,8 @@ themselves, not buried:
   reviewed**.
 - **US-010** has one case that was never executed — the only one left in the
   project.
-- The **end-to-end purchase journey is 12 steps blocked out of 21** — the run
-  stopped before creating an account, entering a password and confirming payment.
+- The **end-to-end purchase journey now reaches all 21 steps**, but 3 of them
+  fail; those failures are written up in their own bug report.
 - **6 of the 10 cross-module integration cases failed**, the weakest result here.
 - Two static findings on US-001 carry **no severity**. They are reported as
   *Unrated*, never folded into Low.

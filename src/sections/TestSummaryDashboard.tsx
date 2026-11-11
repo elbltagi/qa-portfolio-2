@@ -498,6 +498,12 @@ const StoryPanel: React.FC<{ s: ModuleStory }> = ({ s }) => {
 const CrossPanel: React.FC = () => {
   const i = crossModule.integration.totals;
   const e = crossModule.e2e.totals;
+  // The suites' shapes vary: the integration workbook records no blocked or
+  // not-run case, and these keys came and went as the journey was finished.
+  const failed = 'failed' in e ? e.failed : 0;
+  const blocked = 'blocked' in e ? e.blocked : 0;
+  const notRun = 'notRun' in e ? e.notRun : 0;
+  const journeyDefects = (crossModule as { defects?: ModuleStory['defects'] }).defects;
   return (
     <div className="panel">
       <PanelHead
@@ -528,20 +534,31 @@ const CrossPanel: React.FC = () => {
         <dl className="kpis">
           <Kpi label="Steps" value={n(e.total)} />
           <Kpi label="Passed" value={n(e.passed)} tone={k(e.passed, 'pass')} />
-          <Kpi label="Failed" value={n(0)} tone={k(0, 'fail')} />
-          <Kpi label="Blocked" value={n(e.blocked)} tone={k(e.blocked, 'blocked')} />
-          <Kpi label="Not run" value={n(0)} tone={k(0, 'notrun')} />
+          <Kpi label="Failed" value={n(failed)} tone={k(failed, 'fail')} />
+          <Kpi label="Blocked" value={n(blocked)} tone={k(blocked, 'blocked')} />
+          <Kpi label="Not run" value={n(notRun)} tone={k(notRun, 'notrun')} />
         </dl>
         <div className="mt">
           <Bar
             total={e.total}
-            label={`${e.passed} passed, ${e.blocked} blocked of ${e.total}`}
+            label={`${e.passed} passed, ${failed} failed, ${blocked} blocked, ${notRun} not run of ${e.total}`}
             parts={[
               { cls: 'p', label: 'Passed', value: e.passed },
-              { cls: 'b', label: 'Blocked', value: e.blocked },
+              { cls: 'f', label: 'Failed', value: failed },
+              { cls: 'b', label: 'Blocked', value: blocked },
+              { cls: 'n', label: 'Not run', value: notRun },
             ]}
           />
         </div>
+
+        {/* The journey has its own bug report, so it gets the same defects
+            block as a module, exactly as in the original. */}
+        {journeyDefects && journeyDefects.total > 0 && (
+          <>
+            <Subhead>Defects from the journey</Subhead>
+            <Defects d={journeyDefects} />
+          </>
+        )}
       </div>
     </div>
   );

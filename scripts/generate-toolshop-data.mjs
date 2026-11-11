@@ -139,7 +139,7 @@ export interface ModuleArtifacts {
 
 export interface CrossModuleRefs {
   integration: { total: number; passed: number; failed: number };
-  e2e: { total: number; passed: number; blocked: number };
+  e2e: { total: number; passed: number; failed: number; blocked: number; notRun: number };
 }
 
 export type ModuleState = ${[...new Set(stories.map((s) => s.state))]

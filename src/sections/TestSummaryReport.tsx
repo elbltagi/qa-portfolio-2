@@ -312,7 +312,7 @@ export const TestSummaryReport: React.FC<TestSummaryReportProps> = ({
                   `${noStatic.length} module was never statically reviewed: ${noStatic
                     .map((m) => `${m.id} ${m.shortName}`)
                     .join(', ')}.`,
-                  `The end-to-end purchase journey is ${crossModule.e2e.totals.blocked} of ${crossModule.e2e.totals.total} steps blocked; it never reached a confirmed order.`,
+                  `The end-to-end purchase journey reached every one of its ${crossModule.e2e.totals.total} steps, but ${crossModule.e2e.totals.failed} failed.`,
                   `${crossModule.integration.totals.failed} of ${crossModule.integration.totals.total} cross-module integration cases failed.`,
                   `${staticSeverity.unrated} static findings carry no severity rating and are reported as unrated.`,
                   'Three planned weeks — API, mobile and database testing, and both automation weeks — were never carried out.',
@@ -460,10 +460,11 @@ export const TestSummaryReport: React.FC<TestSummaryReportProps> = ({
             <Clause n="08" title="Conclusion">
               <p className="font-editorial-serif text-lg sm:text-xl leading-[1.45] text-ink">
                 On the evidence of this run, the application cannot be signed off.
-                Execution is effectively complete at {totals.execRate}%, but{' '}
+                Execution is effectively complete at {totals.execRate}%, and the
+                end-to-end purchase journey now reaches every step. But{' '}
                 {totals.failed} of the {totals.executed} cases run returned a failure,
-                and the end-to-end purchase journey still never reached a confirmed
-                order.
+                and {totals.failuresAwaitingWriteUp} of those failures were never
+                written up at all.
               </p>
               <p className="mt-4 text-sm text-ink-muted font-light leading-relaxed">
                 What the run establishes is {totals.executed} executed cases across all{' '}
@@ -471,8 +472,9 @@ export const TestSummaryReport: React.FC<TestSummaryReportProps> = ({
                 {defectSeverity.total} defects documented well enough to reproduce. The
                 recommendation is to write up the {totals.failuresAwaitingWriteUp}{' '}
                 outstanding failures in {noBugReport.map((m) => m.id).join(' and ')},
-                statically review {noStatic.map((m) => m.id).join(', ')}, and unblock
-                the end-to-end journey before any release decision is taken.
+                statically review {noStatic.map((m) => m.id).join(', ')}, and fix the{' '}
+                {crossModule.integration.totals.failed} failing integration cases
+                before any release decision is taken.
               </p>
 
               {/* Sign-off, as a document ends. */}
