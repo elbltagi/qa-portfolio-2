@@ -91,8 +91,13 @@ summary::-webkit-details-marker {
 /* Detail page titles need a lower floor still: they are single long words
    like "Traceability" and "Management", which cannot break at all, where
    the hero's longest unbreakable run is "Quality". Identical above ~500px. */
+/* The vw term is lower than the hero's because a page title sits in a
+   7-of-12 column, not the full width. At 5vw the longest word on the site,
+   "Dashboard", filled 659px of a 672px column — a 2% margin, which any
+   narrower window or pre-webfont metric tipped over, and break-words then
+   split it as "SUMMAR / Y DASHBO / ARD". 4.4vw leaves it at 86%. */
 .text-fluid-page-title {
-  font-size: clamp(1.5rem, 5vw, 5.25rem);
+  font-size: clamp(1.5rem, 4.4vw, 4.6rem);
   line-height: 1.02;
   letter-spacing: -0.03em;
 }
